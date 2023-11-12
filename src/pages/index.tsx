@@ -169,9 +169,9 @@ export default function Home() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {loading && (
+                {/* {loading && (
                   <Skeleton className="w-[100px] h-[20px] rounded-full" />
-                )}
+                )} */}
                 {readings !== null && readings.length > 0 ? (
                   readings.map((reading) => (
                     <TableRow className="hover:bg-sky-900" key={reading.id}>
