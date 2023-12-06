@@ -34,3 +34,15 @@ export const getReadingsByUser = async (userId: string) => {
     throw error;
   }
 };
+
+export const getReadingsForUser = async (userId: number) => {
+  try {
+    const response = await fetch(`/api/user-readings/${userId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching readings for user:", error);
+    return [];
+  }
+};
+
