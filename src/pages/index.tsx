@@ -192,11 +192,6 @@ export default function Home() {
                 <TableHead>Quando</TableHead>
                 <TableHead className="w-[100px]">ID de usuário</TableHead>
                 <TableHead className="text-right">Value</TableHead>
-                {/* Cabeçalhos para novos campos */}
-                <TableHead>Torque Values</TableHead>
-                <TableHead>Asm Times</TableHead>
-                <TableHead>Motion Wastes</TableHead>
-                <TableHead>Set Value</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -211,11 +206,6 @@ export default function Home() {
                     <TableCell>{reading.timestamp}</TableCell>
                     <TableCell>{reading.user_id}</TableCell>
                     <TableCell className="text-right">{reading.value}</TableCell>
-                    {/* Exibindo os novos campos */}
-                    <TableCell>{reading.torque_values.join(', ')}</TableCell>
-                    <TableCell>{reading.asm_times.join(', ')}</TableCell>
-                    <TableCell>{reading.motion_wastes.join(', ')}</TableCell>
-                    <TableCell>{reading.set_value}</TableCell>
                   </TableRow>
                 ))
               ) : (
