@@ -34,3 +34,13 @@ export const getReadingsByUser = async (userId: string) => {
     throw error;
   }
 };
+
+export const getTorqueData = async () => {
+  try {
+    const response = await axiosInstance.get("torqueData");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching torque data:", error);
+    throw error;
+  }
+};
