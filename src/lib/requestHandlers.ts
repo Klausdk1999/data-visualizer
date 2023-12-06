@@ -25,7 +25,7 @@ export const getReadings = async () => {
   }
 };
 
-export const getReadingsByUser = async (userId: string) => {
+export const fetchReadingsForUser = async (userId: string) => {
   try {
     const response = await axiosInstance.get(`readings/${userId}`);
     return response.data;
