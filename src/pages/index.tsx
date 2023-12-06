@@ -14,19 +14,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 
 type User = {
   id: number;
   name: string;
+  rfid: string;
+  categoria: string;
+  matricula: string;
 };
 
 type Reading = {
@@ -34,6 +30,10 @@ type Reading = {
   timestamp: string;
   user_id: number;
   value: number;
+  torque_values: number[];
+  asm_times: number[];
+  motion_wastes: number[];
+  set_value: number;
 };
 
 export default function Home() {
@@ -41,7 +41,7 @@ export default function Home() {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [readings, setReadings] = useState<Reading[] | null>([]);
   const [loading, setLoading] = useState(true);
-
+  console.log(readings);
   const fetchReadingsForUser = async (userId: number) => {
     try {
       setLoading(true);
@@ -108,7 +108,7 @@ export default function Home() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-xl font-semibold">Torquimetro</h1>
+                <h1 className="text-xl font-semibold">Torquimetro Digital</h1>
               </div>
             </div>
             {loading && <div>Loading ...</div>}
@@ -130,6 +130,9 @@ export default function Home() {
                   <TableHead></TableHead>
                   <TableHead>ID</TableHead>
                   <TableHead>Nome</TableHead>
+                  <TableHead>Rfid</TableHead>
+                  <TableHead>Categoria</TableHead>
+                  <TableHead>Matricula</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,6 +150,9 @@ export default function Home() {
                     </TableCell>
                     <TableCell className="font-medium">{user.id}</TableCell>
                     <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.rfid}</TableCell>
+                    <TableCell>{user.categoria}</TableCell>
+                    <TableCell>{user.matricula}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -166,6 +172,10 @@ export default function Home() {
                   <TableHead>Quando</TableHead>
                   <TableHead className="w-[100px]">ID de usuário</TableHead>
                   <TableHead className="text-right">Value</TableHead>
+                  <TableHead className="text-right">Set Value</TableHead>
+                  <TableHead className="text-right">Torque Values</TableHead>
+                  <TableHead className="text-right">Asm Times</TableHead>
+                  <TableHead className="text-right">Motion Wastes</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -184,6 +194,18 @@ export default function Home() {
                       </TableCell>
                       <TableCell className="text-right">
                         {reading.value}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {reading.set_value}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {reading.torque_values.join(", ")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {reading.asm_times.join(", ")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {reading.motion_wastes.join(", ")}
                       </TableCell>
                     </TableRow>
                   ))
