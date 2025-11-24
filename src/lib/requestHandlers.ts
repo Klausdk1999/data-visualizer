@@ -1,5 +1,16 @@
 // apiService.ts
 import axios from "axios";
+import type {
+  User,
+  Device,
+  Signal,
+  SignalValue,
+  LoginResponse,
+  CreateDeviceRequest,
+  CreateSignalRequest,
+  CreateSignalValueRequest,
+  CreateUserRequest,
+} from "@/types";
 
 // Use relative path when behind nginx, or full URL for direct access
 const getBaseURL = () => {
@@ -27,9 +38,9 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 // Auth endpoints
-export const login = async (email: string, password: string) => {
+export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
-    const response = await axiosInstance.post("auth/login", { email, password });
+    const response = await axiosInstance.post<LoginResponse>("auth/login", { email, password });
     if (response.data.token) {
       localStorage.setItem('auth_token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -56,9 +67,9 @@ export const isAuthenticated = () => {
 };
 
 // User endpoints
-export const getUsers = async () => {
+export const getUsers = async (): Promise<User[]> => {
   try {
-    const response = await axiosInstance.get("users");
+    const response = await axiosInstance.get<User[]>("users");
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -66,9 +77,19 @@ export const getUsers = async () => {
   }
 };
 
-export const createUser = async (userData: any) => {
+export const getUser = async (userId: string): Promise<User> => {
   try {
-    const response = await axiosInstance.post("users", userData);
+    const response = await axiosInstance.get<User>(`users/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+
+export const createUser = async (userData: CreateUserRequest): Promise<User> => {
+  try {
+    const response = await axiosInstance.post<User>("users", userData);
     return response.data;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -76,10 +97,29 @@ export const createUser = async (userData: any) => {
   }
 };
 
-// Device endpoints
-export const getDevices = async (params?: { user_id?: string; active?: string }) => {
+export const updateUser = async (userId: string, userData: Partial<CreateUserRequest>): Promise<User> => {
   try {
-    const response = await axiosInstance.get("devices", { params });
+    const response = await axiosInstance.put<User>(`users/${userId}`, userData);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+export const deleteUser = async (userId: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`users/${userId}`);
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+};
+
+// Device endpoints
+export const getDevices = async (params?: { user_id?: string; active?: string }): Promise<Device[]> => {
+  try {
+    const response = await axiosInstance.get<Device[]>("devices", { params });
     return response.data;
   } catch (error) {
     console.error("Error fetching devices:", error);
@@ -87,9 +127,9 @@ export const getDevices = async (params?: { user_id?: string; active?: string })
   }
 };
 
-export const getDevice = async (deviceId: string) => {
+export const getDevice = async (deviceId: string): Promise<Device> => {
   try {
-    const response = await axiosInstance.get(`devices/${deviceId}`);
+    const response = await axiosInstance.get<Device>(`devices/${deviceId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching device:", error);
@@ -97,9 +137,9 @@ export const getDevice = async (deviceId: string) => {
   }
 };
 
-export const createDevice = async (deviceData: any) => {
+export const createDevice = async (deviceData: CreateDeviceRequest): Promise<Device & { auth_token: string }> => {
   try {
-    const response = await axiosInstance.post("auth/register-device", deviceData);
+    const response = await axiosInstance.post<Device & { auth_token: string }>("auth/register-device", deviceData);
     return response.data;
   } catch (error) {
     console.error("Error creating device:", error);
@@ -107,9 +147,9 @@ export const createDevice = async (deviceData: any) => {
   }
 };
 
-export const updateDevice = async (deviceId: string, deviceData: any) => {
+export const updateDevice = async (deviceId: string, deviceData: Partial<CreateDeviceRequest & { is_active?: boolean }>): Promise<Device> => {
   try {
-    const response = await axiosInstance.put(`devices/${deviceId}`, deviceData);
+    const response = await axiosInstance.put<Device>(`devices/${deviceId}`, deviceData);
     return response.data;
   } catch (error) {
     console.error("Error updating device:", error);
@@ -117,7 +157,7 @@ export const updateDevice = async (deviceId: string, deviceData: any) => {
   }
 };
 
-export const deleteDevice = async (deviceId: string) => {
+export const deleteDevice = async (deviceId: string): Promise<void> => {
   try {
     await axiosInstance.delete(`devices/${deviceId}`);
   } catch (error) {
@@ -132,9 +172,9 @@ export const getSignals = async (params?: {
   signal_type?: string;
   direction?: string;
   active?: string;
-}) => {
+}): Promise<Signal[]> => {
   try {
-    const response = await axiosInstance.get("signals", { params });
+    const response = await axiosInstance.get<Signal[]>("signals", { params });
     return response.data;
   } catch (error) {
     console.error("Error fetching signals:", error);
@@ -142,9 +182,9 @@ export const getSignals = async (params?: {
   }
 };
 
-export const getSignal = async (signalId: string) => {
+export const getSignal = async (signalId: string): Promise<Signal> => {
   try {
-    const response = await axiosInstance.get(`signals/${signalId}`);
+    const response = await axiosInstance.get<Signal>(`signals/${signalId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching signal:", error);
@@ -152,9 +192,9 @@ export const getSignal = async (signalId: string) => {
   }
 };
 
-export const createSignal = async (signalData: any) => {
+export const createSignal = async (signalData: CreateSignalRequest): Promise<Signal> => {
   try {
-    const response = await axiosInstance.post("signals", signalData);
+    const response = await axiosInstance.post<Signal>("signals", signalData);
     return response.data;
   } catch (error) {
     console.error("Error creating signal:", error);
@@ -162,9 +202,9 @@ export const createSignal = async (signalData: any) => {
   }
 };
 
-export const updateSignal = async (signalId: string, signalData: any) => {
+export const updateSignal = async (signalId: string, signalData: Partial<CreateSignalRequest>): Promise<Signal> => {
   try {
-    const response = await axiosInstance.put(`signals/${signalId}`, signalData);
+    const response = await axiosInstance.put<Signal>(`signals/${signalId}`, signalData);
     return response.data;
   } catch (error) {
     console.error("Error updating signal:", error);
@@ -172,7 +212,7 @@ export const updateSignal = async (signalId: string, signalData: any) => {
   }
 };
 
-export const deleteSignal = async (signalId: string) => {
+export const deleteSignal = async (signalId: string): Promise<void> => {
   try {
     await axiosInstance.delete(`signals/${signalId}`);
   } catch (error) {
@@ -184,9 +224,9 @@ export const deleteSignal = async (signalId: string) => {
 export const getSignalsByDevice = async (deviceId: string, params?: {
   signal_type?: string;
   direction?: string;
-}) => {
+}): Promise<Signal[]> => {
   try {
-    const response = await axiosInstance.get(`devices/${deviceId}/signals`, { params });
+    const response = await axiosInstance.get<Signal[]>(`devices/${deviceId}/signals`, { params });
     return response.data;
   } catch (error) {
     console.error("Error fetching device signals:", error);
@@ -202,9 +242,9 @@ export const getSignalValues = async (params?: {
   from_date?: string;
   to_date?: string;
   limit?: string;
-}) => {
+}): Promise<SignalValue[]> => {
   try {
-    const response = await axiosInstance.get("signal-values", { params });
+    const response = await axiosInstance.get<SignalValue[]>("signal-values", { params });
     return response.data;
   } catch (error) {
     console.error("Error fetching signal values:", error);
@@ -212,9 +252,9 @@ export const getSignalValues = async (params?: {
   }
 };
 
-export const getSignalValue = async (valueId: string) => {
+export const getSignalValue = async (valueId: string): Promise<SignalValue> => {
   try {
-    const response = await axiosInstance.get(`signal-values/${valueId}`);
+    const response = await axiosInstance.get<SignalValue>(`signal-values/${valueId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching signal value:", error);
@@ -222,12 +262,21 @@ export const getSignalValue = async (valueId: string) => {
   }
 };
 
-export const createSignalValue = async (valueData: any) => {
+export const createSignalValue = async (valueData: CreateSignalValueRequest): Promise<SignalValue> => {
   try {
-    const response = await axiosInstance.post("signal-values", valueData);
+    const response = await axiosInstance.post<SignalValue>("signal-values", valueData);
     return response.data;
   } catch (error) {
     console.error("Error creating signal value:", error);
+    throw error;
+  }
+};
+
+export const deleteSignalValue = async (valueId: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`signal-values/${valueId}`);
+  } catch (error) {
+    console.error("Error deleting signal value:", error);
     throw error;
   }
 };
@@ -236,9 +285,9 @@ export const getSignalValuesBySignal = async (signalId: string, params?: {
   from_date?: string;
   to_date?: string;
   limit?: string;
-}) => {
+}): Promise<SignalValue[]> => {
   try {
-    const response = await axiosInstance.get(`signals/${signalId}/values`, { params });
+    const response = await axiosInstance.get<SignalValue[]>(`signals/${signalId}/values`, { params });
     return response.data;
   } catch (error) {
     console.error("Error fetching signal values:", error);
