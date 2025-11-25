@@ -100,4 +100,3 @@ export interface CreateUserRequest {
   matricula?: string;
   rfid?: string;
 }
-

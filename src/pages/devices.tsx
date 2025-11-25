@@ -3,12 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { isAuthenticated, getCurrentUser, logout } from "@/lib/requestHandlers";
-import {
-  getDevices,
-  createDevice,
-  updateDevice,
-  deleteDevice,
-} from "@/lib/requestHandlers";
+import { getDevices, createDevice, updateDevice, deleteDevice } from "@/lib/requestHandlers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,9 +64,9 @@ export default function DevicesPage() {
     const formData = new FormData(e.currentTarget);
     const deviceData: CreateDeviceRequest = {
       name: formData.get("name") as string,
-      description: formData.get("description") as string || undefined,
-      device_type: formData.get("device_type") as string || undefined,
-      location: formData.get("location") as string || undefined,
+      description: (formData.get("description") as string) || undefined,
+      device_type: (formData.get("device_type") as string) || undefined,
+      location: (formData.get("location") as string) || undefined,
     };
 
     try {
@@ -283,4 +278,3 @@ export default function DevicesPage() {
     </div>
   );
 }
-

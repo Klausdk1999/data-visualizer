@@ -29,6 +29,7 @@ NEXT_PUBLIC_API_URL=/api
 ```
 
 For local development without nginx:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
@@ -114,6 +115,7 @@ data-visualizer/
 ## Usage
 
 1. **Start the development server:**
+
    ```bash
    npm run dev
    ```
@@ -138,6 +140,7 @@ data-visualizer/
 ## API Integration
 
 The frontend communicates with the Go API. Ensure:
+
 - API is running on `http://localhost:8080` (or configure `NEXT_PUBLIC_API_URL`)
 - CORS is enabled on the API
 - Authentication tokens are stored in localStorage
@@ -145,10 +148,12 @@ The frontend communicates with the Go API. Ensure:
 ## Testing
 
 Tests are located alongside source files:
+
 - `src/lib/__tests__/requestHandlers.test.ts` - API client tests
 - `src/components/__tests__/Login.test.tsx` - Component tests
 
 Run tests:
+
 ```bash
 npm test
 ```

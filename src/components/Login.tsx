@@ -65,9 +65,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                 placeholder="••••••••"
               />
             </div>
-            {error && (
-              <div className="text-red-500 text-sm">{error}</div>
-            )}
+            {error && <div className="text-red-500 text-sm">{error}</div>}
             <button
               type="submit"
               disabled={loading}
@@ -81,4 +79,3 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     </div>
   );
 }
-

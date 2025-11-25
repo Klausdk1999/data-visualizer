@@ -3,11 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { isAuthenticated, getCurrentUser, logout } from "@/lib/requestHandlers";
-import {
-  getDevice,
-  getSignalsByDevice,
-  getSignalValuesBySignal,
-} from "@/lib/requestHandlers";
+import { getDevice, getSignalsByDevice, getSignalValuesBySignal } from "@/lib/requestHandlers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -209,7 +205,9 @@ export default function DeviceDashboard() {
               </div>
               <div>
                 <p className="text-sm text-gray-400">Status</p>
-                <p className={`font-semibold ${device.is_active ? "text-green-400" : "text-red-400"}`}>
+                <p
+                  className={`font-semibold ${device.is_active ? "text-green-400" : "text-red-400"}`}
+                >
                   {device.is_active ? "Active" : "Inactive"}
                 </p>
               </div>
@@ -226,9 +224,7 @@ export default function DeviceDashboard() {
         {/* Signals with Latest Values */}
         <Card className="bg-gray-700 border-gray-600">
           <CardHeader>
-            <CardTitle className="text-white">
-              Signals ({signals.length})
-            </CardTitle>
+            <CardTitle className="text-white">Signals ({signals.length})</CardTitle>
           </CardHeader>
           <CardContent>
             {signals.length === 0 ? (
@@ -260,25 +256,27 @@ export default function DeviceDashboard() {
                       <TableRow key={signal.id} className="border-gray-600 hover:bg-gray-600">
                         <TableCell className="text-white">{signal.id}</TableCell>
                         <TableCell className="text-white">
-                          <span className="text-white font-medium">
-                            {signal.name}
-                          </span>
+                          <span className="text-white font-medium">{signal.name}</span>
                         </TableCell>
                         <TableCell className="text-white">
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            signal.signal_type === "analogic" 
-                              ? "bg-blue-600 text-white" 
-                              : "bg-purple-600 text-white"
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded text-xs ${
+                              signal.signal_type === "analogic"
+                                ? "bg-blue-600 text-white"
+                                : "bg-purple-600 text-white"
+                            }`}
+                          >
                             {signal.signal_type}
                           </span>
                         </TableCell>
                         <TableCell className="text-white">
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            signal.direction === "input" 
-                              ? "bg-green-600 text-white" 
-                              : "bg-orange-600 text-white"
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded text-xs ${
+                              signal.direction === "input"
+                                ? "bg-green-600 text-white"
+                                : "bg-orange-600 text-white"
+                            }`}
+                          >
                             {signal.direction}
                           </span>
                         </TableCell>
@@ -286,11 +284,12 @@ export default function DeviceDashboard() {
                         <TableCell className="text-white">
                           {latestValue ? (
                             <span className="font-semibold text-lg">
-                              {signal.signal_type === "analogic" 
+                              {signal.signal_type === "analogic"
                                 ? latestValue.value !== null && latestValue.value !== undefined
                                   ? `${latestValue.value}${signal.unit ? ` ${signal.unit}` : ""}`
                                   : "-"
-                                : latestValue.digital_value !== null && latestValue.digital_value !== undefined
+                                : latestValue.digital_value !== null &&
+                                    latestValue.digital_value !== undefined
                                   ? latestValue.digital_value.toString()
                                   : "-"}
                             </span>
@@ -299,11 +298,11 @@ export default function DeviceDashboard() {
                           )}
                         </TableCell>
                         <TableCell className="text-white">
-                          {latestValue ? (
-                            signal.signal_type === "analogic" ? "Analog" : "Digital"
-                          ) : (
-                            "-"
-                          )}
+                          {latestValue
+                            ? signal.signal_type === "analogic"
+                              ? "Analog"
+                              : "Digital"
+                            : "-"}
                         </TableCell>
                         <TableCell className="text-white">
                           {dateInfo ? dateInfo.time : "-"}
@@ -312,11 +311,11 @@ export default function DeviceDashboard() {
                           {dateInfo ? dateInfo.date : "-"}
                         </TableCell>
                         <TableCell className="text-white">
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            signal.is_active 
-                              ? "bg-green-600 text-white" 
-                              : "bg-red-600 text-white"
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded text-xs ${
+                              signal.is_active ? "bg-green-600 text-white" : "bg-red-600 text-white"
+                            }`}
+                          >
                             {signal.is_active ? "Active" : "Inactive"}
                           </span>
                         </TableCell>
@@ -332,4 +331,3 @@ export default function DeviceDashboard() {
     </div>
   );
 }
-

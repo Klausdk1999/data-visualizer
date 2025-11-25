@@ -66,8 +66,7 @@ describe("Login Component", () => {
 
   it("disables submit button while loading", async () => {
     (requestHandlers.login as jest.Mock).mockImplementation(
-      () =>
-        new Promise((resolve) => setTimeout(() => resolve({}), 100))
+      () => new Promise((resolve) => setTimeout(() => resolve({}), 100))
     );
 
     render(<Login onLoginSuccess={mockOnLoginSuccess} />);
@@ -84,4 +83,3 @@ describe("Login Component", () => {
     expect(screen.getByText(/logging in/i)).toBeInTheDocument();
   });
 });
-

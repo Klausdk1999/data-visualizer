@@ -9,6 +9,6 @@ const nextConfig = {
     // Disable TypeScript errors during builds (type checking should be done in CI/local dev)
     ignoreBuildErrors: true,
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

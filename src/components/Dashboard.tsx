@@ -19,25 +19,17 @@ import {
   updateUser,
   deleteUser,
 } from "@/lib/requestHandlers";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut } from "lucide-react";
+import DashboardTab from "@/components/tabs/DashboardTab";
+import DevicesTab from "@/components/tabs/DevicesTab";
+import SignalsTab from "@/components/tabs/SignalsTab";
+import SignalValuesTab from "@/components/tabs/SignalValuesTab";
+import UsersTab from "@/components/tabs/UsersTab";
+import DeviceDialog from "@/components/dialogs/DeviceDialog";
+import SignalDialog from "@/components/dialogs/SignalDialog";
+import SignalValueDialog from "@/components/dialogs/SignalValueDialog";
+import UserDialog from "@/components/dialogs/UserDialog";
 import type {
   User,
   Device,
@@ -62,14 +54,16 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const [selectedDevice, setSelectedDevice] = useState<number | null>(null);
   const [selectedSignal, setSelectedSignal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"devices" | "signals" | "values" | "users">("devices");
-  
+  const [activeTab, setActiveTab] = useState<
+    "dashboard" | "devices" | "signals" | "values" | "users"
+  >("dashboard");
+
   // Dialog states
   const [deviceDialogOpen, setDeviceDialogOpen] = useState(false);
   const [signalDialogOpen, setSignalDialogOpen] = useState(false);
   const [valueDialogOpen, setValueDialogOpen] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingItem, setEditingItem] = useState<Device | Signal | User | null>(null);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
@@ -132,21 +126,12 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   };
 
-  // Device CRUD
-  const handleCreateDevice = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // Device CRUD handlers
+  const handleCreateDevice = async (deviceData: CreateDeviceRequest) => {
     setError("");
-    const formData = new FormData(e.currentTarget);
-    const deviceData: CreateDeviceRequest = {
-      name: formData.get("name") as string,
-      description: formData.get("description") as string || undefined,
-      device_type: formData.get("device_type") as string || undefined,
-      location: formData.get("location") as string || undefined,
-    };
-
     try {
-      if (editingItem) {
-        await updateDevice(editingItem.id.toString(), deviceData);
+      if (editingItem && "device_type" in editingItem) {
+        await updateDevice((editingItem as Device).id.toString(), deviceData);
       } else {
         await createDevice(deviceData);
       }
@@ -168,27 +153,12 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   };
 
-  // Signal CRUD
-  const handleCreateSignal = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // Signal CRUD handlers
+  const handleCreateSignal = async (signalData: CreateSignalRequest) => {
     setError("");
-    const formData = new FormData(e.currentTarget);
-    const signalData: CreateSignalRequest = {
-      device_id: parseInt(formData.get("device_id") as string),
-      name: formData.get("name") as string,
-      signal_type: formData.get("signal_type") as "digital" | "analogic",
-      direction: formData.get("direction") as "input" | "output",
-      sensor_name: formData.get("sensor_name") as string || undefined,
-      description: formData.get("description") as string || undefined,
-      unit: formData.get("unit") as string || undefined,
-      min_value: formData.get("min_value") ? parseFloat(formData.get("min_value") as string) : undefined,
-      max_value: formData.get("max_value") ? parseFloat(formData.get("max_value") as string) : undefined,
-      is_active: formData.get("is_active") === "true",
-    };
-
     try {
-      if (editingItem) {
-        await updateSignal(editingItem.id.toString(), signalData);
+      if (editingItem && "signal_type" in editingItem) {
+        await updateSignal((editingItem as Signal).id.toString(), signalData);
       } else {
         await createSignal(signalData);
       }
@@ -212,17 +182,9 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   };
 
-  // Signal Value CRUD
-  const handleCreateSignalValue = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // Signal Value CRUD handlers
+  const handleCreateSignalValue = async (valueData: CreateSignalValueRequest) => {
     setError("");
-    const formData = new FormData(e.currentTarget);
-    const valueData: CreateSignalValueRequest = {
-      signal_id: parseInt(formData.get("signal_id") as string),
-      value: formData.get("value") ? parseFloat(formData.get("value") as string) : undefined,
-      digital_value: formData.get("digital_value") === "true" ? true : formData.get("digital_value") === "false" ? false : undefined,
-    };
-
     try {
       await createSignalValue(valueData);
       setValueDialogOpen(false);
@@ -244,23 +206,12 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   };
 
-  // User CRUD
-  const handleCreateUser = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // User CRUD handlers
+  const handleCreateUser = async (userData: CreateUserRequest) => {
     setError("");
-    const formData = new FormData(e.currentTarget);
-    const userData: CreateUserRequest = {
-      name: formData.get("name") as string,
-      email: formData.get("email") as string || undefined,
-      password: formData.get("password") as string || undefined,
-      categoria: formData.get("categoria") as string || undefined,
-      matricula: formData.get("matricula") as string || undefined,
-      rfid: formData.get("rfid") as string || undefined,
-    };
-
     try {
-      if (editingItem) {
-        await updateUser(editingItem.id.toString(), userData);
+      if (editingItem && "email" in editingItem) {
+        await updateUser((editingItem as User).id.toString(), userData);
       } else {
         await createUser(userData);
       }
@@ -288,18 +239,19 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       <div className="w-full bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-xl font-semibold">IoT Dashboard</h1>
-              <Button variant="outline" size="sm" onClick={() => window.location.href = "/devices"}>
-                Devices
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => window.location.href = "/signals"}>
-                Signals
-              </Button>
-            </div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <LayoutDashboard className="w-6 h-6" />
+              IoT Data Storage Dashboard
+            </h1>
             <div className="flex items-center space-x-4">
               <span className="text-sm">{user?.email || user?.name}</span>
-              <Button variant="destructive" size="sm" onClick={onLogout}>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={onLogout}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
                 Logout
               </Button>
             </div>
@@ -318,43 +270,58 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <div className="flex space-x-4 border-b border-gray-700">
           <button
+            onClick={() => setActiveTab("dashboard")}
+            className={`px-4 py-2 flex items-center gap-2 ${
+              activeTab === "dashboard"
+                ? "border-b-2 border-blue-500 text-blue-500"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            Dashboard
+          </button>
+          <button
             onClick={() => setActiveTab("devices")}
-            className={`px-4 py-2 ${
+            className={`px-4 py-2 flex items-center gap-2 ${
               activeTab === "devices"
                 ? "border-b-2 border-blue-500 text-blue-500"
                 : "text-gray-400 hover:text-white"
             }`}
           >
+            <Cpu className="w-4 h-4" />
             Devices
           </button>
           <button
             onClick={() => setActiveTab("signals")}
-            className={`px-4 py-2 ${
+            className={`px-4 py-2 flex items-center gap-2 ${
               activeTab === "signals"
                 ? "border-b-2 border-blue-500 text-blue-500"
                 : "text-gray-400 hover:text-white"
             }`}
           >
+            <Radio className="w-4 h-4" />
             Signal Configurations
           </button>
           <button
             onClick={() => setActiveTab("values")}
-            className={`px-4 py-2 ${
+            className={`px-4 py-2 flex items-center gap-2 ${
               activeTab === "values"
                 ? "border-b-2 border-blue-500 text-blue-500"
                 : "text-gray-400 hover:text-white"
             }`}
           >
+            <Activity className="w-4 h-4" />
             Signal Values
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`px-4 py-2 ${
+            className={`px-4 py-2 flex items-center gap-2 ${
               activeTab === "users"
                 ? "border-b-2 border-blue-500 text-blue-500"
                 : "text-gray-400 hover:text-white"
             }`}
           >
+            <Users className="w-4 h-4" />
             Users
           </button>
         </div>
@@ -366,611 +333,103 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           <div className="text-white text-center">Loading...</div>
         ) : (
           <>
+            {activeTab === "dashboard" && <DashboardTab devices={devices} signals={signals} />}
+
             {activeTab === "devices" && (
-              <Card className="bg-gray-700 border-gray-600">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-white">Devices</CardTitle>
-                  <Button
-                    onClick={() => {
-                      setEditingItem(null);
-                      setDeviceDialogOpen(true);
-                    }}
-                  >
-                    Add Device
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-gray-600">
-                        <TableHead className="text-white">ID</TableHead>
-                        <TableHead className="text-white">Name</TableHead>
-                        <TableHead className="text-white">Type</TableHead>
-                        <TableHead className="text-white">Location</TableHead>
-                        <TableHead className="text-white">User</TableHead>
-                        <TableHead className="text-white">Status</TableHead>
-                        <TableHead className="text-white">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {devices.map((device) => (
-                        <TableRow
-                          key={device.id}
-                          className={`border-gray-600 ${
-                            selectedDevice === device.id ? "bg-blue-900" : "hover:bg-gray-600"
-                          }`}
-                        >
-                          <TableCell className="text-white">{device.id}</TableCell>
-                          <TableCell
-                            className="text-white cursor-pointer"
-                            onClick={() => handleDeviceSelect(device.id)}
-                          >
-                            {device.name}
-                          </TableCell>
-                          <TableCell className="text-white">{device.device_type || "-"}</TableCell>
-                          <TableCell className="text-white">{device.location || "-"}</TableCell>
-                          <TableCell className="text-white">
-                            {device.user?.name || device.user_id || "-"}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            {device.is_active ? "Active" : "Inactive"}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            <div className="flex space-x-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  setEditingItem(device);
-                                  setDeviceDialogOpen(true);
-                                }}
-                              >
-                                Edit
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleDeleteDevice(device.id)}
-                              >
-                                Delete
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+              <DevicesTab
+                devices={devices}
+                selectedDevice={selectedDevice}
+                onDeviceSelect={handleDeviceSelect}
+                onAddDevice={() => {
+                  setEditingItem(null);
+                  setDeviceDialogOpen(true);
+                }}
+                onEditDevice={(device) => {
+                  setEditingItem(device);
+                  setDeviceDialogOpen(true);
+                }}
+                onDeleteDevice={handleDeleteDevice}
+              />
             )}
 
             {activeTab === "signals" && (
-              <Card className="bg-gray-700 border-gray-600">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-white">
-                    Signal Configurations
-                    {selectedDevice && ` (Device ${selectedDevice})`}
-                  </CardTitle>
-                  <Button
-                    onClick={() => {
-                      setEditingItem(null);
-                      setSignalDialogOpen(true);
-                    }}
-                    disabled={!selectedDevice}
-                  >
-                    Add Signal
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-gray-600">
-                        <TableHead className="text-white">ID</TableHead>
-                        <TableHead className="text-white">Name</TableHead>
-                        <TableHead className="text-white">Type</TableHead>
-                        <TableHead className="text-white">Direction</TableHead>
-                        <TableHead className="text-white">Sensor</TableHead>
-                        <TableHead className="text-white">Device</TableHead>
-                        <TableHead className="text-white">Status</TableHead>
-                        <TableHead className="text-white">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {signals.map((signal) => (
-                        <TableRow
-                          key={signal.id}
-                          className={`border-gray-600 ${
-                            selectedSignal === signal.id ? "bg-blue-900" : "hover:bg-gray-600"
-                          }`}
-                        >
-                          <TableCell className="text-white">{signal.id}</TableCell>
-                          <TableCell
-                            className="text-white cursor-pointer"
-                            onClick={() => handleSignalSelect(signal.id)}
-                          >
-                            {signal.name}
-                          </TableCell>
-                          <TableCell className="text-white">{signal.signal_type}</TableCell>
-                          <TableCell className="text-white">{signal.direction}</TableCell>
-                          <TableCell className="text-white">{signal.sensor_name || "-"}</TableCell>
-                          <TableCell className="text-white">
-                            {signal.device?.name || signal.device_id}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            {signal.is_active ? "Active" : "Inactive"}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            <div className="flex space-x-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  setEditingItem(signal);
-                                  setSignalDialogOpen(true);
-                                }}
-                              >
-                                Edit
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleDeleteSignal(signal.id)}
-                              >
-                                Delete
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+              <SignalsTab
+                signals={signals}
+                selectedDevice={selectedDevice}
+                selectedSignal={selectedSignal}
+                onSignalSelect={handleSignalSelect}
+                onAddSignal={() => {
+                  setEditingItem(null);
+                  setSignalDialogOpen(true);
+                }}
+                onEditSignal={(signal) => {
+                  setEditingItem(signal);
+                  setSignalDialogOpen(true);
+                }}
+                onDeleteSignal={handleDeleteSignal}
+              />
             )}
 
             {activeTab === "values" && (
-              <Card className="bg-gray-700 border-gray-600">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-white">
-                    Signal Values
-                    {selectedSignal && ` (Signal ${selectedSignal})`}
-                  </CardTitle>
-                  <Button
-                    onClick={() => {
-                      setEditingItem(null);
-                      setValueDialogOpen(true);
-                    }}
-                    disabled={!selectedSignal}
-                  >
-                    Add Value
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-gray-600">
-                        <TableHead className="text-white">ID</TableHead>
-                        <TableHead className="text-white">Timestamp</TableHead>
-                        <TableHead className="text-white">Signal</TableHead>
-                        <TableHead className="text-white">Value</TableHead>
-                        <TableHead className="text-white">Digital</TableHead>
-                        <TableHead className="text-white">User</TableHead>
-                        <TableHead className="text-white">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {signalValues.map((value) => (
-                        <TableRow key={value.id} className="border-gray-600 hover:bg-gray-600">
-                          <TableCell className="text-white">{value.id}</TableCell>
-                          <TableCell className="text-white">
-                            {new Date(value.timestamp).toLocaleString()}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            {value.signal?.name || value.signal_id}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            {value.value !== null && value.value !== undefined ? value.value : "-"}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            {value.digital_value !== null && value.digital_value !== undefined
-                              ? value.digital_value.toString()
-                              : "-"}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            {value.user?.name || value.user_id || "-"}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleDeleteSignalValue(value.id)}
-                            >
-                              Delete
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+              <SignalValuesTab
+                signals={signals}
+                signalValues={signalValues}
+                selectedSignal={selectedSignal}
+                onAddValue={() => {
+                  setEditingItem(null);
+                  setValueDialogOpen(true);
+                }}
+                onDeleteValue={handleDeleteSignalValue}
+              />
             )}
 
             {activeTab === "users" && (
-              <Card className="bg-gray-700 border-gray-600">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-white">Users</CardTitle>
-                  <Button
-                    onClick={() => {
-                      setEditingItem(null);
-                      setUserDialogOpen(true);
-                    }}
-                  >
-                    Add User
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-gray-600">
-                        <TableHead className="text-white">ID</TableHead>
-                        <TableHead className="text-white">Name</TableHead>
-                        <TableHead className="text-white">Email</TableHead>
-                        <TableHead className="text-white">Categoria</TableHead>
-                        <TableHead className="text-white">Matricula</TableHead>
-                        <TableHead className="text-white">RFID</TableHead>
-                        <TableHead className="text-white">Status</TableHead>
-                        <TableHead className="text-white">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {users.map((u) => (
-                        <TableRow key={u.id} className="border-gray-600 hover:bg-gray-600">
-                          <TableCell className="text-white">{u.id}</TableCell>
-                          <TableCell className="text-white">{u.name}</TableCell>
-                          <TableCell className="text-white">{u.email || "-"}</TableCell>
-                          <TableCell className="text-white">{u.categoria || "-"}</TableCell>
-                          <TableCell className="text-white">{u.matricula || "-"}</TableCell>
-                          <TableCell className="text-white">{u.rfid || "-"}</TableCell>
-                          <TableCell className="text-white">
-                            {u.is_active ? "Active" : "Inactive"}
-                          </TableCell>
-                          <TableCell className="text-white">
-                            <div className="flex space-x-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  setEditingItem(u);
-                                  setUserDialogOpen(true);
-                                }}
-                              >
-                                Edit
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleDeleteUser(u.id)}
-                              >
-                                Delete
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+              <UsersTab
+                users={users}
+                onAddUser={() => {
+                  setEditingItem(null);
+                  setUserDialogOpen(true);
+                }}
+                onEditUser={(user) => {
+                  setEditingItem(user);
+                  setUserDialogOpen(true);
+                }}
+                onDeleteUser={handleDeleteUser}
+              />
             )}
           </>
         )}
       </div>
 
-      {/* Device Dialog */}
-      <Dialog open={deviceDialogOpen} onOpenChange={setDeviceDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingItem ? "Edit Device" : "Create Device"}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleCreateDevice}>
-            <div className="space-y-4 py-4">
-              <div>
-                <Label htmlFor="device-name">Name *</Label>
-                <Input
-                  id="device-name"
-                  name="name"
-                  required
-                  defaultValue={editingItem?.name}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="device-description">Description</Label>
-                <Input
-                  id="device-description"
-                  name="description"
-                  defaultValue={editingItem?.description}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="device-type">Device Type</Label>
-                <Input
-                  id="device-type"
-                  name="device_type"
-                  defaultValue={editingItem?.device_type}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="device-location">Location</Label>
-                <Input
-                  id="device-location"
-                  name="location"
-                  defaultValue={editingItem?.location}
-                  className="mt-1"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setDeviceDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Save</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {/* Dialogs */}
+      <DeviceDialog
+        open={deviceDialogOpen}
+        onOpenChange={setDeviceDialogOpen}
+        editingItem={editingItem as Device | null}
+        onSubmit={handleCreateDevice}
+      />
 
-      {/* Signal Dialog */}
-      <Dialog open={signalDialogOpen} onOpenChange={setSignalDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingItem ? "Edit Signal" : "Create Signal"}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleCreateSignal}>
-            <div className="space-y-4 py-4">
-              <div>
-                <Label htmlFor="signal-device-id">Device ID *</Label>
-                <Input
-                  id="signal-device-id"
-                  name="device_id"
-                  type="number"
-                  required
-                  defaultValue={editingItem?.device_id || selectedDevice}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="signal-name">Name *</Label>
-                <Input
-                  id="signal-name"
-                  name="name"
-                  required
-                  defaultValue={editingItem?.name}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="signal-type">Signal Type *</Label>
-                <select
-                  id="signal-type"
-                  name="signal_type"
-                  required
-                  defaultValue={editingItem?.signal_type || "analogic"}
-                  className="mt-1 w-full h-10 rounded-md border border-gray-300 px-3"
-                >
-                  <option value="analogic">Analogic</option>
-                  <option value="digital">Digital</option>
-                </select>
-              </div>
-              <div>
-                <Label htmlFor="signal-direction">Direction *</Label>
-                <select
-                  id="signal-direction"
-                  name="direction"
-                  required
-                  defaultValue={editingItem?.direction || "input"}
-                  className="mt-1 w-full h-10 rounded-md border border-gray-300 px-3"
-                >
-                  <option value="input">Input</option>
-                  <option value="output">Output</option>
-                </select>
-              </div>
-              <div>
-                <Label htmlFor="signal-sensor-name">Sensor Name</Label>
-                <Input
-                  id="signal-sensor-name"
-                  name="sensor_name"
-                  defaultValue={editingItem?.sensor_name}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="signal-unit">Unit</Label>
-                <Input
-                  id="signal-unit"
-                  name="unit"
-                  defaultValue={editingItem?.unit}
-                  className="mt-1"
-                />
-              </div>
-              <div className="flex space-x-2">
-                <div className="flex-1">
-                  <Label htmlFor="signal-min-value">Min Value</Label>
-                  <Input
-                    id="signal-min-value"
-                    name="min_value"
-                    type="number"
-                    step="any"
-                    defaultValue={editingItem?.min_value}
-                    className="mt-1"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Label htmlFor="signal-max-value">Max Value</Label>
-                  <Input
-                    id="signal-max-value"
-                    name="max_value"
-                    type="number"
-                    step="any"
-                    defaultValue={editingItem?.max_value}
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="signal-active">Active</Label>
-                <select
-                  id="signal-active"
-                  name="is_active"
-                  defaultValue={editingItem?.is_active !== false ? "true" : "false"}
-                  className="mt-1 w-full h-10 rounded-md border border-gray-300 px-3"
-                >
-                  <option value="true">Active</option>
-                  <option value="false">Inactive</option>
-                </select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setSignalDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Save</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <SignalDialog
+        open={signalDialogOpen}
+        onOpenChange={setSignalDialogOpen}
+        editingItem={editingItem as Signal | null}
+        selectedDevice={selectedDevice}
+        onSubmit={handleCreateSignal}
+      />
 
-      {/* Signal Value Dialog */}
-      <Dialog open={valueDialogOpen} onOpenChange={setValueDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Signal Value</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleCreateSignalValue}>
-            <div className="space-y-4 py-4">
-              <div>
-                <Label htmlFor="value-signal-id">Signal ID *</Label>
-                <Input
-                  id="value-signal-id"
-                  name="signal_id"
-                  type="number"
-                  required
-                  defaultValue={selectedSignal || undefined}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="value-value">Value (for analogic)</Label>
-                <Input
-                  id="value-value"
-                  name="value"
-                  type="number"
-                  step="any"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="value-digital">Digital Value (for digital)</Label>
-                <select
-                  id="value-digital"
-                  name="digital_value"
-                  className="mt-1 w-full h-10 rounded-md border border-gray-300 px-3"
-                >
-                  <option value="">None</option>
-                  <option value="true">True</option>
-                  <option value="false">False</option>
-                </select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setValueDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Create</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <SignalValueDialog
+        open={valueDialogOpen}
+        onOpenChange={setValueDialogOpen}
+        selectedSignal={selectedSignal}
+        onSubmit={handleCreateSignalValue}
+      />
 
-      {/* User Dialog */}
-      <Dialog open={userDialogOpen} onOpenChange={setUserDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingItem ? "Edit User" : "Create User"}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleCreateUser}>
-            <div className="space-y-4 py-4">
-              <div>
-                <Label htmlFor="user-name">Name *</Label>
-                <Input
-                  id="user-name"
-                  name="name"
-                  required
-                  defaultValue={editingItem?.name}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="user-email">Email</Label>
-                <Input
-                  id="user-email"
-                  name="email"
-                  type="email"
-                  defaultValue={editingItem?.email}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="user-password">Password{!editingItem && " *"}</Label>
-                <Input
-                  id="user-password"
-                  name="password"
-                  type="password"
-                  required={!editingItem}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="user-categoria">Categoria</Label>
-                <Input
-                  id="user-categoria"
-                  name="categoria"
-                  defaultValue={editingItem?.categoria}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="user-matricula">Matricula</Label>
-                <Input
-                  id="user-matricula"
-                  name="matricula"
-                  defaultValue={editingItem?.matricula}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="user-rfid">RFID</Label>
-                <Input
-                  id="user-rfid"
-                  name="rfid"
-                  defaultValue={editingItem?.rfid}
-                  className="mt-1"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setUserDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Save</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <UserDialog
+        open={userDialogOpen}
+        onOpenChange={setUserDialogOpen}
+        editingItem={editingItem as User | null}
+        onSubmit={handleCreateUser}
+      />
     </div>
   );
 }
-

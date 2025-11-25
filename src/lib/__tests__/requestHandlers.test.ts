@@ -1,9 +1,4 @@
-import {
-  login,
-  logout,
-  getCurrentUser,
-  isAuthenticated,
-} from "../requestHandlers";
+import { login, logout, getCurrentUser, isAuthenticated } from "../requestHandlers";
 import axios from "axios";
 
 jest.mock("axios");
@@ -30,10 +25,7 @@ describe("requestHandlers", () => {
       const result = await login("test@example.com", "password");
 
       expect(result.token).toBe("test-token");
-      expect(localStorage.setItem).toHaveBeenCalledWith(
-        "auth_token",
-        "test-token"
-      );
+      expect(localStorage.setItem).toHaveBeenCalledWith("auth_token", "test-token");
       expect(localStorage.setItem).toHaveBeenCalledWith(
         "user",
         JSON.stringify(mockResponse.data.user)
@@ -60,9 +52,7 @@ describe("requestHandlers", () => {
   describe("getCurrentUser", () => {
     it("should return user from localStorage", () => {
       const user = { id: 1, email: "test@example.com" };
-      (localStorage.getItem as jest.Mock).mockReturnValue(
-        JSON.stringify(user)
-      );
+      (localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(user));
 
       const result = getCurrentUser();
       expect(result).toEqual(user);
@@ -90,4 +80,3 @@ describe("requestHandlers", () => {
     });
   });
 });
-

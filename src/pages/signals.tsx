@@ -85,11 +85,15 @@ export default function SignalsPage() {
       name: formData.get("name") as string,
       signal_type: formData.get("signal_type") as "digital" | "analogic",
       direction: formData.get("direction") as "input" | "output",
-      sensor_name: formData.get("sensor_name") as string || undefined,
-      description: formData.get("description") as string || undefined,
-      unit: formData.get("unit") as string || undefined,
-      min_value: formData.get("min_value") ? parseFloat(formData.get("min_value") as string) : undefined,
-      max_value: formData.get("max_value") ? parseFloat(formData.get("max_value") as string) : undefined,
+      sensor_name: (formData.get("sensor_name") as string) || undefined,
+      description: (formData.get("description") as string) || undefined,
+      unit: (formData.get("unit") as string) || undefined,
+      min_value: formData.get("min_value")
+        ? parseFloat(formData.get("min_value") as string)
+        : undefined,
+      max_value: formData.get("max_value")
+        ? parseFloat(formData.get("max_value") as string)
+        : undefined,
       is_active: formData.get("is_active") === "true",
     };
 
@@ -388,4 +392,3 @@ export default function SignalsPage() {
     </div>
   );
 }
-

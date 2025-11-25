@@ -16,12 +16,12 @@ import type {
 const getBaseURL = () => {
   const envURL = process.env.NEXT_PUBLIC_API_URL;
   if (envURL) {
-    if (envURL.startsWith('/')) {
+    if (envURL.startsWith("/")) {
       return envURL;
     }
-    return envURL.endsWith('/') ? envURL : `${envURL}/`;
+    return envURL.endsWith("/") ? envURL : `${envURL}/`;
   }
-  return typeof window !== 'undefined' ? '/api/' : 'http://localhost:8080/';
+  return typeof window !== "undefined" ? "/api/" : "http://localhost:8080/";
 };
 
 const axiosInstance = axios.create({
@@ -30,7 +30,7 @@ const axiosInstance = axios.create({
 
 // Add auth token to requests if available
 axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem("auth_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -42,8 +42,8 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   try {
     const response = await axiosInstance.post<LoginResponse>("auth/login", { email, password });
     if (response.data.token) {
-      localStorage.setItem('auth_token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem("auth_token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
     }
     return response.data;
   } catch (error: any) {
@@ -53,17 +53,17 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 };
 
 export const logout = () => {
-  localStorage.removeItem('auth_token');
-  localStorage.removeItem('user');
+  localStorage.removeItem("auth_token");
+  localStorage.removeItem("user");
 };
 
 export const getCurrentUser = () => {
-  const userStr = localStorage.getItem('user');
+  const userStr = localStorage.getItem("user");
   return userStr ? JSON.parse(userStr) : null;
 };
 
 export const isAuthenticated = () => {
-  return !!localStorage.getItem('auth_token');
+  return !!localStorage.getItem("auth_token");
 };
 
 // User endpoints
@@ -97,7 +97,10 @@ export const createUser = async (userData: CreateUserRequest): Promise<User> => 
   }
 };
 
-export const updateUser = async (userId: string, userData: Partial<CreateUserRequest>): Promise<User> => {
+export const updateUser = async (
+  userId: string,
+  userData: Partial<CreateUserRequest>
+): Promise<User> => {
   try {
     const response = await axiosInstance.put<User>(`users/${userId}`, userData);
     return response.data;
@@ -117,7 +120,10 @@ export const deleteUser = async (userId: string): Promise<void> => {
 };
 
 // Device endpoints
-export const getDevices = async (params?: { user_id?: string; active?: string }): Promise<Device[]> => {
+export const getDevices = async (params?: {
+  user_id?: string;
+  active?: string;
+}): Promise<Device[]> => {
   try {
     const response = await axiosInstance.get<Device[]>("devices", { params });
     return response.data;
@@ -137,9 +143,14 @@ export const getDevice = async (deviceId: string): Promise<Device> => {
   }
 };
 
-export const createDevice = async (deviceData: CreateDeviceRequest): Promise<Device & { auth_token: string }> => {
+export const createDevice = async (
+  deviceData: CreateDeviceRequest
+): Promise<Device & { auth_token: string }> => {
   try {
-    const response = await axiosInstance.post<Device & { auth_token: string }>("auth/register-device", deviceData);
+    const response = await axiosInstance.post<Device & { auth_token: string }>(
+      "auth/register-device",
+      deviceData
+    );
     return response.data;
   } catch (error) {
     console.error("Error creating device:", error);
@@ -147,7 +158,10 @@ export const createDevice = async (deviceData: CreateDeviceRequest): Promise<Dev
   }
 };
 
-export const updateDevice = async (deviceId: string, deviceData: Partial<CreateDeviceRequest & { is_active?: boolean }>): Promise<Device> => {
+export const updateDevice = async (
+  deviceId: string,
+  deviceData: Partial<CreateDeviceRequest & { is_active?: boolean }>
+): Promise<Device> => {
   try {
     const response = await axiosInstance.put<Device>(`devices/${deviceId}`, deviceData);
     return response.data;
@@ -202,7 +216,10 @@ export const createSignal = async (signalData: CreateSignalRequest): Promise<Sig
   }
 };
 
-export const updateSignal = async (signalId: string, signalData: Partial<CreateSignalRequest>): Promise<Signal> => {
+export const updateSignal = async (
+  signalId: string,
+  signalData: Partial<CreateSignalRequest>
+): Promise<Signal> => {
   try {
     const response = await axiosInstance.put<Signal>(`signals/${signalId}`, signalData);
     return response.data;
@@ -221,10 +238,13 @@ export const deleteSignal = async (signalId: string): Promise<void> => {
   }
 };
 
-export const getSignalsByDevice = async (deviceId: string, params?: {
-  signal_type?: string;
-  direction?: string;
-}): Promise<Signal[]> => {
+export const getSignalsByDevice = async (
+  deviceId: string,
+  params?: {
+    signal_type?: string;
+    direction?: string;
+  }
+): Promise<Signal[]> => {
   try {
     const response = await axiosInstance.get<Signal[]>(`devices/${deviceId}/signals`, { params });
     return response.data;
@@ -262,7 +282,9 @@ export const getSignalValue = async (valueId: string): Promise<SignalValue> => {
   }
 };
 
-export const createSignalValue = async (valueData: CreateSignalValueRequest): Promise<SignalValue> => {
+export const createSignalValue = async (
+  valueData: CreateSignalValueRequest
+): Promise<SignalValue> => {
   try {
     const response = await axiosInstance.post<SignalValue>("signal-values", valueData);
     return response.data;
@@ -281,13 +303,18 @@ export const deleteSignalValue = async (valueId: string): Promise<void> => {
   }
 };
 
-export const getSignalValuesBySignal = async (signalId: string, params?: {
-  from_date?: string;
-  to_date?: string;
-  limit?: string;
-}): Promise<SignalValue[]> => {
+export const getSignalValuesBySignal = async (
+  signalId: string,
+  params?: {
+    from_date?: string;
+    to_date?: string;
+    limit?: string;
+  }
+): Promise<SignalValue[]> => {
   try {
-    const response = await axiosInstance.get<SignalValue[]>(`signals/${signalId}/values`, { params });
+    const response = await axiosInstance.get<SignalValue[]>(`signals/${signalId}/values`, {
+      params,
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching signal values:", error);
