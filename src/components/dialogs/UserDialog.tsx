@@ -38,16 +38,16 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white text-gray-900">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-gray-900">
+          <DialogTitle className="text-gray-900 dark:text-white">
             {editingItem ? "Edit User" : "Create User"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
-              <Label htmlFor="user-name" className="text-gray-900">
+              <Label htmlFor="user-name" className="text-gray-700 dark:text-gray-300">
                 Name *
               </Label>
               <Input
@@ -55,11 +55,11 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
                 name="name"
                 required
                 defaultValue={editingItem?.name}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="user-email" className="text-gray-900">
+              <Label htmlFor="user-email" className="text-gray-700 dark:text-gray-300">
                 Email
               </Label>
               <Input
@@ -67,11 +67,11 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
                 name="email"
                 type="email"
                 defaultValue={editingItem?.email}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="user-password" className="text-gray-900">
+              <Label htmlFor="user-password" className="text-gray-700 dark:text-gray-300">
                 Password{!editingItem && " *"}
               </Label>
               <Input
@@ -79,40 +79,40 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
                 name="password"
                 type="password"
                 required={!editingItem}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="user-categoria" className="text-gray-900">
+              <Label htmlFor="user-categoria" className="text-gray-700 dark:text-gray-300">
                 Categoria
               </Label>
               <Input
                 id="user-categoria"
                 name="categoria"
                 defaultValue={editingItem?.categoria}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="user-matricula" className="text-gray-900">
+              <Label htmlFor="user-matricula" className="text-gray-700 dark:text-gray-300">
                 Matricula
               </Label>
               <Input
                 id="user-matricula"
                 name="matricula"
                 defaultValue={editingItem?.matricula}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="user-rfid" className="text-gray-900">
+              <Label htmlFor="user-rfid" className="text-gray-700 dark:text-gray-300">
                 RFID
               </Label>
               <Input
                 id="user-rfid"
                 name="rfid"
                 defaultValue={editingItem?.rfid}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
           </div>

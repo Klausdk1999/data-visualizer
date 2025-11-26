@@ -23,9 +23,9 @@ interface UsersTabProps {
 
 export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }: UsersTabProps) {
   return (
-    <Card className="bg-gray-700 border-gray-600">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-white">Users</CardTitle>
+        <CardTitle className="text-gray-900 dark:text-white">Users</CardTitle>
         <Button onClick={onAddUser} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
           Add User
@@ -34,28 +34,28 @@ export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }:
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-600">
-              <TableHead className="text-white">ID</TableHead>
-              <TableHead className="text-white">Name</TableHead>
-              <TableHead className="text-white">Email</TableHead>
-              <TableHead className="text-white">Categoria</TableHead>
-              <TableHead className="text-white">Matricula</TableHead>
-              <TableHead className="text-white">RFID</TableHead>
-              <TableHead className="text-white">Status</TableHead>
-              <TableHead className="text-white">Actions</TableHead>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Categoria</TableHead>
+              <TableHead>Matricula</TableHead>
+              <TableHead>RFID</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.map((u) => (
-              <TableRow key={u.id} className="border-gray-600 hover:bg-gray-600">
-                <TableCell className="text-white">{u.id}</TableCell>
-                <TableCell className="text-white">{u.name}</TableCell>
-                <TableCell className="text-white">{u.email || "-"}</TableCell>
-                <TableCell className="text-white">{u.categoria || "-"}</TableCell>
-                <TableCell className="text-white">{u.matricula || "-"}</TableCell>
-                <TableCell className="text-white">{u.rfid || "-"}</TableCell>
-                <TableCell className="text-white">{u.is_active ? "Active" : "Inactive"}</TableCell>
-                <TableCell className="text-white">
+              <TableRow key={u.id}>
+                <TableCell className="text-gray-900 dark:text-gray-100">{u.id}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{u.name}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{u.email || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{u.categoria || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{u.matricula || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{u.rfid || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{u.is_active ? "Active" : "Inactive"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
                     <Button
                       size="sm"

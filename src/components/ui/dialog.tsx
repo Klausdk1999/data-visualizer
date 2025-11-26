@@ -19,7 +19,7 @@ const Dialog = ({ open, onOpenChange, children }: DialogProps) => {
       className="fixed inset-0 z-50 flex items-center justify-center"
       onClick={() => onOpenChange(false)}
     >
-      <div className="fixed inset-0 bg-black/50" />
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
       <div onClick={(e) => e.stopPropagation()}>{children}</div>
     </div>
   );
@@ -29,7 +29,11 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
   ({ className, children, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("relative z-50 w-full max-w-lg bg-white rounded-lg shadow-lg p-6", className)}
+      className={cn(
+        "relative z-50 w-full max-w-lg bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/30",
+        "dark:bg-gray-800/90 dark:border-white/10",
+        className
+      )}
       {...props}
     >
       {children}
@@ -58,7 +62,7 @@ const DialogDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <p ref={ref} className={cn("text-sm text-gray-500", className)} {...props} />
+  <p ref={ref} className={cn("text-sm text-gray-700 dark:text-gray-300", className)} {...props} />
 ));
 DialogDescription.displayName = "DialogDescription";
 

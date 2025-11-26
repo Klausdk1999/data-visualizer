@@ -41,16 +41,16 @@ export default function DeviceDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white text-gray-900">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-gray-900">
+          <DialogTitle className="text-gray-900 dark:text-white">
             {editingItem ? "Edit Device" : "Create Device"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
-              <Label htmlFor="device-name" className="text-gray-900">
+              <Label htmlFor="device-name" className="text-gray-700 dark:text-gray-300">
                 Name *
               </Label>
               <Input
@@ -58,40 +58,40 @@ export default function DeviceDialog({
                 name="name"
                 required
                 defaultValue={editingItem?.name}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="device-description" className="text-gray-900">
+              <Label htmlFor="device-description" className="text-gray-700 dark:text-gray-300">
                 Description
               </Label>
               <Input
                 id="device-description"
                 name="description"
                 defaultValue={editingItem?.description}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="device-type" className="text-gray-900">
+              <Label htmlFor="device-type" className="text-gray-700 dark:text-gray-300">
                 Device Type
               </Label>
               <Input
                 id="device-type"
                 name="device_type"
                 defaultValue={editingItem?.device_type}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="device-location" className="text-gray-900">
+              <Label htmlFor="device-location" className="text-gray-700 dark:text-gray-300">
                 Location
               </Label>
               <Input
                 id="device-location"
                 name="location"
                 defaultValue={editingItem?.location}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
           </div>

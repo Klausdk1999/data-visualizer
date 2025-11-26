@@ -34,9 +34,9 @@ export default function SignalsTab({
   onDeleteSignal,
 }: SignalsTabProps) {
   return (
-    <Card className="bg-gray-700 border-gray-600">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-white">
+        <CardTitle className="text-gray-900 dark:text-white">
           Signal Configurations
           {selectedDevice && ` (Device ${selectedDevice})`}
         </CardTitle>
@@ -52,42 +52,40 @@ export default function SignalsTab({
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-600">
-              <TableHead className="text-white">ID</TableHead>
-              <TableHead className="text-white">Name</TableHead>
-              <TableHead className="text-white">Type</TableHead>
-              <TableHead className="text-white">Direction</TableHead>
-              <TableHead className="text-white">Sensor</TableHead>
-              <TableHead className="text-white">Device</TableHead>
-              <TableHead className="text-white">Status</TableHead>
-              <TableHead className="text-white">Actions</TableHead>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Direction</TableHead>
+              <TableHead>Sensor</TableHead>
+              <TableHead>Device</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {signals.map((signal) => (
               <TableRow
                 key={signal.id}
-                className={`border-gray-600 ${
-                  selectedSignal === signal.id ? "bg-blue-900" : "hover:bg-gray-600"
-                }`}
+                className={selectedSignal === signal.id ? "bg-blue-100/50 dark:bg-blue-900/30" : ""}
               >
-                <TableCell className="text-white">{signal.id}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{signal.id}</TableCell>
                 <TableCell
-                  className="text-white cursor-pointer"
+                  className="text-gray-900 dark:text-gray-100 cursor-pointer"
                   onClick={() => onSignalSelect(signal.id)}
                 >
                   {signal.name}
                 </TableCell>
-                <TableCell className="text-white">{signal.signal_type}</TableCell>
-                <TableCell className="text-white">{signal.direction}</TableCell>
-                <TableCell className="text-white">{signal.sensor_name || "-"}</TableCell>
-                <TableCell className="text-white">
+                <TableCell className="text-gray-900 dark:text-gray-100">{signal.signal_type}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{signal.direction}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{signal.sensor_name || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
                   {signal.device?.name || signal.device_id}
                 </TableCell>
-                <TableCell className="text-white">
+                <TableCell className="text-gray-900 dark:text-gray-100">
                   {signal.is_active ? "Active" : "Inactive"}
                 </TableCell>
-                <TableCell className="text-white">
+                <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
                     <Button
                       size="sm"

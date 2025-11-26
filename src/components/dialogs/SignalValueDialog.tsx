@@ -45,14 +45,14 @@ export default function SignalValueDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white text-gray-900">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-gray-900">Create Signal Value</DialogTitle>
+          <DialogTitle className="text-gray-900 dark:text-white">Create Signal Value</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
-              <Label htmlFor="value-signal-id" className="text-gray-900">
+              <Label htmlFor="value-signal-id" className="text-gray-700 dark:text-gray-300">
                 Signal ID *
               </Label>
               <Input
@@ -61,11 +61,11 @@ export default function SignalValueDialog({
                 type="number"
                 required
                 defaultValue={selectedSignal || undefined}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="value-value" className="text-gray-900">
+              <Label htmlFor="value-value" className="text-gray-700 dark:text-gray-300">
                 Value (for analogic)
               </Label>
               <Input
@@ -73,17 +73,17 @@ export default function SignalValueDialog({
                 name="value"
                 type="number"
                 step="any"
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="value-digital" className="text-gray-900">
+              <Label htmlFor="value-digital" className="text-gray-700 dark:text-gray-300">
                 Digital Value (for digital)
               </Label>
               <select
                 id="value-digital"
                 name="digital_value"
-                className="mt-1 w-full h-10 rounded-md border border-gray-300 px-3 bg-white text-gray-900"
+                className="mt-1 w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm px-3 text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 transition-all"
               >
                 <option value="">None</option>
                 <option value="true">True</option>

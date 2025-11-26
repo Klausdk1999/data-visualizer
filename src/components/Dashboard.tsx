@@ -234,17 +234,17 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
-      <div className="w-full bg-gray-900 text-white">
+      <div className="w-full bg-white/70 backdrop-blur-xl border-b border-white/30 shadow-sm dark:bg-gray-800/70 dark:border-white/10 rounded-b-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <h1 className="text-2xl font-bold flex items-center gap-2">
+            <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
               <LayoutDashboard className="w-6 h-6" />
               IoT Data Storage Dashboard
             </h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm">{user?.email || user?.name}</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">{user?.email || user?.name}</span>
               <Button
                 variant="destructive"
                 size="sm"
@@ -262,19 +262,19 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       {/* Error Message */}
       {error && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-red-600 text-white p-3 rounded-md">{error}</div>
+          <div className="bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-xl shadow-md border border-red-400/30">{error}</div>
         </div>
       )}
 
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div className="flex space-x-4 border-b border-gray-700">
+        <div className="flex space-x-2 bg-white/50 backdrop-blur-xl rounded-2xl p-1.5 border border-white/30 shadow-sm dark:bg-gray-800/50 dark:border-white/10">
           <button
             onClick={() => setActiveTab("dashboard")}
-            className={`px-4 py-2 flex items-center gap-2 ${
+            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "dashboard"
-                ? "border-b-2 border-blue-500 text-blue-500"
-                : "text-gray-400 hover:text-white"
+                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
             }`}
           >
             <LayoutDashboard className="w-4 h-4" />
@@ -282,10 +282,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           </button>
           <button
             onClick={() => setActiveTab("devices")}
-            className={`px-4 py-2 flex items-center gap-2 ${
+            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "devices"
-                ? "border-b-2 border-blue-500 text-blue-500"
-                : "text-gray-400 hover:text-white"
+                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
             }`}
           >
             <Cpu className="w-4 h-4" />
@@ -293,10 +293,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           </button>
           <button
             onClick={() => setActiveTab("signals")}
-            className={`px-4 py-2 flex items-center gap-2 ${
+            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "signals"
-                ? "border-b-2 border-blue-500 text-blue-500"
-                : "text-gray-400 hover:text-white"
+                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
             }`}
           >
             <Radio className="w-4 h-4" />
@@ -304,10 +304,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           </button>
           <button
             onClick={() => setActiveTab("values")}
-            className={`px-4 py-2 flex items-center gap-2 ${
+            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "values"
-                ? "border-b-2 border-blue-500 text-blue-500"
-                : "text-gray-400 hover:text-white"
+                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
             }`}
           >
             <Activity className="w-4 h-4" />
@@ -315,10 +315,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`px-4 py-2 flex items-center gap-2 ${
+            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "users"
-                ? "border-b-2 border-blue-500 text-blue-500"
-                : "text-gray-400 hover:text-white"
+                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
             }`}
           >
             <Users className="w-4 h-4" />
@@ -330,7 +330,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {loading ? (
-          <div className="text-white text-center">Loading...</div>
+          <div className="text-gray-700 dark:text-gray-300 text-center">Loading...</div>
         ) : (
           <>
             {activeTab === "dashboard" && <DashboardTab devices={devices} signals={signals} />}

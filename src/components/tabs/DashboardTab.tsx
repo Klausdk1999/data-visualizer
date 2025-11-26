@@ -54,9 +54,9 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
   const deviceSignals = signals.filter((s) => s.device_id === dashboardDevice);
 
   return (
-    <Card className="bg-gray-700 border-gray-600">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
+        <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
           <Gauge className="w-5 h-5" />
           Device Dashboard
         </CardTitle>
@@ -66,7 +66,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
           <div>
             <Label
               htmlFor="dashboard-device"
-              className="text-white mb-2 block flex items-center gap-2"
+              className="text-gray-700 dark:text-gray-300 mb-2 block flex items-center gap-2"
             >
               <Cpu className="w-4 h-4" />
               Select Device
@@ -75,7 +75,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
               id="dashboard-device"
               value={dashboardDevice || ""}
               onChange={(e) => setDashboardDevice(e.target.value ? Number(e.target.value) : null)}
-              className="w-full h-10 rounded-md border border-gray-600 bg-gray-800 text-white px-3"
+              className="w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 px-3 transition-all"
             >
               <option value="">-- Select a device --</option>
               {devices.map((device) => (
@@ -88,26 +88,26 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
 
           {dashboardDevice && (
             <div className="mt-6">
-              <h3 className="text-white text-lg font-semibold mb-4">Latest Signal Values</h3>
+              <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">Latest Signal Values</h3>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-gray-600">
-                    <TableHead className="text-white">Signal Name</TableHead>
-                    <TableHead className="text-white">Type</TableHead>
-                    <TableHead className="text-white">Unit</TableHead>
-                    <TableHead className="text-white">Latest Value</TableHead>
-                    <TableHead className="text-white">Timestamp</TableHead>
+                  <TableRow>
+                    <TableHead>Signal Name</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Unit</TableHead>
+                    <TableHead>Latest Value</TableHead>
+                    <TableHead>Timestamp</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {deviceSignals.map((signal) => {
                     const latestValue = latestSignalValues.get(signal.id);
                     return (
-                      <TableRow key={signal.id} className="border-gray-600 hover:bg-gray-600">
-                        <TableCell className="text-white">{signal.name}</TableCell>
-                        <TableCell className="text-white">{signal.signal_type}</TableCell>
-                        <TableCell className="text-white">{signal.unit || "-"}</TableCell>
-                        <TableCell className="text-white">
+                      <TableRow key={signal.id}>
+                        <TableCell className="text-gray-900 dark:text-gray-100">{signal.name}</TableCell>
+                        <TableCell className="text-gray-900 dark:text-gray-100">{signal.signal_type}</TableCell>
+                        <TableCell className="text-gray-900 dark:text-gray-100">{signal.unit || "-"}</TableCell>
+                        <TableCell className="text-gray-900 dark:text-gray-100">
                           {latestValue
                             ? latestValue.value !== null && latestValue.value !== undefined
                               ? `${latestValue.value}${signal.unit ? ` ${signal.unit}` : ""}`
@@ -117,7 +117,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
                                 : "N/A"
                             : "No data"}
                         </TableCell>
-                        <TableCell className="text-white">
+                        <TableCell className="text-gray-900 dark:text-gray-100">
                           {latestValue ? new Date(latestValue.timestamp).toLocaleString() : "-"}
                         </TableCell>
                       </TableRow>
@@ -125,7 +125,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
                   })}
                   {deviceSignals.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-white text-center">
+                      <TableCell colSpan={5} className="text-gray-700 dark:text-gray-400 text-center">
                         No signals configured for this device
                       </TableCell>
                     </TableRow>

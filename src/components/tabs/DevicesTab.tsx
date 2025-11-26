@@ -32,9 +32,9 @@ export default function DevicesTab({
   onDeleteDevice,
 }: DevicesTabProps) {
   return (
-    <Card className="bg-gray-700 border-gray-600">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-white">Devices</CardTitle>
+        <CardTitle className="text-gray-900 dark:text-white">Devices</CardTitle>
         <Button onClick={onAddDevice} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
           Add Device
@@ -43,40 +43,38 @@ export default function DevicesTab({
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-600">
-              <TableHead className="text-white">ID</TableHead>
-              <TableHead className="text-white">Name</TableHead>
-              <TableHead className="text-white">Type</TableHead>
-              <TableHead className="text-white">Location</TableHead>
-              <TableHead className="text-white">User</TableHead>
-              <TableHead className="text-white">Status</TableHead>
-              <TableHead className="text-white">Actions</TableHead>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>User</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {devices.map((device) => (
               <TableRow
                 key={device.id}
-                className={`border-gray-600 ${
-                  selectedDevice === device.id ? "bg-blue-900" : "hover:bg-gray-600"
-                }`}
+                className={selectedDevice === device.id ? "bg-blue-100/50 dark:bg-blue-900/30" : ""}
               >
-                <TableCell className="text-white">{device.id}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{device.id}</TableCell>
                 <TableCell
-                  className="text-white cursor-pointer"
+                  className="text-gray-900 dark:text-gray-100 cursor-pointer"
                   onClick={() => onDeviceSelect(device.id)}
                 >
                   {device.name}
                 </TableCell>
-                <TableCell className="text-white">{device.device_type || "-"}</TableCell>
-                <TableCell className="text-white">{device.location || "-"}</TableCell>
-                <TableCell className="text-white">
+                <TableCell className="text-gray-900 dark:text-gray-100">{device.device_type || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{device.location || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
                   {device.user?.name || device.user_id || "-"}
                 </TableCell>
-                <TableCell className="text-white">
+                <TableCell className="text-gray-900 dark:text-gray-100">
                   {device.is_active ? "Active" : "Inactive"}
                 </TableCell>
-                <TableCell className="text-white">
+                <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
                     <Button
                       size="sm"

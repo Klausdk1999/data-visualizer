@@ -68,9 +68,9 @@ export default function SignalValuesTab({
 
   return (
     <div className="space-y-4">
-      <Card className="bg-gray-700 border-gray-600">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-white">
+          <CardTitle className="text-gray-900 dark:text-white">
             Signal Values
             {selectedSignal && ` (Signal ${selectedSignal})`}
           </CardTitle>
@@ -78,7 +78,7 @@ export default function SignalValuesTab({
             <select
               value={graphSignal || ""}
               onChange={(e) => setGraphSignal(e.target.value ? Number(e.target.value) : null)}
-              className="h-10 rounded-md border border-gray-600 bg-gray-800 text-white px-3"
+              className="h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 px-3 transition-all"
             >
               <option value="">-- Select signal for graph --</option>
               {signals.map((signal) => (
@@ -100,7 +100,7 @@ export default function SignalValuesTab({
         <CardContent>
           {graphSignal && graphData.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-white text-lg font-semibold mb-4">
+              <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">
                 Signal Evolution: {selectedSignalData?.name}
               </h3>
               <div className="h-96 w-full">
@@ -121,23 +121,25 @@ export default function SignalValuesTab({
                       }))
                       .filter((d) => d.value !== null)}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#4B5563" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#CBD5E1" />
                     <XAxis
                       dataKey="timestamp"
-                      stroke="#9CA3AF"
+                      stroke="#64748B"
                       angle={-45}
                       textAnchor="end"
                       height={80}
                     />
-                    <YAxis stroke="#9CA3AF" />
+                    <YAxis stroke="#64748B" />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#374151",
-                        border: "1px solid #4B5563",
-                        color: "#F3F4F6",
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        backdropFilter: "blur(10px)",
+                        border: "1px solid rgba(148, 163, 184, 0.3)",
+                        color: "#1E293B",
+                        borderRadius: "8px",
                       }}
                     />
-                    <Legend wrapperStyle={{ color: "#F3F4F6" }} />
+                    <Legend wrapperStyle={{ color: "#1E293B" }} />
                     <Line
                       type="monotone"
                       dataKey="value"
@@ -153,38 +155,38 @@ export default function SignalValuesTab({
           )}
           <Table>
             <TableHeader>
-              <TableRow className="border-gray-600">
-                <TableHead className="text-white">ID</TableHead>
-                <TableHead className="text-white">Timestamp</TableHead>
-                <TableHead className="text-white">Signal</TableHead>
-                <TableHead className="text-white">Value</TableHead>
-                <TableHead className="text-white">Digital</TableHead>
-                <TableHead className="text-white">User</TableHead>
-                <TableHead className="text-white">Actions</TableHead>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Timestamp</TableHead>
+                <TableHead>Signal</TableHead>
+                <TableHead>Value</TableHead>
+                <TableHead>Digital</TableHead>
+                <TableHead>User</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {signalValues.map((value) => (
-                <TableRow key={value.id} className="border-gray-600 hover:bg-gray-600">
-                  <TableCell className="text-white">{value.id}</TableCell>
-                  <TableCell className="text-white">
+                <TableRow key={value.id}>
+                  <TableCell className="text-gray-900 dark:text-gray-100">{value.id}</TableCell>
+                  <TableCell className="text-gray-900 dark:text-gray-100">
                     {new Date(value.timestamp).toLocaleString()}
                   </TableCell>
-                  <TableCell className="text-white">
+                  <TableCell className="text-gray-900 dark:text-gray-100">
                     {value.signal?.name || value.signal_id}
                   </TableCell>
-                  <TableCell className="text-white">
+                  <TableCell className="text-gray-900 dark:text-gray-100">
                     {value.value !== null && value.value !== undefined ? value.value : "-"}
                   </TableCell>
-                  <TableCell className="text-white">
+                  <TableCell className="text-gray-900 dark:text-gray-100">
                     {value.digital_value !== null && value.digital_value !== undefined
                       ? value.digital_value.toString()
                       : "-"}
                   </TableCell>
-                  <TableCell className="text-white">
+                  <TableCell className="text-gray-900 dark:text-gray-100">
                     {value.user?.name || value.user_id || "-"}
                   </TableCell>
-                  <TableCell className="text-white">
+                  <TableCell className="text-gray-900 dark:text-gray-100">
                     <Button
                       size="sm"
                       variant="destructive"

@@ -48,16 +48,16 @@ export default function SignalDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white text-gray-900">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-gray-900">
+          <DialogTitle className="text-gray-900 dark:text-white">
             {editingItem ? "Edit Signal" : "Create Signal"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
-              <Label htmlFor="signal-device-id" className="text-gray-900">
+              <Label htmlFor="signal-device-id" className="text-gray-700 dark:text-gray-300">
                 Device ID *
               </Label>
               <Input
@@ -66,11 +66,11 @@ export default function SignalDialog({
                 type="number"
                 required
                 defaultValue={editingItem?.device_id || selectedDevice || ""}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="signal-name" className="text-gray-900">
+              <Label htmlFor="signal-name" className="text-gray-700 dark:text-gray-300">
                 Name *
               </Label>
               <Input
@@ -78,11 +78,11 @@ export default function SignalDialog({
                 name="name"
                 required
                 defaultValue={editingItem?.name}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="signal-type" className="text-gray-900">
+              <Label htmlFor="signal-type" className="text-gray-700 dark:text-gray-300">
                 Signal Type *
               </Label>
               <select
@@ -90,14 +90,14 @@ export default function SignalDialog({
                 name="signal_type"
                 required
                 defaultValue={editingItem?.signal_type || "analogic"}
-                className="mt-1 w-full h-10 rounded-md border border-gray-300 px-3 bg-white text-gray-900"
+                className="mt-1 w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm px-3 text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 transition-all"
               >
                 <option value="analogic">Analogic</option>
                 <option value="digital">Digital</option>
               </select>
             </div>
             <div>
-              <Label htmlFor="signal-direction" className="text-gray-900">
+              <Label htmlFor="signal-direction" className="text-gray-700 dark:text-gray-300">
                 Direction *
               </Label>
               <select
@@ -105,37 +105,37 @@ export default function SignalDialog({
                 name="direction"
                 required
                 defaultValue={editingItem?.direction || "input"}
-                className="mt-1 w-full h-10 rounded-md border border-gray-300 px-3 bg-white text-gray-900"
+                className="mt-1 w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm px-3 text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 transition-all"
               >
                 <option value="input">Input</option>
                 <option value="output">Output</option>
               </select>
             </div>
             <div>
-              <Label htmlFor="signal-sensor-name" className="text-gray-900">
+              <Label htmlFor="signal-sensor-name" className="text-gray-700 dark:text-gray-300">
                 Sensor Name
               </Label>
               <Input
                 id="signal-sensor-name"
                 name="sensor_name"
                 defaultValue={editingItem?.sensor_name}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="signal-unit" className="text-gray-900">
+              <Label htmlFor="signal-unit" className="text-gray-700 dark:text-gray-300">
                 Unit
               </Label>
               <Input
                 id="signal-unit"
                 name="unit"
                 defaultValue={editingItem?.unit}
-                className="mt-1 bg-white text-gray-900 border-gray-300"
+                className="mt-1"
               />
             </div>
             <div className="flex space-x-2">
               <div className="flex-1">
-                <Label htmlFor="signal-min-value" className="text-gray-900">
+                <Label htmlFor="signal-min-value" className="text-gray-700 dark:text-gray-300">
                   Min Value
                 </Label>
                 <Input
@@ -144,11 +144,11 @@ export default function SignalDialog({
                   type="number"
                   step="any"
                   defaultValue={editingItem?.min_value}
-                  className="mt-1 bg-white text-gray-900 border-gray-300"
+                  className="mt-1"
                 />
               </div>
               <div className="flex-1">
-                <Label htmlFor="signal-max-value" className="text-gray-900">
+                <Label htmlFor="signal-max-value" className="text-gray-700 dark:text-gray-300">
                   Max Value
                 </Label>
                 <Input
@@ -157,19 +157,19 @@ export default function SignalDialog({
                   type="number"
                   step="any"
                   defaultValue={editingItem?.max_value}
-                  className="mt-1 bg-white text-gray-900 border-gray-300"
+                  className="mt-1"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="signal-active" className="text-gray-900">
+              <Label htmlFor="signal-active" className="text-gray-700 dark:text-gray-300">
                 Active
               </Label>
               <select
                 id="signal-active"
                 name="is_active"
                 defaultValue={editingItem?.is_active !== false ? "true" : "false"}
-                className="mt-1 w-full h-10 rounded-md border border-gray-300 px-3 bg-white text-gray-900"
+                className="mt-1 w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm px-3 text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 transition-all"
               >
                 <option value="true">Active</option>
                 <option value="false">Inactive</option>
