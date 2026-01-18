@@ -11,6 +11,7 @@ import type {
   CreateSignalValueRequest,
   CreateUserRequest,
 } from "@/types";
+import type { TTNUplink, TTNDevice, TTNStats } from "@/types/ttn";
 
 // Use relative path when behind nginx, or full URL for direct access
 const getBaseURL = () => {
@@ -19,23 +20,40 @@ const getBaseURL = () => {
     if (envURL.startsWith("/")) {
       return envURL;
     }
-    return envURL.endsWith("/") ? envURL : `${envURL}/`;
+    // Remove trailing slash if present, we'll add it per-request
+    return envURL.replace(/\/$/, "");
   }
-  return typeof window !== "undefined" ? "/api/" : "http://localhost:8080/";
+  // Default to localhost:8080 for development
+  return "http://localhost:8080";
 };
 
 const axiosInstance = axios.create({
   baseURL: getBaseURL(),
+  timeout: 10000, // 10 second timeout
 });
 
 // Add auth token to requests if available
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("auth_token");
-  if (token) {
+  // Don't require token for login endpoint
+  if (token && !config.url?.includes("auth/login")) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+// Add response interceptor for debugging
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.error("401 Unauthorized - Token may be invalid or missing");
+      console.error("Request URL:", error.config?.url);
+      console.error("Request headers:", error.config?.headers);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Auth endpoints
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
@@ -318,6 +336,42 @@ export const getSignalValuesBySignal = async (
     return response.data;
   } catch (error) {
     console.error("Error fetching signal values:", error);
+    throw error;
+  }
+};
+
+// TTN endpoints
+export const getTTNUplinks = async (params?: {
+  device_id?: string;
+  start_date?: string;
+  end_date?: string;
+  limit?: number;
+}): Promise<TTNUplink[]> => {
+  try {
+    const response = await axiosInstance.get<TTNUplink[]>("ttn/uplinks", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching TTN uplinks:", error);
+    throw error;
+  }
+};
+
+export const getTTNDevices = async (): Promise<TTNDevice[]> => {
+  try {
+    const response = await axiosInstance.get<TTNDevice[]>("ttn/devices");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching TTN devices:", error);
+    throw error;
+  }
+};
+
+export const getTTNStats = async (): Promise<TTNStats> => {
+  try {
+    const response = await axiosInstance.get<TTNStats>("ttn/stats");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching TTN stats:", error);
     throw error;
   }
 };

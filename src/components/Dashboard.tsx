@@ -75,6 +75,15 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError("");
+      
+      // Check if we have auth token
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        setError("No authentication token found. Please login again.");
+        return;
+      }
+
       const [devicesData, signalsData, valuesData, usersData] = await Promise.all([
         getDevices(),
         getSignals(),
@@ -85,9 +94,16 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       setSignals(signalsData);
       setSignalValues(valuesData);
       setUsers(usersData);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching data:", error);
-      setError("Failed to fetch data. Please try again.");
+      if (error.response?.status === 401) {
+        setError("Authentication failed. Please login again.");
+        // Clear invalid token
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("user");
+      } else {
+        setError(error.response?.data || "Failed to fetch data. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

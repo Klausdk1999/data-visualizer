@@ -89,14 +89,24 @@ npm run lint:fix
 data-visualizer/
 ├── src/
 │   ├── pages/              # Next.js pages
-│   │   └── index.tsx       # Main dashboard page
+│   │   ├── index.tsx       # Main dashboard page
+│   │   └── ttn/            # TTN river monitoring
+│   │       └── index.tsx   # TTN dashboard page
 │   ├── components/         # React components
 │   │   ├── Login.tsx      # Login component
 │   │   ├── Dashboard.tsx  # Main dashboard
+│   │   ├── ttn/           # TTN-specific components
+│   │   │   ├── TTNChart.tsx
+│   │   │   ├── TTNDataTable.tsx
+│   │   │   ├── DateRangePicker.tsx
+│   │   │   └── ParameterSelector.tsx
 │   │   └── __tests__/     # Component tests
-│   └── lib/               # Utilities
-│       ├── requestHandlers.ts  # API client
-│       └── __tests__/     # API client tests
+│   ├── lib/               # Utilities
+│   │   ├── requestHandlers.ts  # API client
+│   │   └── __tests__/     # API client tests
+│   ├── types/             # TypeScript types
+│   │   └── ttn.ts         # TTN-specific types
+│   └── styles/            # Global styles
 ├── public/                # Static assets
 ├── jest.config.js         # Jest configuration
 ├── jest.setup.js          # Test setup
@@ -109,6 +119,11 @@ data-visualizer/
 - ✅ **Device Management** - View and manage IoT devices
 - ✅ **Signal Configuration** - Configure input/output signals
 - ✅ **Signal Values** - View real-time sensor data
+- ✅ **TTN River Monitoring Dashboard** - Dedicated dashboard for TTN sensor data
+  - Interactive charts (distance/battery over time)
+  - Data table with sorting and filtering
+  - Date range selection
+  - Parameter selection (distance or battery)
 - ✅ **Filtering** - Filter by device, signal, user
 - ✅ **Responsive Design** - Works on desktop and mobile
 
@@ -136,6 +151,12 @@ data-visualizer/
    - Browse signal values
    - Filter by device or signal
    - View real-time updates
+
+6. **TTN River Monitoring:**
+   - Navigate to `/ttn` route
+   - View distance and battery charts
+   - Filter by date range
+   - View detailed data table
 
 ## API Integration
 
@@ -170,9 +191,33 @@ docker run -p 3000:3000 \
   iot-frontend
 ```
 
+## Testing
+
+### Unit Tests (Jest)
+```bash
+npm test              # Run all tests
+npm run test:watch    # Watch mode
+npm run test:coverage # With coverage report
+```
+
+### E2E Tests (Playwright)
+```bash
+# First time: Install Playwright and browsers
+npm install -D @playwright/test
+npx playwright install
+
+# Run E2E tests
+npm run test:e2e      # Headless mode
+npm run test:e2e:ui   # UI mode (interactive)
+npm run test:e2e:headed # Headed mode (see browser)
+
+# Note: Make sure both frontend and backend are running before running E2E tests
+```
+
 ## Troubleshooting
 
-- **API connection errors**: Check `NEXT_PUBLIC_API_URL` and ensure API is running
+- **API connection errors**: Check `NEXT_PUBLIC_API_URL` and ensure API is running on `http://localhost:8080`
+- **Network Error on login**: Verify backend is running and accessible. Check terminal for backend logs.
 - **Authentication issues**: Clear localStorage and login again
 - **Build errors**: Delete `.next` folder and rebuild
 - **Test failures**: Ensure all dependencies are installed
