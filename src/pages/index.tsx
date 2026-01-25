@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { isAuthenticated, getCurrentUser, logout } from "@/lib/requestHandlers";
+import { isAuthenticated, getCurrentUser, logout, setOnUnauthorizedCallback } from "@/lib/requestHandlers";
 import Login from "@/components/Login";
 import Dashboard from "@/components/Dashboard";
 
@@ -10,6 +10,16 @@ export default function Home() {
   useEffect(() => {
     setAuthenticated(isAuthenticated());
     setLoading(false);
+
+    // Set up global 401 handler to redirect to login
+    setOnUnauthorizedCallback(() => {
+      setAuthenticated(false);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      setOnUnauthorizedCallback(null);
+    };
   }, []);
 
   const handleLoginSuccess = () => {

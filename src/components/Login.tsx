@@ -23,7 +23,18 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       await login(email, password);
       onLoginSuccess();
     } catch (err: any) {
-      setError(err.response?.data || "Login failed. Please check your credentials.");
+      // Handle specific error cases
+      if (err.response?.status === 401) {
+        setError("Invalid email or password. Please try again.");
+      } else if (err.response?.status === 400) {
+        setError(err.response?.data || "Invalid request. Please check your input.");
+      } else if (err.code === "ERR_NETWORK" || err.code === "ECONNREFUSED") {
+        setError("Unable to connect to server. Please check if the API is running.");
+      } else if (err.code === "ECONNABORTED") {
+        setError("Connection timed out. Please try again.");
+      } else {
+        setError(err.response?.data || "Login failed. Please try again later.");
+      }
     } finally {
       setLoading(false);
     }

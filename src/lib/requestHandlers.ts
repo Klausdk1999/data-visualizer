@@ -27,6 +27,24 @@ const getBaseURL = () => {
   return "http://localhost:8080";
 };
 
+// Auth event system for handling 401 errors globally
+type AuthEventCallback = () => void;
+let onUnauthorizedCallback: AuthEventCallback | null = null;
+
+export const setOnUnauthorizedCallback = (callback: AuthEventCallback | null) => {
+  onUnauthorizedCallback = callback;
+};
+
+const handleUnauthorized = () => {
+  // Clear auth data
+  localStorage.removeItem("auth_token");
+  localStorage.removeItem("user");
+  // Notify listeners
+  if (onUnauthorizedCallback) {
+    onUnauthorizedCallback();
+  }
+};
+
 const axiosInstance = axios.create({
   baseURL: getBaseURL(),
   timeout: 10000, // 10 second timeout
@@ -42,14 +60,17 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response interceptor for debugging
+// Add response interceptor for handling 401 errors globally
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.error("401 Unauthorized - Token may be invalid or missing");
-      console.error("Request URL:", error.config?.url);
-      console.error("Request headers:", error.config?.headers);
+      const requestUrl = error.config?.url || "";
+      // Don't trigger logout for login endpoint - that's expected for bad credentials
+      if (!requestUrl.includes("auth/login")) {
+        console.error("401 Unauthorized - Session expired or invalid token");
+        handleUnauthorized();
+      }
     }
     return Promise.reject(error);
   }
