@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pio run:*)",
+      "Bash(mode)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Get-WMIObject Win32_SerialPort | Select-Object DeviceID, Caption, Description\")",
+      "Bash(powershell -Command \"Get-PnpDevice -Class Ports -Status OK | Select-Object FriendlyName\")",
+      "Bash(powershell -Command:*)",
+      "Bash(pio pkg install:*)",
+      "Bash(pio pkg search:*)",
+      "Bash(pio device:*)"
+    ]
+  }
+}
