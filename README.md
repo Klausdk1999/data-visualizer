@@ -194,6 +194,7 @@ docker run -p 3000:3000 \
 ## Testing
 
 ### Unit Tests (Jest)
+
 ```bash
 npm test              # Run all tests
 npm run test:watch    # Watch mode
@@ -201,6 +202,7 @@ npm run test:coverage # With coverage report
 ```
 
 ### E2E Tests (Playwright)
+
 ```bash
 # First time: Install Playwright and browsers
 npm install -D @playwright/test

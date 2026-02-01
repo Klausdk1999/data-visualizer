@@ -68,13 +68,7 @@ export default function SignalValueDialog({
               <Label htmlFor="value-value" className="text-gray-700 dark:text-gray-300">
                 Value (for analogic)
               </Label>
-              <Input
-                id="value-value"
-                name="value"
-                type="number"
-                step="any"
-                className="mt-1"
-              />
+              <Input id="value-value" name="value" type="number" step="any" className="mt-1" />
             </div>
             <div>
               <Label htmlFor="value-digital" className="text-gray-700 dark:text-gray-300">

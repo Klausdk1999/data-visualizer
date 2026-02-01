@@ -31,4 +31,4 @@ export interface TTNStats {
   last_uplink?: string;
 }
 
-export type TTNParameter = 'distance' | 'battery';
+export type TTNParameter = "distance" | "battery";

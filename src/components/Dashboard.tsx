@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/router";
 import { getCurrentUser } from "@/lib/requestHandlers";
 import {
   getDevices,
@@ -41,11 +42,18 @@ import type {
   CreateUserRequest,
 } from "@/types";
 
+type TabType = "dashboard" | "devices" | "signals" | "values" | "users";
+
 interface DashboardProps {
   onLogout: () => void;
+  initialTab?: TabType;
 }
 
-export default function Dashboard({ onLogout }: DashboardProps) {
+export default function Dashboard({
+  onLogout,
+  initialTab = "dashboard",
+}: DashboardProps) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
@@ -54,9 +62,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const [selectedDevice, setSelectedDevice] = useState<number | null>(null);
   const [selectedSignal, setSelectedSignal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<
-    "dashboard" | "devices" | "signals" | "values" | "users"
-  >("dashboard");
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
 
   // Dialog states
   const [deviceDialogOpen, setDeviceDialogOpen] = useState(false);
@@ -65,6 +71,29 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const [userDialogOpen, setUserDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Device | Signal | User | null>(null);
   const [error, setError] = useState<string>("");
+
+  // Update URL when tab changes
+  const updateUrl = useCallback(
+    (tab: TabType, extraParams?: Record<string, string>) => {
+      const params = new URLSearchParams();
+      params.set("tab", tab);
+      if (extraParams) {
+        Object.entries(extraParams).forEach(([key, value]) => {
+          if (value) params.set(key, value);
+        });
+      }
+      router.replace(`/?${params.toString()}`, undefined, { shallow: true });
+    },
+    [router]
+  );
+
+  const handleTabChange = useCallback(
+    (tab: TabType) => {
+      setActiveTab(tab);
+      updateUrl(tab);
+    },
+    [updateUrl]
+  );
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -76,7 +105,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     try {
       setLoading(true);
       setError("");
-      
+
       // Check if we have auth token
       const token = localStorage.getItem("auth_token");
       if (!token) {
@@ -260,7 +289,9 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               IoT Data Storage Dashboard
             </h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700 dark:text-gray-300">{user?.email || user?.name}</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                {user?.email || user?.name}
+              </span>
               <Button
                 variant="destructive"
                 size="sm"
@@ -278,7 +309,9 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       {/* Error Message */}
       {error && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-xl shadow-md border border-red-400/30">{error}</div>
+          <div className="bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-xl shadow-md border border-red-400/30">
+            {error}
+          </div>
         </div>
       )}
 
@@ -286,7 +319,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <div className="flex space-x-2 bg-white/50 backdrop-blur-xl rounded-2xl p-1.5 border border-white/30 shadow-sm dark:bg-gray-800/50 dark:border-white/10">
           <button
-            onClick={() => setActiveTab("dashboard")}
+            onClick={() => handleTabChange("dashboard")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "dashboard"
                 ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
@@ -297,7 +330,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             Dashboard
           </button>
           <button
-            onClick={() => setActiveTab("devices")}
+            onClick={() => handleTabChange("devices")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "devices"
                 ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
@@ -308,7 +341,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             Devices
           </button>
           <button
-            onClick={() => setActiveTab("signals")}
+            onClick={() => handleTabChange("signals")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "signals"
                 ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
@@ -319,7 +352,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             Signal Configurations
           </button>
           <button
-            onClick={() => setActiveTab("values")}
+            onClick={() => handleTabChange("values")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "values"
                 ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
@@ -330,7 +363,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             Signal Values
           </button>
           <button
-            onClick={() => setActiveTab("users")}
+            onClick={() => handleTabChange("users")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
               activeTab === "users"
                 ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"

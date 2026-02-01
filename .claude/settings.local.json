@@ -9,7 +9,10 @@
       "Bash(powershell -Command:*)",
       "Bash(pio pkg install:*)",
       "Bash(pio pkg search:*)",
-      "Bash(pio device:*)"
+      "Bash(pio device:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run format:*)"
     ]
   }
 }

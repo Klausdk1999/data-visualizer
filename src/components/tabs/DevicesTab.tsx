@@ -66,8 +66,12 @@ export default function DevicesTab({
                 >
                   {device.name}
                 </TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{device.device_type || "-"}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{device.location || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {device.device_type || "-"}
+                </TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {device.location || "-"}
+                </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   {device.user?.name || device.user_id || "-"}
                 </TableCell>

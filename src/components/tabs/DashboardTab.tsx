@@ -88,7 +88,9 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
 
           {dashboardDevice && (
             <div className="mt-6">
-              <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">Latest Signal Values</h3>
+              <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">
+                Latest Signal Values
+              </h3>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -104,9 +106,15 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
                     const latestValue = latestSignalValues.get(signal.id);
                     return (
                       <TableRow key={signal.id}>
-                        <TableCell className="text-gray-900 dark:text-gray-100">{signal.name}</TableCell>
-                        <TableCell className="text-gray-900 dark:text-gray-100">{signal.signal_type}</TableCell>
-                        <TableCell className="text-gray-900 dark:text-gray-100">{signal.unit || "-"}</TableCell>
+                        <TableCell className="text-gray-900 dark:text-gray-100">
+                          {signal.name}
+                        </TableCell>
+                        <TableCell className="text-gray-900 dark:text-gray-100">
+                          {signal.signal_type}
+                        </TableCell>
+                        <TableCell className="text-gray-900 dark:text-gray-100">
+                          {signal.unit || "-"}
+                        </TableCell>
                         <TableCell className="text-gray-900 dark:text-gray-100">
                           {latestValue
                             ? latestValue.value !== null && latestValue.value !== undefined
@@ -125,7 +133,10 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
                   })}
                   {deviceSignals.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-gray-700 dark:text-gray-400 text-center">
+                      <TableCell
+                        colSpan={5}
+                        className="text-gray-700 dark:text-gray-400 text-center"
+                      >
                         No signals configured for this device
                       </TableCell>
                     </TableRow>

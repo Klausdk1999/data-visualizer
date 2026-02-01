@@ -108,12 +108,7 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
               <Label htmlFor="user-rfid" className="text-gray-700 dark:text-gray-300">
                 RFID
               </Label>
-              <Input
-                id="user-rfid"
-                name="rfid"
-                defaultValue={editingItem?.rfid}
-                className="mt-1"
-              />
+              <Input id="user-rfid" name="rfid" defaultValue={editingItem?.rfid} className="mt-1" />
             </div>
           </div>
           <DialogFooter>

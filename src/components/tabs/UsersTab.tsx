@@ -51,10 +51,16 @@ export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }:
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.id}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.name}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.email || "-"}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{u.categoria || "-"}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{u.matricula || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {u.categoria || "-"}
+                </TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {u.matricula || "-"}
+                </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.rfid || "-"}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{u.is_active ? "Active" : "Inactive"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {u.is_active ? "Active" : "Inactive"}
+                </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
                     <Button

@@ -44,12 +44,17 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl text-center text-gray-900 dark:text-white">IoT Dashboard Login</CardTitle>
+          <CardTitle className="text-2xl text-center text-gray-900 dark:text-white">
+            IoT Dashboard Login
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300"
+              >
                 Email
               </label>
               <input
@@ -63,7 +68,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300"
+              >
                 Password
               </label>
               <input
@@ -76,7 +84,11 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                 placeholder="••••••••"
               />
             </div>
-            {error && <div className="text-red-600 dark:text-red-400 text-sm bg-red-50/50 dark:bg-red-900/20 p-2 rounded-xl border border-red-200/50 dark:border-red-800/50">{error}</div>}
+            {error && (
+              <div className="text-red-600 dark:text-red-400 text-sm bg-red-50/50 dark:bg-red-900/20 p-2 rounded-xl border border-red-200/50 dark:border-red-800/50">
+                {error}
+              </div>
+            )}
             <button
               type="submit"
               disabled={loading}

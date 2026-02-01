@@ -33,9 +33,7 @@ export default function DateRangePicker({
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        Date Range:
-      </label>
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Date Range:</label>
       <div className="flex gap-2">
         <button
           onClick={setLast24Hours}

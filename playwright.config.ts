@@ -1,8 +1,8 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Playwright E2E Test Configuration
- * 
+ *
  * Install: npm install -D @playwright/test
  * Install browsers: npx playwright install
  * Run tests: npx playwright test
@@ -10,23 +10,23 @@ import { defineConfig, devices } from '@playwright/test';
  */
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
-  
+  reporter: "html",
+
   use: {
-    baseURL: process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    baseURL: process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
   },
 
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
     // Uncomment to test on other browsers
     // {

@@ -76,9 +76,15 @@ export default function SignalsTab({
                 >
                   {signal.name}
                 </TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{signal.signal_type}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{signal.direction}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{signal.sensor_name || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {signal.signal_type}
+                </TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {signal.direction}
+                </TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {signal.sensor_name || "-"}
+                </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   {signal.device?.name || signal.device_id}
                 </TableCell>
