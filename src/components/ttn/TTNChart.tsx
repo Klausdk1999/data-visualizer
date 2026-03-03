@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import {
   LineChart,
   Line,
@@ -19,10 +20,12 @@ interface TTNChartProps {
 }
 
 export default function TTNChart({ data, parameter }: TTNChartProps) {
+  const t = useTranslations("ttn");
+
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-96 text-gray-500 dark:text-gray-400">
-        No data available for the selected date range
+        {t("noDataForRange")}
       </div>
     );
   }
@@ -39,7 +42,7 @@ export default function TTNChart({ data, parameter }: TTNChartProps) {
     }));
 
   const yAxisKey = parameter === "distance" ? "distance" : "battery";
-  const yAxisLabel = parameter === "distance" ? "Distance (cm)" : "Battery (%)";
+  const yAxisLabel = parameter === "distance" ? t("distanceCm") : t("batteryPercent");
   const lineColor = parameter === "distance" ? "#3b82f6" : "#10b981";
 
   return (
@@ -67,11 +70,10 @@ export default function TTNChart({ data, parameter }: TTNChartProps) {
             padding: "8px",
           }}
           labelStyle={{ color: "#374151" }}
-          formatter={(value: number, name: string) => {
-            if (name === "distance") return [`${value.toFixed(2)} cm`, "Distance"];
-            if (name === "battery") return [`${value}%`, "Battery"];
-            if (name === "temperature") return [`${value}°C`, "Temperature"];
-            return [value, name];
+          formatter={(value: number) => {
+            if (parameter === "distance") return [`${value.toFixed(2)} cm`, t("distance")];
+            if (parameter === "battery") return [`${value}%`, t("battery")];
+            return [value, yAxisLabel];
           }}
         />
         <Legend />

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TTNChart from "@/components/ttn/TTNChart";
 import TTNDataTable from "@/components/ttn/TTNDataTable";
@@ -9,7 +10,11 @@ import ParameterSelector from "@/components/ttn/ParameterSelector";
 import { getTTNUplinks, getTTNStats } from "@/lib/requestHandlers";
 import type { TTNUplink, TTNParameter, TTNStats } from "@/types/ttn";
 
+// Prevent static prerendering (requires auth + i18n provider at runtime)
+export const getServerSideProps = async () => ({ props: {} });
+
 export default function TTNDashboard() {
+  const t = useTranslations("ttn");
   const [uplinks, setUplinks] = useState<TTNUplink[]>([]);
   const [stats, setStats] = useState<TTNStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,11 +70,11 @@ export default function TTNDashboard() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          TTN River Monitoring Dashboard
+          {t("dashboardTitle")}
         </h1>
         {stats && (
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            Total Uplinks: {stats.total_uplinks} | Devices: {stats.unique_devices}
+            {t("totalUplinks")}: {stats.total_uplinks} | {t("devices")}: {stats.unique_devices}
           </div>
         )}
       </div>
@@ -99,13 +104,13 @@ export default function TTNDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="text-gray-900 dark:text-white">
-            {parameter === "distance" ? "Distance Over Time" : "Battery Level Over Time"}
+            {parameter === "distance" ? t("distanceOverTime") : t("batteryLevelOverTime")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center h-96 text-gray-500 dark:text-gray-400">
-              Loading chart data...
+              {t("loadingChartData")}
             </div>
           ) : (
             <TTNChart data={uplinks} parameter={parameter} />
@@ -116,7 +121,7 @@ export default function TTNDashboard() {
       {/* Data Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-gray-900 dark:text-white">Uplink Data</CardTitle>
+          <CardTitle className="text-gray-900 dark:text-white">{t("uplinkData")}</CardTitle>
         </CardHeader>
         <CardContent>
           <TTNDataTable data={uplinks} loading={loading} />

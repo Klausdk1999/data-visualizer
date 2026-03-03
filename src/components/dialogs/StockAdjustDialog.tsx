@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { AdjustStockRequest } from "@/types";
 
 interface StockAdjustDialogProps {
@@ -27,6 +28,9 @@ export default function StockAdjustDialog({
   materialName,
   onSubmit,
 }: StockAdjustDialogProps) {
+  const t = useTranslations("materials");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -43,14 +47,14 @@ export default function StockAdjustDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
-            Adjust Stock - {materialName}
+            {t("adjustStock")} - {materialName}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="adjust-type" className="text-gray-700 dark:text-gray-300">
-                Movement Type *
+                {t("movementType")} *
               </Label>
               <select
                 id="adjust-type"
@@ -59,14 +63,14 @@ export default function StockAdjustDialog({
                 defaultValue="in"
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <option value="in">In</option>
-                <option value="out">Out</option>
-                <option value="adjustment">Adjustment</option>
+                <option value="in">{t("in")}</option>
+                <option value="out">{t("out")}</option>
+                <option value="adjustment">{t("adjustment")}</option>
               </select>
             </div>
             <div>
               <Label htmlFor="adjust-quantity" className="text-gray-700 dark:text-gray-300">
-                Quantity *
+                {tc("quantity")} *
               </Label>
               <Input
                 id="adjust-quantity"
@@ -79,7 +83,7 @@ export default function StockAdjustDialog({
             </div>
             <div>
               <Label htmlFor="adjust-notes" className="text-gray-700 dark:text-gray-300">
-                Notes
+                {tc("notes")}
               </Label>
               <Input
                 id="adjust-notes"
@@ -96,11 +100,11 @@ export default function StockAdjustDialog({
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Save className="w-4 h-4" />
-              Save
+              {tc("save")}
             </Button>
           </DialogFooter>
         </form>

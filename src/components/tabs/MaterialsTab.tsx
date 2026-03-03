@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2, PackagePlus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { RawMaterial } from "@/types";
 
 interface MaterialsTabProps {
@@ -36,28 +37,31 @@ export default function MaterialsTab({
   onDeleteMaterial,
   onAdjustStock,
 }: MaterialsTabProps) {
+  const t = useTranslations("materials");
+  const tc = useTranslations("common");
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-gray-900 dark:text-white">Raw Materials</CardTitle>
+        <CardTitle className="text-gray-900 dark:text-white">{t("title")}</CardTitle>
         <Button onClick={onAddMaterial} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          Add Material
+          {t("addMaterial")}
         </Button>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>SKU</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Unit</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Min Stock</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{tc("id")}</TableHead>
+              <TableHead>{tc("name")}</TableHead>
+              <TableHead>{t("sku")}</TableHead>
+              <TableHead>{t("category")}</TableHead>
+              <TableHead>{t("unit")}</TableHead>
+              <TableHead>{t("stock")}</TableHead>
+              <TableHead>{t("minStock")}</TableHead>
+              <TableHead>{tc("status")}</TableHead>
+              <TableHead>{tc("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -83,7 +87,7 @@ export default function MaterialsTab({
                   {material.min_stock != null ? material.min_stock : "-"}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
-                  {material.is_active ? "Active" : "Inactive"}
+                  {material.is_active ? tc("active") : tc("inactive")}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
@@ -94,7 +98,7 @@ export default function MaterialsTab({
                       className="flex items-center gap-1"
                     >
                       <Edit className="w-3 h-3" />
-                      Edit
+                      {tc("edit")}
                     </Button>
                     <Button
                       size="sm"
@@ -103,7 +107,7 @@ export default function MaterialsTab({
                       className="flex items-center gap-1"
                     >
                       <Trash2 className="w-3 h-3" />
-                      Delete
+                      {tc("delete")}
                     </Button>
                     <Button
                       size="sm"
@@ -112,7 +116,7 @@ export default function MaterialsTab({
                       className="flex items-center gap-1"
                     >
                       <PackagePlus className="w-3 h-3" />
-                      Adjust
+                      {t("adjust")}
                     </Button>
                   </div>
                 </TableCell>

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { Product, CreateProductRequest } from "@/types";
 
 interface ProductDialogProps {
@@ -27,6 +28,9 @@ export default function ProductDialog({
   editingItem,
   onSubmit,
 }: ProductDialogProps) {
+  const t = useTranslations("products");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -45,14 +49,14 @@ export default function ProductDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
-            {editingItem ? "Edit Product" : "Create Product"}
+            {editingItem ? t("editProduct") : t("createProduct")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="product-name" className="text-gray-700 dark:text-gray-300">
-                Name *
+                {tc("name")} *
               </Label>
               <Input
                 id="product-name"
@@ -64,7 +68,7 @@ export default function ProductDialog({
             </div>
             <div>
               <Label htmlFor="product-sku" className="text-gray-700 dark:text-gray-300">
-                SKU
+                {t("sku")}
               </Label>
               <Input
                 id="product-sku"
@@ -75,7 +79,7 @@ export default function ProductDialog({
             </div>
             <div>
               <Label htmlFor="product-description" className="text-gray-700 dark:text-gray-300">
-                Description
+                {tc("description")}
               </Label>
               <Input
                 id="product-description"
@@ -86,7 +90,7 @@ export default function ProductDialog({
             </div>
             <div>
               <Label htmlFor="product-unit" className="text-gray-700 dark:text-gray-300">
-                Unit
+                {tc("unit")}
               </Label>
               <Input
                 id="product-unit"
@@ -97,7 +101,7 @@ export default function ProductDialog({
             </div>
             <div>
               <Label htmlFor="product-category" className="text-gray-700 dark:text-gray-300">
-                Category
+                {t("category")}
               </Label>
               <Input
                 id="product-category"
@@ -115,11 +119,11 @@ export default function ProductDialog({
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Save className="w-4 h-4" />
-              Save
+              {tc("save")}
             </Button>
           </DialogFooter>
         </form>

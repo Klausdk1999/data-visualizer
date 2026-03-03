@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { Signal, CreateSignalRequest } from "@/types";
 
 interface SignalDialogProps {
@@ -29,6 +30,9 @@ export default function SignalDialog({
   selectedDevice,
   onSubmit,
 }: SignalDialogProps) {
+  const t = useTranslations("signals");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -51,14 +55,14 @@ export default function SignalDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
-            {editingItem ? "Edit Signal" : "Create Signal"}
+            {editingItem ? t("editSignal") : t("createSignal")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="signal-device-id" className="text-gray-700 dark:text-gray-300">
-                Device ID *
+                {t("deviceId")} *
               </Label>
               <Input
                 id="signal-device-id"
@@ -71,7 +75,7 @@ export default function SignalDialog({
             </div>
             <div>
               <Label htmlFor="signal-name" className="text-gray-700 dark:text-gray-300">
-                Name *
+                {tc("name")} *
               </Label>
               <Input
                 id="signal-name"
@@ -83,7 +87,7 @@ export default function SignalDialog({
             </div>
             <div>
               <Label htmlFor="signal-type" className="text-gray-700 dark:text-gray-300">
-                Signal Type *
+                {t("signalType")} *
               </Label>
               <select
                 id="signal-type"
@@ -92,13 +96,13 @@ export default function SignalDialog({
                 defaultValue={editingItem?.signal_type || "analogic"}
                 className="mt-1 w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm px-3 text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 transition-all"
               >
-                <option value="analogic">Analogic</option>
-                <option value="digital">Digital</option>
+                <option value="analogic">{t("analogic")}</option>
+                <option value="digital">{t("digital")}</option>
               </select>
             </div>
             <div>
               <Label htmlFor="signal-direction" className="text-gray-700 dark:text-gray-300">
-                Direction *
+                {t("direction")} *
               </Label>
               <select
                 id="signal-direction"
@@ -107,13 +111,13 @@ export default function SignalDialog({
                 defaultValue={editingItem?.direction || "input"}
                 className="mt-1 w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm px-3 text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 transition-all"
               >
-                <option value="input">Input</option>
-                <option value="output">Output</option>
+                <option value="input">{t("input")}</option>
+                <option value="output">{t("output")}</option>
               </select>
             </div>
             <div>
               <Label htmlFor="signal-sensor-name" className="text-gray-700 dark:text-gray-300">
-                Sensor Name
+                {t("sensorName")}
               </Label>
               <Input
                 id="signal-sensor-name"
@@ -124,7 +128,7 @@ export default function SignalDialog({
             </div>
             <div>
               <Label htmlFor="signal-unit" className="text-gray-700 dark:text-gray-300">
-                Unit
+                {t("unit")}
               </Label>
               <Input
                 id="signal-unit"
@@ -136,7 +140,7 @@ export default function SignalDialog({
             <div className="flex space-x-2">
               <div className="flex-1">
                 <Label htmlFor="signal-min-value" className="text-gray-700 dark:text-gray-300">
-                  Min Value
+                  {t("minValue")}
                 </Label>
                 <Input
                   id="signal-min-value"
@@ -149,7 +153,7 @@ export default function SignalDialog({
               </div>
               <div className="flex-1">
                 <Label htmlFor="signal-max-value" className="text-gray-700 dark:text-gray-300">
-                  Max Value
+                  {t("maxValue")}
                 </Label>
                 <Input
                   id="signal-max-value"
@@ -163,7 +167,7 @@ export default function SignalDialog({
             </div>
             <div>
               <Label htmlFor="signal-active" className="text-gray-700 dark:text-gray-300">
-                Active
+                {tc("active")}
               </Label>
               <select
                 id="signal-active"
@@ -171,8 +175,8 @@ export default function SignalDialog({
                 defaultValue={editingItem?.is_active !== false ? "true" : "false"}
                 className="mt-1 w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm px-3 text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 transition-all"
               >
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
+                <option value="true">{tc("active")}</option>
+                <option value="false">{tc("inactive")}</option>
               </select>
             </div>
           </div>
@@ -184,11 +188,11 @@ export default function SignalDialog({
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Save className="w-4 h-4" />
-              Save
+              {tc("save")}
             </Button>
           </DialogFooter>
         </form>

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { RawMaterial, CreateRawMaterialRequest } from "@/types";
 
 interface RawMaterialDialogProps {
@@ -27,6 +28,9 @@ export default function RawMaterialDialog({
   editingItem,
   onSubmit,
 }: RawMaterialDialogProps) {
+  const t = useTranslations("materials");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -48,14 +52,14 @@ export default function RawMaterialDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
-            {editingItem ? "Edit Raw Material" : "Create Raw Material"}
+            {editingItem ? t("editMaterial") : t("createMaterial")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="material-name" className="text-gray-700 dark:text-gray-300">
-                Name *
+                {tc("name")} *
               </Label>
               <Input
                 id="material-name"
@@ -67,7 +71,7 @@ export default function RawMaterialDialog({
             </div>
             <div>
               <Label htmlFor="material-sku" className="text-gray-700 dark:text-gray-300">
-                SKU
+                {t("sku")}
               </Label>
               <Input
                 id="material-sku"
@@ -78,7 +82,7 @@ export default function RawMaterialDialog({
             </div>
             <div>
               <Label htmlFor="material-description" className="text-gray-700 dark:text-gray-300">
-                Description
+                {tc("description")}
               </Label>
               <Input
                 id="material-description"
@@ -89,7 +93,7 @@ export default function RawMaterialDialog({
             </div>
             <div>
               <Label htmlFor="material-unit" className="text-gray-700 dark:text-gray-300">
-                Unit
+                {t("unit")}
               </Label>
               <Input
                 id="material-unit"
@@ -100,7 +104,7 @@ export default function RawMaterialDialog({
             </div>
             <div>
               <Label htmlFor="material-category" className="text-gray-700 dark:text-gray-300">
-                Category
+                {t("category")}
               </Label>
               <Input
                 id="material-category"
@@ -111,7 +115,7 @@ export default function RawMaterialDialog({
             </div>
             <div>
               <Label htmlFor="material-min-stock" className="text-gray-700 dark:text-gray-300">
-                Min Stock
+                {t("minStock")}
               </Label>
               <Input
                 id="material-min-stock"
@@ -131,11 +135,11 @@ export default function RawMaterialDialog({
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Save className="w-4 h-4" />
-              Save
+              {tc("save")}
             </Button>
           </DialogFooter>
         </form>

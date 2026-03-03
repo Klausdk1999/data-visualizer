@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { RawMaterial, CreateBOMEntryRequest } from "@/types";
 
 interface BOMDialogProps {
@@ -27,6 +28,9 @@ export default function BOMDialog({
   rawMaterials,
   onSubmit,
 }: BOMDialogProps) {
+  const t = useTranslations("products");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -42,14 +46,14 @@ export default function BOMDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
-            Add Bill of Materials Entry
+            {t("addBomEntry")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="bom-material" className="text-gray-700 dark:text-gray-300">
-                Raw Material *
+                {t("rawMaterial")} *
               </Label>
               <select
                 id="bom-material"
@@ -58,7 +62,7 @@ export default function BOMDialog({
                 defaultValue=""
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <option value="">Select a material</option>
+                <option value="">{t("selectMaterial")}</option>
                 {rawMaterials.map((material) => (
                   <option key={material.id} value={material.id}>
                     {material.name}
@@ -68,7 +72,7 @@ export default function BOMDialog({
             </div>
             <div>
               <Label htmlFor="bom-quantity" className="text-gray-700 dark:text-gray-300">
-                Quantity *
+                {t("quantity")} *
               </Label>
               <Input
                 id="bom-quantity"
@@ -89,11 +93,11 @@ export default function BOMDialog({
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Save className="w-4 h-4" />
-              Save
+              {tc("save")}
             </Button>
           </DialogFooter>
         </form>

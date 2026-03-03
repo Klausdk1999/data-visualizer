@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { User } from "@/types";
 
 interface UsersTabProps {
@@ -22,27 +23,30 @@ interface UsersTabProps {
 }
 
 export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }: UsersTabProps) {
+  const t = useTranslations("users");
+  const tc = useTranslations("common");
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-gray-900 dark:text-white">Users</CardTitle>
+        <CardTitle className="text-gray-900 dark:text-white">{t("title")}</CardTitle>
         <Button onClick={onAddUser} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          Add User
+          {t("addUser")}
         </Button>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>Matricula</TableHead>
-              <TableHead>RFID</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{tc("id")}</TableHead>
+              <TableHead>{tc("name")}</TableHead>
+              <TableHead>{t("email")}</TableHead>
+              <TableHead>{t("category")}</TableHead>
+              <TableHead>{t("matricula")}</TableHead>
+              <TableHead>{t("rfid")}</TableHead>
+              <TableHead>{tc("status")}</TableHead>
+              <TableHead>{tc("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -59,7 +63,7 @@ export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }:
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.rfid || "-"}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
-                  {u.is_active ? "Active" : "Inactive"}
+                  {u.is_active ? tc("active") : tc("inactive")}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
@@ -70,7 +74,7 @@ export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }:
                       className="flex items-center gap-1"
                     >
                       <Edit className="w-3 h-3" />
-                      Edit
+                      {tc("edit")}
                     </Button>
                     <Button
                       size="sm"
@@ -79,7 +83,7 @@ export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }:
                       className="flex items-center gap-1"
                     >
                       <Trash2 className="w-3 h-3" />
-                      Delete
+                      {tc("delete")}
                     </Button>
                   </div>
                 </TableCell>

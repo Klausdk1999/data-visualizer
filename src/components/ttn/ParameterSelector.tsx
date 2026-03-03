@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import type { TTNParameter } from "@/types/ttn";
 
 interface ParameterSelectorProps {
@@ -9,9 +10,11 @@ interface ParameterSelectorProps {
 }
 
 export default function ParameterSelector({ value, onChange }: ParameterSelectorProps) {
+  const t = useTranslations("ttn");
+
   return (
     <div className="flex items-center gap-4">
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Parameter:</label>
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("parameter")}:</label>
       <div className="flex gap-2">
         <button
           onClick={() => onChange("distance")}
@@ -21,7 +24,7 @@ export default function ParameterSelector({ value, onChange }: ParameterSelector
               : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           }`}
         >
-          Distance (cm)
+          {t("distanceCm")}
         </button>
         <button
           onClick={() => onChange("battery")}
@@ -31,7 +34,7 @@ export default function ParameterSelector({ value, onChange }: ParameterSelector
               : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           }`}
         >
-          Battery (%)
+          {t("batteryPercent")}
         </button>
       </div>
     </div>

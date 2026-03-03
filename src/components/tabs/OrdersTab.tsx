@@ -23,6 +23,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { getOrderSignalValues } from "@/lib/requestHandlers";
+import { useTranslations } from "next-intl";
 import type { ProductionOrder, SignalValue } from "@/types";
 
 interface OrdersTabProps {
@@ -44,28 +45,6 @@ const LINE_COLORS = [
   "#F97316",
 ];
 
-function getStatusBadge(status: string) {
-  const styles: Record<string, string> = {
-    planned: "bg-gray-100 text-gray-700",
-    in_progress: "bg-blue-100 text-blue-700",
-    completed: "bg-green-100 text-green-700",
-    cancelled: "bg-red-100 text-red-700",
-  };
-  const labels: Record<string, string> = {
-    planned: "Planned",
-    in_progress: "In Progress",
-    completed: "Completed",
-    cancelled: "Cancelled",
-  };
-  return (
-    <span
-      className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || "bg-gray-100 text-gray-700"}`}
-    >
-      {labels[status] || status}
-    </span>
-  );
-}
-
 export default function OrdersTab({
   orders,
   onAddOrder,
@@ -73,6 +52,8 @@ export default function OrdersTab({
   onDeleteOrder,
   onUpdateStatus,
 }: OrdersTabProps) {
+  const t = useTranslations("orders");
+  const tc = useTranslations("common");
   const [selectedOrder, setSelectedOrder] = useState<ProductionOrder | null>(null);
   const [orderSignalValues, setOrderSignalValues] = useState<SignalValue[]>([]);
   const [loadingSignals, setLoadingSignals] = useState(false);
@@ -127,29 +108,51 @@ export default function OrdersTab({
     return Array.from(names);
   }, [orderSignalValues]);
 
+  function getStatusBadge(status: string) {
+    const styles: Record<string, string> = {
+      planned: "bg-gray-100 text-gray-700",
+      in_progress: "bg-blue-100 text-blue-700",
+      completed: "bg-green-100 text-green-700",
+      cancelled: "bg-red-100 text-red-700",
+    };
+    const labels: Record<string, string> = {
+      planned: t("planned"),
+      in_progress: t("inProgress"),
+      completed: t("completed"),
+      cancelled: t("cancelled"),
+    };
+    return (
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || "bg-gray-100 text-gray-700"}`}
+      >
+        {labels[status] || status}
+      </span>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-gray-900 dark:text-white">Production Orders</CardTitle>
+          <CardTitle className="text-gray-900 dark:text-white">{t("title")}</CardTitle>
           <Button onClick={onAddOrder} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
-            Add Order
+            {t("addOrder")}
           </Button>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Device</TableHead>
-                <TableHead>Started</TableHead>
-                <TableHead>Completed</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{tc("id")}</TableHead>
+                <TableHead>{t("product")}</TableHead>
+                <TableHead>{t("quantity")}</TableHead>
+                <TableHead>{tc("status")}</TableHead>
+                <TableHead>{t("priority")}</TableHead>
+                <TableHead>{t("device")}</TableHead>
+                <TableHead>{t("started")}</TableHead>
+                <TableHead>{t("completed")}</TableHead>
+                <TableHead>{tc("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -196,7 +199,7 @@ export default function OrdersTab({
                           ) : (
                             <BarChart3 className="w-3 h-3" />
                           )}
-                          Signals
+                          {t("signals")}
                         </Button>
                       )}
                       {order.status === "planned" && (
@@ -207,7 +210,7 @@ export default function OrdersTab({
                           className="flex items-center gap-1 text-blue-700 border-blue-300"
                         >
                           <Play className="w-3 h-3" />
-                          Start
+                          {t("startOrder")}
                         </Button>
                       )}
                       {order.status === "in_progress" && (
@@ -218,7 +221,7 @@ export default function OrdersTab({
                           className="flex items-center gap-1 text-green-700 border-green-300"
                         >
                           <CheckCircle className="w-3 h-3" />
-                          Complete
+                          {t("completeOrder")}
                         </Button>
                       )}
                       {(order.status === "planned" || order.status === "in_progress") && (
@@ -229,7 +232,7 @@ export default function OrdersTab({
                           className="flex items-center gap-1 text-red-700 border-red-300"
                         >
                           <XCircle className="w-3 h-3" />
-                          Cancel
+                          {t("cancelOrder")}
                         </Button>
                       )}
                       {(order.status === "planned" || order.status === "in_progress") && (
@@ -240,7 +243,7 @@ export default function OrdersTab({
                           className="flex items-center gap-1"
                         >
                           <Edit className="w-3 h-3" />
-                          Edit
+                          {tc("edit")}
                         </Button>
                       )}
                       <Button
@@ -250,7 +253,7 @@ export default function OrdersTab({
                         className="flex items-center gap-1"
                       >
                         <Trash2 className="w-3 h-3" />
-                        Delete
+                        {tc("delete")}
                       </Button>
                     </div>
                   </TableCell>
@@ -265,17 +268,17 @@ export default function OrdersTab({
         <Card>
           <CardHeader>
             <CardTitle className="text-gray-900 dark:text-white">
-              Device Signal Values during Order #{selectedOrder.id}
+              {t("deviceSignalValues", { orderId: selectedOrder.id })}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {loadingSignals ? (
               <div className="flex items-center justify-center py-8 text-gray-500">
-                Loading signal values...
+                {t("loadingSignalValues")}
               </div>
             ) : orderSignalValues.length === 0 ? (
               <div className="flex items-center justify-center py-8 text-gray-500">
-                No signal values found for this order&apos;s time range.
+                {t("noSignalValues")}
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={400}>

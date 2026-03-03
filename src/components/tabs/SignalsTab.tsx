@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { Signal } from "@/types";
 
 interface SignalsTabProps {
@@ -33,12 +34,15 @@ export default function SignalsTab({
   onEditSignal,
   onDeleteSignal,
 }: SignalsTabProps) {
+  const t = useTranslations("signals");
+  const tc = useTranslations("common");
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-gray-900 dark:text-white">
-          Signal Configurations
-          {selectedDevice && ` (Device ${selectedDevice})`}
+          {t("title")}
+          {selectedDevice && ` (${t("device")} ${selectedDevice})`}
         </CardTitle>
         <Button
           onClick={onAddSignal}
@@ -46,21 +50,21 @@ export default function SignalsTab({
           className="flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          Add Signal
+          {t("addSignal")}
         </Button>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Direction</TableHead>
-              <TableHead>Sensor</TableHead>
-              <TableHead>Device</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{tc("id")}</TableHead>
+              <TableHead>{tc("name")}</TableHead>
+              <TableHead>{tc("type")}</TableHead>
+              <TableHead>{t("direction")}</TableHead>
+              <TableHead>{t("sensor")}</TableHead>
+              <TableHead>{t("device")}</TableHead>
+              <TableHead>{tc("status")}</TableHead>
+              <TableHead>{tc("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -89,7 +93,7 @@ export default function SignalsTab({
                   {signal.device?.name || signal.device_id}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
-                  {signal.is_active ? "Active" : "Inactive"}
+                  {signal.is_active ? tc("active") : tc("inactive")}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
@@ -100,7 +104,7 @@ export default function SignalsTab({
                       className="flex items-center gap-1"
                     >
                       <Edit className="w-3 h-3" />
-                      Edit
+                      {tc("edit")}
                     </Button>
                     <Button
                       size="sm"
@@ -109,7 +113,7 @@ export default function SignalsTab({
                       className="flex items-center gap-1"
                     >
                       <Trash2 className="w-3 h-3" />
-                      Delete
+                      {tc("delete")}
                     </Button>
                   </div>
                 </TableCell>

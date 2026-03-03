@@ -56,6 +56,10 @@ import RawMaterialDialog from "@/components/dialogs/RawMaterialDialog";
 import ProductionOrderDialog from "@/components/dialogs/ProductionOrderDialog";
 import StockAdjustDialog from "@/components/dialogs/StockAdjustDialog";
 import BOMDialog from "@/components/dialogs/BOMDialog";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useTranslations } from "next-intl";
+import { LocaleSwitcher } from "@/components/ui/locale-switcher";
+import type { Locale } from "@/lib/i18n";
 import type {
   User,
   Device,
@@ -81,12 +85,17 @@ type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "produ
 interface DashboardProps {
   onLogout: () => void;
   initialTab?: TabType;
+  locale?: Locale;
+  onLocaleChange?: (locale: Locale) => void;
 }
 
 export default function Dashboard({
   onLogout,
   initialTab = "dashboard",
+  locale = "en",
+  onLocaleChange,
 }: DashboardProps) {
+  const t = useTranslations();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
@@ -158,7 +167,7 @@ export default function Dashboard({
       // Check if we have auth token
       const token = localStorage.getItem("auth_token");
       if (!token) {
-        setError("No authentication token found. Please login again.");
+        setError(t("errors.noToken"));
         return;
       }
 
@@ -181,12 +190,12 @@ export default function Dashboard({
     } catch (error: any) {
       console.error("Error fetching data:", error);
       if (error.response?.status === 401) {
-        setError("Authentication failed. Please login again.");
+        setError(t("errors.authFailed"));
         // Clear invalid token
         localStorage.removeItem("auth_token");
         localStorage.removeItem("user");
       } else {
-        setError(error.response?.data || "Failed to fetch data. Please try again.");
+        setError(error.response?.data || t("errors.fetchFailed"));
       }
     } finally {
       setLoading(false);
@@ -239,17 +248,17 @@ export default function Dashboard({
       setEditingItem(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to save device");
+      setError(err.response?.data || t("errors.saveFailed"));
     }
   };
 
   const handleDeleteDevice = async (deviceId: number) => {
-    if (!confirm("Are you sure you want to delete this device?")) return;
+    if (!confirm(t("devices.confirmDelete"))) return;
     try {
       await deleteDevice(deviceId.toString());
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to delete device");
+      setError(err.response?.data || t("errors.deleteFailed"));
     }
   };
 
@@ -267,18 +276,18 @@ export default function Dashboard({
       fetchData();
       if (selectedDevice) fetchDeviceSignals(selectedDevice);
     } catch (err: any) {
-      setError(err.response?.data || "Failed to save signal");
+      setError(err.response?.data || t("errors.saveFailed"));
     }
   };
 
   const handleDeleteSignal = async (signalId: number) => {
-    if (!confirm("Are you sure you want to delete this signal?")) return;
+    if (!confirm(t("devices.confirmDeleteSignal"))) return;
     try {
       await deleteSignal(signalId.toString());
       fetchData();
       if (selectedDevice) fetchDeviceSignals(selectedDevice);
     } catch (err: any) {
-      setError(err.response?.data || "Failed to delete signal");
+      setError(err.response?.data || t("errors.deleteFailed"));
     }
   };
 
@@ -291,18 +300,18 @@ export default function Dashboard({
       fetchData();
       if (selectedSignal) fetchSignalValues(selectedSignal);
     } catch (err: any) {
-      setError(err.response?.data || "Failed to create signal value");
+      setError(err.response?.data || t("errors.saveFailed"));
     }
   };
 
   const handleDeleteSignalValue = async (valueId: number) => {
-    if (!confirm("Are you sure you want to delete this signal value?")) return;
+    if (!confirm(t("devices.confirmDeleteSignalValue"))) return;
     try {
       await deleteSignalValue(valueId.toString());
       fetchData();
       if (selectedSignal) fetchSignalValues(selectedSignal);
     } catch (err: any) {
-      setError(err.response?.data || "Failed to delete signal value");
+      setError(err.response?.data || t("errors.deleteFailed"));
     }
   };
 
@@ -319,17 +328,17 @@ export default function Dashboard({
       setEditingItem(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to save user");
+      setError(err.response?.data || t("errors.saveFailed"));
     }
   };
 
   const handleDeleteUser = async (userId: number) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+    if (!confirm(t("devices.confirmDeleteUser"))) return;
     try {
       await deleteUser(userId.toString());
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to delete user");
+      setError(err.response?.data || t("errors.deleteFailed"));
     }
   };
 
@@ -362,17 +371,17 @@ export default function Dashboard({
       setEditingItem(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to save product");
+      setError(err.response?.data || t("errors.saveFailed"));
     }
   };
 
   const handleDeleteProduct = async (productId: number) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+    if (!confirm(t("devices.confirmDeleteProduct"))) return;
     try {
       await deleteProduct(productId.toString());
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to delete product");
+      setError(err.response?.data || t("errors.deleteFailed"));
     }
   };
 
@@ -386,12 +395,12 @@ export default function Dashboard({
       const bom = await getProductBOM(selectedProduct.toString());
       setBomEntries(bom);
     } catch (err: any) {
-      setError(err.response?.data || "Failed to add BOM entry");
+      setError(err.response?.data || t("errors.saveFailed"));
     }
   };
 
   const handleDeleteBOMEntry = async (bomId: number) => {
-    if (!confirm("Remove this material from the BOM?")) return;
+    if (!confirm(t("devices.confirmRemoveBOM"))) return;
     try {
       await deleteBOMEntry(bomId.toString());
       if (selectedProduct) {
@@ -399,7 +408,7 @@ export default function Dashboard({
         setBomEntries(bom);
       }
     } catch (err: any) {
-      setError(err.response?.data || "Failed to delete BOM entry");
+      setError(err.response?.data || t("errors.deleteFailed"));
     }
   };
 
@@ -416,17 +425,17 @@ export default function Dashboard({
       setEditingItem(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to save raw material");
+      setError(err.response?.data || t("errors.saveFailed"));
     }
   };
 
   const handleDeleteRawMaterial = async (materialId: number) => {
-    if (!confirm("Are you sure you want to delete this raw material?")) return;
+    if (!confirm(t("devices.confirmDeleteMaterial"))) return;
     try {
       await deleteRawMaterial(materialId.toString());
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to delete raw material");
+      setError(err.response?.data || t("errors.deleteFailed"));
     }
   };
 
@@ -439,7 +448,7 @@ export default function Dashboard({
       setSelectedMaterial(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to adjust stock");
+      setError(err.response?.data || t("errors.updateFailed"));
     }
   };
 
@@ -456,33 +465,33 @@ export default function Dashboard({
       setEditingItem(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to save production order");
+      setError(err.response?.data || t("errors.saveFailed"));
     }
   };
 
   const handleDeleteOrder = async (orderId: number) => {
-    if (!confirm("Are you sure you want to delete this order?")) return;
+    if (!confirm(t("devices.confirmDeleteOrder"))) return;
     try {
       await deleteProductionOrder(orderId.toString());
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to delete order");
+      setError(err.response?.data || t("errors.deleteFailed"));
     }
   };
 
   const handleUpdateOrderStatus = async (orderId: number, status: string) => {
     const confirmMsg = status === "completed"
-      ? "Complete this order? Stock will be decremented based on the BOM."
+      ? t("devices.confirmCompleteOrder")
       : status === "cancelled"
-      ? "Cancel this order?"
-      : "Start this order?";
+      ? t("devices.confirmCancelOrder")
+      : t("devices.confirmStartOrder");
     if (!confirm(confirmMsg)) return;
     setError("");
     try {
       await updateOrderStatus(orderId.toString(), status);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data || "Failed to update order status");
+      setError(err.response?.data || t("errors.updateFailed"));
     }
   };
 
@@ -494,9 +503,13 @@ export default function Dashboard({
           <div className="flex items-center justify-between h-16">
             <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
               <LayoutDashboard className="w-6 h-6" />
-              IoT Data Storage Dashboard
+              {t("header.title")}
             </h1>
             <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              {onLocaleChange && (
+                <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />
+              )}
               <span className="text-sm text-gray-700 dark:text-gray-300">
                 {user?.email || user?.name}
               </span>
@@ -507,7 +520,7 @@ export default function Dashboard({
                 className="flex items-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                Logout
+                {t("header.logout")}
               </Button>
             </div>
           </div>
@@ -535,7 +548,7 @@ export default function Dashboard({
             }`}
           >
             <LayoutDashboard className="w-4 h-4" />
-            Dashboard
+            {t("tabs.dashboard")}
           </button>
           <button
             onClick={() => handleTabChange("devices")}
@@ -546,7 +559,7 @@ export default function Dashboard({
             }`}
           >
             <Cpu className="w-4 h-4" />
-            Devices
+            {t("tabs.devices")}
           </button>
           <button
             onClick={() => handleTabChange("signals")}
@@ -557,7 +570,7 @@ export default function Dashboard({
             }`}
           >
             <Radio className="w-4 h-4" />
-            Signal Configurations
+            {t("tabs.signals")}
           </button>
           <button
             onClick={() => handleTabChange("values")}
@@ -568,7 +581,7 @@ export default function Dashboard({
             }`}
           >
             <Activity className="w-4 h-4" />
-            Signal Values
+            {t("tabs.values")}
           </button>
           <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
           <button
@@ -580,7 +593,7 @@ export default function Dashboard({
             }`}
           >
             <Package className="w-4 h-4" />
-            Products
+            {t("tabs.products")}
           </button>
           <button
             onClick={() => handleTabChange("materials")}
@@ -591,7 +604,7 @@ export default function Dashboard({
             }`}
           >
             <Boxes className="w-4 h-4" />
-            Materials
+            {t("tabs.materials")}
           </button>
           <button
             onClick={() => handleTabChange("orders")}
@@ -602,7 +615,7 @@ export default function Dashboard({
             }`}
           >
             <ClipboardList className="w-4 h-4" />
-            Orders
+            {t("tabs.orders")}
           </button>
           <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
           <button
@@ -614,7 +627,7 @@ export default function Dashboard({
             }`}
           >
             <Users className="w-4 h-4" />
-            Users
+            {t("tabs.users")}
           </button>
         </div>
       </div>
@@ -622,7 +635,7 @@ export default function Dashboard({
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {loading ? (
-          <div className="text-gray-700 dark:text-gray-300 text-center">Loading...</div>
+          <div className="text-gray-700 dark:text-gray-300 text-center">{t("common.loading")}</div>
         ) : (
           <>
             {activeTab === "dashboard" && <DashboardTab devices={devices} signals={signals} />}

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Cpu, Gauge } from "lucide-react";
 import { getSignals, getSignalValues } from "@/lib/requestHandlers";
+import { useTranslations } from "next-intl";
 import type { Device, Signal, SignalValue } from "@/types";
 
 interface DashboardTabProps {
@@ -21,6 +22,8 @@ interface DashboardTabProps {
 }
 
 export default function DashboardTab({ devices, signals }: DashboardTabProps) {
+  const t = useTranslations("dashboardTab");
+  const tc = useTranslations("common");
   const [dashboardDevice, setDashboardDevice] = useState<number | null>(null);
   const [latestSignalValues, setLatestSignalValues] = useState<Map<number, SignalValue>>(new Map());
 
@@ -58,7 +61,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
       <CardHeader>
         <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
           <Gauge className="w-5 h-5" />
-          Device Dashboard
+          {t("title")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -69,7 +72,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
               className="text-gray-700 dark:text-gray-300 mb-2 block flex items-center gap-2"
             >
               <Cpu className="w-4 h-4" />
-              Select Device
+              {t("selectDevice")}
             </Label>
             <select
               id="dashboard-device"
@@ -77,7 +80,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
               onChange={(e) => setDashboardDevice(e.target.value ? Number(e.target.value) : null)}
               className="w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 px-3 transition-all"
             >
-              <option value="">-- Select a device --</option>
+              <option value="">{t("selectDevicePlaceholder")}</option>
               {devices.map((device) => (
                 <option key={device.id} value={device.id}>
                   {device.name} ({device.device_type || "N/A"})
@@ -89,16 +92,16 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
           {dashboardDevice && (
             <div className="mt-6">
               <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">
-                Latest Signal Values
+                {t("latestSignalValues")}
               </h3>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Signal Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Unit</TableHead>
-                    <TableHead>Latest Value</TableHead>
-                    <TableHead>Timestamp</TableHead>
+                    <TableHead>{t("signalName")}</TableHead>
+                    <TableHead>{tc("type")}</TableHead>
+                    <TableHead>{t("unit")}</TableHead>
+                    <TableHead>{t("latestValue")}</TableHead>
+                    <TableHead>{t("timestamp")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -123,7 +126,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
                                   latestValue.digital_value !== undefined
                                 ? latestValue.digital_value.toString()
                                 : "N/A"
-                            : "No data"}
+                            : t("noData")}
                         </TableCell>
                         <TableCell className="text-gray-900 dark:text-gray-100">
                           {latestValue ? new Date(latestValue.timestamp).toLocaleString() : "-"}
@@ -137,7 +140,7 @@ export default function DashboardTab({ devices, signals }: DashboardTabProps) {
                         colSpan={5}
                         className="text-gray-700 dark:text-gray-400 text-center"
                       >
-                        No signals configured for this device
+                        {t("noSignals")}
                       </TableCell>
                     </TableRow>
                   )}

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { CreateSignalValueRequest } from "@/types";
 
 interface SignalValueDialogProps {
@@ -27,6 +28,9 @@ export default function SignalValueDialog({
   selectedSignal,
   onSubmit,
 }: SignalValueDialogProps) {
+  const t = useTranslations("signalValues");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -47,13 +51,13 @@ export default function SignalValueDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-gray-900 dark:text-white">Create Signal Value</DialogTitle>
+          <DialogTitle className="text-gray-900 dark:text-white">{t("createValue")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="value-signal-id" className="text-gray-700 dark:text-gray-300">
-                Signal ID *
+                {t("signalId")} *
               </Label>
               <Input
                 id="value-signal-id"
@@ -66,22 +70,22 @@ export default function SignalValueDialog({
             </div>
             <div>
               <Label htmlFor="value-value" className="text-gray-700 dark:text-gray-300">
-                Value (for analogic)
+                {t("valueAnalogic")}
               </Label>
               <Input id="value-value" name="value" type="number" step="any" className="mt-1" />
             </div>
             <div>
               <Label htmlFor="value-digital" className="text-gray-700 dark:text-gray-300">
-                Digital Value (for digital)
+                {t("digitalValueDigital")}
               </Label>
               <select
                 id="value-digital"
                 name="digital_value"
                 className="mt-1 w-full h-10 rounded-xl border border-gray-300/50 bg-white/70 backdrop-blur-sm px-3 text-gray-900 dark:bg-gray-700/60 dark:border-gray-600/50 dark:text-gray-100 transition-all"
               >
-                <option value="">None</option>
-                <option value="true">True</option>
-                <option value="false">False</option>
+                <option value="">{tc("none")}</option>
+                <option value="true">{t("true")}</option>
+                <option value="false">{t("false")}</option>
               </select>
             </div>
           </div>
@@ -93,11 +97,11 @@ export default function SignalValueDialog({
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Plus className="w-4 h-4" />
-              Create
+              {tc("create")}
             </Button>
           </DialogFooter>
         </form>

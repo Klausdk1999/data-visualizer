@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { Device } from "@/types";
 
 interface DevicesTabProps {
@@ -31,26 +32,29 @@ export default function DevicesTab({
   onEditDevice,
   onDeleteDevice,
 }: DevicesTabProps) {
+  const t = useTranslations("devices");
+  const tc = useTranslations("common");
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-gray-900 dark:text-white">Devices</CardTitle>
+        <CardTitle className="text-gray-900 dark:text-white">{t("title")}</CardTitle>
         <Button onClick={onAddDevice} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          Add Device
+          {t("addDevice")}
         </Button>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{tc("id")}</TableHead>
+              <TableHead>{tc("name")}</TableHead>
+              <TableHead>{tc("type")}</TableHead>
+              <TableHead>{t("location")}</TableHead>
+              <TableHead>{t("user")}</TableHead>
+              <TableHead>{tc("status")}</TableHead>
+              <TableHead>{tc("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -76,7 +80,7 @@ export default function DevicesTab({
                   {device.user?.name || device.user_id || "-"}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
-                  {device.is_active ? "Active" : "Inactive"}
+                  {device.is_active ? tc("active") : tc("inactive")}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
@@ -87,7 +91,7 @@ export default function DevicesTab({
                       className="flex items-center gap-1"
                     >
                       <Edit className="w-3 h-3" />
-                      Edit
+                      {tc("edit")}
                     </Button>
                     <Button
                       size="sm"
@@ -96,7 +100,7 @@ export default function DevicesTab({
                       className="flex items-center gap-1"
                     >
                       <Trash2 className="w-3 h-3" />
-                      Delete
+                      {tc("delete")}
                     </Button>
                   </div>
                 </TableCell>

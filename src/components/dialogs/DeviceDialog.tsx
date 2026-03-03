@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { Device, CreateDeviceRequest } from "@/types";
 
 interface DeviceDialogProps {
@@ -27,6 +28,9 @@ export default function DeviceDialog({
   editingItem,
   onSubmit,
 }: DeviceDialogProps) {
+  const t = useTranslations("devices");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -44,14 +48,14 @@ export default function DeviceDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
-            {editingItem ? "Edit Device" : "Create Device"}
+            {editingItem ? t("editDevice") : t("createDevice")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="device-name" className="text-gray-700 dark:text-gray-300">
-                Name *
+                {tc("name")} *
               </Label>
               <Input
                 id="device-name"
@@ -63,7 +67,7 @@ export default function DeviceDialog({
             </div>
             <div>
               <Label htmlFor="device-description" className="text-gray-700 dark:text-gray-300">
-                Description
+                {tc("description")}
               </Label>
               <Input
                 id="device-description"
@@ -74,7 +78,7 @@ export default function DeviceDialog({
             </div>
             <div>
               <Label htmlFor="device-type" className="text-gray-700 dark:text-gray-300">
-                Device Type
+                {t("deviceType")}
               </Label>
               <Input
                 id="device-type"
@@ -85,7 +89,7 @@ export default function DeviceDialog({
             </div>
             <div>
               <Label htmlFor="device-location" className="text-gray-700 dark:text-gray-300">
-                Location
+                {t("location")}
               </Label>
               <Input
                 id="device-location"
@@ -103,11 +107,11 @@ export default function DeviceDialog({
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Save className="w-4 h-4" />
-              Save
+              {tc("save")}
             </Button>
           </DialogFooter>
         </form>

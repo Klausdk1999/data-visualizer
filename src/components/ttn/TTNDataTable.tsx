@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import {
   Table,
   TableBody,
@@ -17,10 +18,13 @@ interface TTNDataTableProps {
 }
 
 export default function TTNDataTable({ data, loading }: TTNDataTableProps) {
+  const t = useTranslations("ttn");
+  const tCommon = useTranslations("common");
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
-        Loading data...
+        {t("loadingData")}
       </div>
     );
   }
@@ -28,7 +32,7 @@ export default function TTNDataTable({ data, loading }: TTNDataTableProps) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
-        No data available
+        {tCommon("noData")}
       </div>
     );
   }
@@ -38,14 +42,14 @@ export default function TTNDataTable({ data, loading }: TTNDataTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Timestamp</TableHead>
-            <TableHead>Device ID</TableHead>
-            <TableHead>Distance (cm)</TableHead>
-            <TableHead>Battery (%)</TableHead>
-            <TableHead>Temperature (°C)</TableHead>
-            <TableHead>Signal Strength</TableHead>
-            <TableHead>RSSI</TableHead>
-            <TableHead>SNR</TableHead>
+            <TableHead>{t("timestamp")}</TableHead>
+            <TableHead>{t("deviceId")}</TableHead>
+            <TableHead>{t("distanceCm")}</TableHead>
+            <TableHead>{t("batteryPercent")}</TableHead>
+            <TableHead>{t("temperatureC")}</TableHead>
+            <TableHead>{t("signalStrength")}</TableHead>
+            <TableHead>{t("rssi")}</TableHead>
+            <TableHead>{t("snr")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

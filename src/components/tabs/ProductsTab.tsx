@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { Product, RawMaterial, BillOfMaterials } from "@/types";
 
 interface ProductsTabProps {
@@ -39,27 +40,30 @@ export default function ProductsTab({
   onAddBOMEntry,
   onDeleteBOMEntry,
 }: ProductsTabProps) {
+  const t = useTranslations("products");
+  const tc = useTranslations("common");
+
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-gray-900 dark:text-white">Products</CardTitle>
+          <CardTitle className="text-gray-900 dark:text-white">{t("title")}</CardTitle>
           <Button onClick={onAddProduct} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
-            Add Product
+            {t("addProduct")}
           </Button>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>SKU</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Unit</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{tc("id")}</TableHead>
+                <TableHead>{tc("name")}</TableHead>
+                <TableHead>{t("sku")}</TableHead>
+                <TableHead>{t("category")}</TableHead>
+                <TableHead>{tc("unit")}</TableHead>
+                <TableHead>{tc("status")}</TableHead>
+                <TableHead>{tc("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -85,7 +89,7 @@ export default function ProductsTab({
                     {product.unit || "-"}
                   </TableCell>
                   <TableCell className="text-gray-900 dark:text-gray-100">
-                    {product.is_active ? "Active" : "Inactive"}
+                    {product.is_active ? tc("active") : tc("inactive")}
                   </TableCell>
                   <TableCell className="text-gray-900 dark:text-gray-100">
                     <div className="flex space-x-2">
@@ -96,7 +100,7 @@ export default function ProductsTab({
                         className="flex items-center gap-1"
                       >
                         <Edit className="w-3 h-3" />
-                        Edit
+                        {tc("edit")}
                       </Button>
                       <Button
                         size="sm"
@@ -105,7 +109,7 @@ export default function ProductsTab({
                         className="flex items-center gap-1"
                       >
                         <Trash2 className="w-3 h-3" />
-                        Delete
+                        {tc("delete")}
                       </Button>
                     </div>
                   </TableCell>
@@ -119,20 +123,20 @@ export default function ProductsTab({
       {selectedProduct && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-gray-900 dark:text-white">Bill of Materials</CardTitle>
+            <CardTitle className="text-gray-900 dark:text-white">{t("bom")}</CardTitle>
             <Button onClick={onAddBOMEntry} className="flex items-center gap-2">
               <Plus className="w-4 h-4" />
-              Add Material
+              {t("addMaterial")}
             </Button>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Material Name</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Unit</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("materialName")}</TableHead>
+                  <TableHead>{t("quantity")}</TableHead>
+                  <TableHead>{tc("unit")}</TableHead>
+                  <TableHead>{tc("actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -155,7 +159,7 @@ export default function ProductsTab({
                         className="flex items-center gap-1"
                       >
                         <Trash2 className="w-3 h-3" />
-                        Delete
+                        {tc("delete")}
                       </Button>
                     </TableCell>
                   </TableRow>

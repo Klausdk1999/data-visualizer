@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type {
   ProductionOrder,
   Product,
@@ -36,6 +37,9 @@ export default function ProductionOrderDialog({
   devices,
   onSubmit,
 }: ProductionOrderDialogProps) {
+  const t = useTranslations("orders");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -59,14 +63,14 @@ export default function ProductionOrderDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
-            {editingItem ? "Edit Production Order" : "Create Production Order"}
+            {editingItem ? t("editOrder") : t("createOrder")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="order-product" className="text-gray-700 dark:text-gray-300">
-                Product *
+                {t("product")} *
               </Label>
               <select
                 id="order-product"
@@ -75,7 +79,7 @@ export default function ProductionOrderDialog({
                 defaultValue={editingItem?.product_id ?? ""}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <option value="">Select a product</option>
+                <option value="">{t("selectProduct")}</option>
                 {products.map((product) => (
                   <option key={product.id} value={product.id}>
                     {product.name}
@@ -85,7 +89,7 @@ export default function ProductionOrderDialog({
             </div>
             <div>
               <Label htmlFor="order-quantity" className="text-gray-700 dark:text-gray-300">
-                Quantity *
+                {t("quantity")} *
               </Label>
               <Input
                 id="order-quantity"
@@ -100,7 +104,7 @@ export default function ProductionOrderDialog({
             </div>
             <div>
               <Label htmlFor="order-priority" className="text-gray-700 dark:text-gray-300">
-                Priority
+                {t("priority")}
               </Label>
               <Input
                 id="order-priority"
@@ -112,7 +116,7 @@ export default function ProductionOrderDialog({
             </div>
             <div>
               <Label htmlFor="order-device" className="text-gray-700 dark:text-gray-300">
-                Device
+                {t("device")}
               </Label>
               <select
                 id="order-device"
@@ -120,7 +124,7 @@ export default function ProductionOrderDialog({
                 defaultValue={editingItem?.device_id ?? ""}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <option value="">None</option>
+                <option value="">{tc("none")}</option>
                 {devices.map((device) => (
                   <option key={device.id} value={device.id}>
                     {device.name}
@@ -130,7 +134,7 @@ export default function ProductionOrderDialog({
             </div>
             <div>
               <Label htmlFor="order-instructions" className="text-gray-700 dark:text-gray-300">
-                Work Instructions
+                {t("workInstructions")}
               </Label>
               <textarea
                 id="order-instructions"
@@ -142,7 +146,7 @@ export default function ProductionOrderDialog({
             </div>
             <div>
               <Label htmlFor="order-quality-notes" className="text-gray-700 dark:text-gray-300">
-                Quality Notes
+                {t("qualityNotes")}
               </Label>
               <textarea
                 id="order-quality-notes"
@@ -161,11 +165,11 @@ export default function ProductionOrderDialog({
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Save className="w-4 h-4" />
-              Save
+              {tc("save")}
             </Button>
           </DialogFooter>
         </form>

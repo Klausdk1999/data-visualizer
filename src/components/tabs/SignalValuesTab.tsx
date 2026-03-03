@@ -23,6 +23,7 @@ import {
 } from "recharts";
 import { Plus, Trash2, Clock, Calendar } from "lucide-react";
 import { getSignalValues } from "@/lib/requestHandlers";
+import { useTranslations } from "next-intl";
 import type { Signal, SignalValue } from "@/types";
 
 const CHART_COLORS = [
@@ -34,14 +35,6 @@ const CHART_COLORS = [
   "#EC4899",
   "#06B6D4",
   "#F97316",
-];
-
-const TIMESPAN_OPTIONS = [
-  { value: "1h", label: "Last 1 hour" },
-  { value: "24h", label: "Last 24 hours" },
-  { value: "7d", label: "Last 7 days" },
-  { value: "30d", label: "Last 30 days" },
-  { value: "custom", label: "Custom range" },
 ];
 
 interface SignalValuesTabProps {
@@ -84,12 +77,22 @@ export default function SignalValuesTab({
   onAddValue,
   onDeleteValue,
 }: SignalValuesTabProps) {
+  const t = useTranslations("signalValues");
+  const tc = useTranslations("common");
   const [selectedSignals, setSelectedSignals] = useState<number[]>([]);
   const [timespan, setTimespan] = useState("24h");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [graphDataMap, setGraphDataMap] = useState<Record<number, SignalValue[]>>({});
   const [loading, setLoading] = useState(false);
+
+  const TIMESPAN_OPTIONS = [
+    { value: "1h", label: t("last1hLong") },
+    { value: "24h", label: t("last24hLong") },
+    { value: "7d", label: t("last7dLong") },
+    { value: "30d", label: t("last30dLong") },
+    { value: "custom", label: t("customRange") },
+  ];
 
   // Fetch data when selection or time range changes
   useEffect(() => {
@@ -202,7 +205,7 @@ export default function SignalValuesTab({
         <CardHeader>
           <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
             <Clock className="w-5 h-5" />
-            Time Range
+            {t("timeRange")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -223,7 +226,7 @@ export default function SignalValuesTab({
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
-                <label className="text-sm text-gray-600 dark:text-gray-400">From:</label>
+                <label className="text-sm text-gray-600 dark:text-gray-400">{t("from")}:</label>
                 <input
                   type="datetime-local"
                   value={fromDate}
@@ -232,7 +235,7 @@ export default function SignalValuesTab({
                 />
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600 dark:text-gray-400">To:</label>
+                <label className="text-sm text-gray-600 dark:text-gray-400">{t("to")}:</label>
                 <input
                   type="datetime-local"
                   value={toDate}
@@ -248,26 +251,26 @@ export default function SignalValuesTab({
       {/* Signal Selection and Chart */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-gray-900 dark:text-white">Signal Values</CardTitle>
+          <CardTitle className="text-gray-900 dark:text-white">{t("title")}</CardTitle>
           <Button
             onClick={onAddValue}
             disabled={!selectedSignal}
             className="flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            Add Value
+            {t("addValue")}
           </Button>
         </CardHeader>
         <CardContent>
           {/* Signal Selection */}
           <div className="mb-6">
             <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Select signals to display on chart:
+              {t("selectSignals")}
             </h3>
             <div className="flex flex-wrap gap-3 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl">
               {signals.length === 0 ? (
                 <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  No signals available. Create signals in the Signal Configurations tab first.
+                  {t("noSignals")}
                 </p>
               ) : (
                 signals.map((signal) => {
@@ -313,9 +316,9 @@ export default function SignalValuesTab({
           {selectedSignals.length > 0 && (
             <div className="mb-6">
               <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">
-                Signal Evolution
+                {t("signalEvolution")}
                 {loading && (
-                  <span className="text-sm font-normal text-gray-500 ml-2">(Loading...)</span>
+                  <span className="text-sm font-normal text-gray-500 ml-2">({tc("loading")})</span>
                 )}
               </h3>
               {chartData.length > 0 ? (
@@ -362,7 +365,7 @@ export default function SignalValuesTab({
                 </div>
               ) : (
                 <div className="h-48 flex items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl">
-                  {loading ? "Loading data..." : "No data available for the selected time range"}
+                  {loading ? t("loadingData") : t("noDataTimeRange")}
                 </div>
               )}
             </div>
@@ -372,13 +375,13 @@ export default function SignalValuesTab({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>Signal</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Digital</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{tc("id")}</TableHead>
+                <TableHead>{t("timestamp")}</TableHead>
+                <TableHead>{t("signal")}</TableHead>
+                <TableHead>{t("value")}</TableHead>
+                <TableHead>{t("digital")}</TableHead>
+                <TableHead>{t("user")}</TableHead>
+                <TableHead>{tc("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -410,7 +413,7 @@ export default function SignalValuesTab({
                       className="flex items-center gap-1"
                     >
                       <Trash2 className="w-3 h-3" />
-                      Delete
+                      {tc("delete")}
                     </Button>
                   </TableCell>
                 </TableRow>

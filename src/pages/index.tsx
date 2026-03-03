@@ -10,7 +10,7 @@ import Dashboard from "@/components/Dashboard";
 
 type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders";
 
-export default function Home() {
+export default function Home(props: any) {
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -55,7 +55,13 @@ export default function Home() {
   }
 
   if (!authenticated) {
-    return <Login onLoginSuccess={handleLoginSuccess} />;
+    return (
+      <Login
+        onLoginSuccess={handleLoginSuccess}
+        locale={props.locale}
+        onLocaleChange={props.onLocaleChange}
+      />
+    );
   }
 
   // Wait for router to be ready before rendering Dashboard with URL params
@@ -67,5 +73,5 @@ export default function Home() {
     );
   }
 
-  return <Dashboard onLogout={handleLogout} initialTab={getInitialTab()} />;
+  return <Dashboard onLogout={handleLogout} initialTab={getInitialTab()} locale={props.locale} onLocaleChange={props.onLocaleChange} />;
 }

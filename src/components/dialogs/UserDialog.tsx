@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { User, CreateUserRequest } from "@/types";
 
 interface UserDialogProps {
@@ -22,6 +23,9 @@ interface UserDialogProps {
 }
 
 export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }: UserDialogProps) {
+  const t = useTranslations("users");
+  const tc = useTranslations("common");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -41,14 +45,14 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
-            {editingItem ? "Edit User" : "Create User"}
+            {editingItem ? t("editUser") : t("createUser")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="user-name" className="text-gray-700 dark:text-gray-300">
-                Name *
+                {tc("name")} *
               </Label>
               <Input
                 id="user-name"
@@ -60,7 +64,7 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
             </div>
             <div>
               <Label htmlFor="user-email" className="text-gray-700 dark:text-gray-300">
-                Email
+                {t("email")}
               </Label>
               <Input
                 id="user-email"
@@ -72,7 +76,7 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
             </div>
             <div>
               <Label htmlFor="user-password" className="text-gray-700 dark:text-gray-300">
-                Password{!editingItem && " *"}
+                {t("password")}{!editingItem && " *"}
               </Label>
               <Input
                 id="user-password"
@@ -84,7 +88,7 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
             </div>
             <div>
               <Label htmlFor="user-categoria" className="text-gray-700 dark:text-gray-300">
-                Categoria
+                {t("category")}
               </Label>
               <Input
                 id="user-categoria"
@@ -95,7 +99,7 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
             </div>
             <div>
               <Label htmlFor="user-matricula" className="text-gray-700 dark:text-gray-300">
-                Matricula
+                {t("matricula")}
               </Label>
               <Input
                 id="user-matricula"
@@ -106,7 +110,7 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
             </div>
             <div>
               <Label htmlFor="user-rfid" className="text-gray-700 dark:text-gray-300">
-                RFID
+                {t("rfid")}
               </Label>
               <Input id="user-rfid" name="rfid" defaultValue={editingItem?.rfid} className="mt-1" />
             </div>
@@ -119,11 +123,11 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
               className="flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button type="submit" className="flex items-center gap-2">
               <Save className="w-4 h-4" />
-              Save
+              {tc("save")}
             </Button>
           </DialogFooter>
         </form>
