@@ -1,6 +1,6 @@
 # Data Visualizer - Next.js Frontend
 
-Web dashboard for visualizing IoT device data, managing devices, and configuring signals.
+Web dashboard for visualizing IoT device data, managing devices, configuring signals, and manufacturing execution (MES).
 
 ## Dependencies
 
@@ -88,44 +88,84 @@ npm run lint:fix
 ```
 data-visualizer/
 ├── src/
-│   ├── pages/              # Next.js pages
-│   │   ├── index.tsx       # Main dashboard page
-│   │   └── ttn/            # TTN river monitoring
-│   │       └── index.tsx   # TTN dashboard page
-│   ├── components/         # React components
-│   │   ├── Login.tsx      # Login component
-│   │   ├── Dashboard.tsx  # Main dashboard
-│   │   ├── ttn/           # TTN-specific components
+│   ├── pages/                  # Next.js pages
+│   │   ├── index.tsx           # Main dashboard page
+│   │   └── ttn/
+│   │       └── index.tsx       # TTN river monitoring dashboard
+│   ├── components/
+│   │   ├── Login.tsx           # Authentication component
+│   │   ├── Dashboard.tsx       # Main dashboard shell with tab navigation
+│   │   ├── dialogs/            # Modal dialogs for CRUD operations
+│   │   │   ├── DeviceDialog.tsx
+│   │   │   ├── SignalDialog.tsx
+│   │   │   ├── SignalValueDialog.tsx
+│   │   │   ├── UserDialog.tsx
+│   │   │   ├── ProductDialog.tsx
+│   │   │   ├── ProductionOrderDialog.tsx
+│   │   │   ├── RawMaterialDialog.tsx
+│   │   │   ├── BOMDialog.tsx
+│   │   │   └── StockAdjustDialog.tsx
+│   │   ├── tabs/               # Dashboard tab components
+│   │   │   ├── DashboardTab.tsx
+│   │   │   ├── DevicesTab.tsx
+│   │   │   ├── SignalsTab.tsx
+│   │   │   ├── SignalValuesTab.tsx
+│   │   │   ├── UsersTab.tsx
+│   │   │   ├── ProductsTab.tsx
+│   │   │   ├── MaterialsTab.tsx
+│   │   │   └── OrdersTab.tsx
+│   │   ├── ttn/                # TTN-specific components
 │   │   │   ├── TTNChart.tsx
 │   │   │   ├── TTNDataTable.tsx
 │   │   │   ├── DateRangePicker.tsx
 │   │   │   └── ParameterSelector.tsx
-│   │   └── __tests__/     # Component tests
-│   ├── lib/               # Utilities
-│   │   ├── requestHandlers.ts  # API client
-│   │   └── __tests__/     # API client tests
-│   ├── types/             # TypeScript types
-│   │   └── ttn.ts         # TTN-specific types
-│   └── styles/            # Global styles
-├── public/                # Static assets
-├── jest.config.js         # Jest configuration
-├── jest.setup.js          # Test setup
-└── .prettierrc            # Prettier config
+│   │   ├── ui/                 # shadcn/ui components
+│   │   └── __tests__/          # Component tests
+│   ├── lib/
+│   │   ├── requestHandlers.ts  # API client with auth handling
+│   │   └── __tests__/
+│   ├── types/
+│   │   ├── index.ts            # Main type definitions
+│   │   └── ttn.ts              # TTN-specific types
+│   └── styles/                 # Global styles
+├── public/                     # Static assets
+├── jest.config.js
+├── jest.setup.js
+└── .prettierrc
 ```
 
 ## Features
 
-- ✅ **User Authentication** - Login with email/password
-- ✅ **Device Management** - View and manage IoT devices
-- ✅ **Signal Configuration** - Configure input/output signals
-- ✅ **Signal Values** - View real-time sensor data
-- ✅ **TTN River Monitoring Dashboard** - Dedicated dashboard for TTN sensor data
+- ✅ **User Authentication** - Login with email/password, JWT-based sessions
+- ✅ **Device Management** - CRUD for IoT devices with signal configuration
+- ✅ **Signal Configuration** - Configure input/output, analogic/digital signals
+- ✅ **Signal Values** - Time-series data visualization with Recharts
+  - Multi-signal comparison on a single chart
+  - Preset time ranges (1h, 24h, 7d, 30d) and custom date ranges
+  - URL-based filter state for shareable links
+- ✅ **TTN River Monitoring** - Dedicated dashboard at `/ttn`
   - Interactive charts (distance/battery over time)
   - Data table with sorting and filtering
-  - Date range selection
-  - Parameter selection (distance or battery)
-- ✅ **Filtering** - Filter by device, signal, user
+  - Date range and parameter selection
+- ✅ **Manufacturing Execution System (MES)**
+  - Product management with Bill of Materials (BOM)
+  - Raw material inventory with stock adjustments
+  - Production order tracking with status transitions (planned → in_progress → completed)
+  - Signal values linked to production orders via device and time range
 - ✅ **Responsive Design** - Works on desktop and mobile
+
+## URL Routing
+
+The dashboard supports URL-based navigation via query parameters:
+
+- `/?tab=dashboard` - Overview dashboard
+- `/?tab=devices` - Device management
+- `/?tab=signals` - Signal configurations
+- `/?tab=values` - Signal values (supports `&signals=1,2,3`, `&timespan=1h|24h|7d|30d`, `&from=YYYY-MM-DD&to=YYYY-MM-DD`)
+- `/?tab=users` - User management
+- `/?tab=products` - Product management with BOM
+- `/?tab=materials` - Raw material inventory and stock
+- `/?tab=orders` - Production order tracking
 
 ## Usage
 
