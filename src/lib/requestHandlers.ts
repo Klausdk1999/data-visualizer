@@ -628,3 +628,13 @@ export const updateOrderStatus = async (id: string, status: string): Promise<Pro
     throw error;
   }
 };
+
+export const getOrderSignalValues = async (orderId: string): Promise<SignalValue[]> => {
+  try {
+    const response = await axiosInstance.get<SignalValue[]>(`production-orders/${orderId}/signal-values`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching order signal values:", error);
+    throw error;
+  }
+};
