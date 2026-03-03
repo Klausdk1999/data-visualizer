@@ -10,6 +10,16 @@ import type {
   CreateSignalRequest,
   CreateSignalValueRequest,
   CreateUserRequest,
+  Product,
+  RawMaterial,
+  BillOfMaterials,
+  ProductionOrder,
+  StockMovement,
+  CreateProductRequest,
+  CreateRawMaterialRequest,
+  CreateBOMEntryRequest,
+  CreateProductionOrderRequest,
+  AdjustStockRequest,
 } from "@/types";
 import type { TTNUplink, TTNDevice, TTNStats } from "@/types/ttn";
 
@@ -393,6 +403,228 @@ export const getTTNStats = async (): Promise<TTNStats> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching TTN stats:", error);
+    throw error;
+  }
+};
+
+// MES: Product endpoints
+export const getProducts = async (params?: { category?: string; active?: string }): Promise<Product[]> => {
+  try {
+    const response = await axiosInstance.get<Product[]>("products", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+
+export const getProduct = async (id: string): Promise<Product> => {
+  try {
+    const response = await axiosInstance.get<Product>(`products/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    throw error;
+  }
+};
+
+export const createProduct = async (data: CreateProductRequest): Promise<Product> => {
+  try {
+    const response = await axiosInstance.post<Product>("products", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating product:", error);
+    throw error;
+  }
+};
+
+export const updateProduct = async (id: string, data: Partial<CreateProductRequest>): Promise<Product> => {
+  try {
+    const response = await axiosInstance.put<Product>(`products/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw error;
+  }
+};
+
+export const deleteProduct = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`products/${id}`);
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw error;
+  }
+};
+
+// MES: BOM endpoints
+export const getProductBOM = async (productId: string): Promise<BillOfMaterials[]> => {
+  try {
+    const response = await axiosInstance.get<BillOfMaterials[]>(`products/${productId}/bom`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product BOM:", error);
+    throw error;
+  }
+};
+
+export const addBOMEntry = async (productId: string, data: CreateBOMEntryRequest): Promise<BillOfMaterials> => {
+  try {
+    const response = await axiosInstance.post<BillOfMaterials>(`products/${productId}/bom`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding BOM entry:", error);
+    throw error;
+  }
+};
+
+export const deleteBOMEntry = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`bom/${id}`);
+  } catch (error) {
+    console.error("Error deleting BOM entry:", error);
+    throw error;
+  }
+};
+
+// MES: Raw Material endpoints
+export const getRawMaterials = async (params?: { category?: string; active?: string }): Promise<RawMaterial[]> => {
+  try {
+    const response = await axiosInstance.get<RawMaterial[]>("raw-materials", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching raw materials:", error);
+    throw error;
+  }
+};
+
+export const getRawMaterial = async (id: string): Promise<RawMaterial> => {
+  try {
+    const response = await axiosInstance.get<RawMaterial>(`raw-materials/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching raw material:", error);
+    throw error;
+  }
+};
+
+export const createRawMaterial = async (data: CreateRawMaterialRequest): Promise<RawMaterial> => {
+  try {
+    const response = await axiosInstance.post<RawMaterial>("raw-materials", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating raw material:", error);
+    throw error;
+  }
+};
+
+export const updateRawMaterial = async (id: string, data: Partial<CreateRawMaterialRequest>): Promise<RawMaterial> => {
+  try {
+    const response = await axiosInstance.put<RawMaterial>(`raw-materials/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating raw material:", error);
+    throw error;
+  }
+};
+
+export const deleteRawMaterial = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`raw-materials/${id}`);
+  } catch (error) {
+    console.error("Error deleting raw material:", error);
+    throw error;
+  }
+};
+
+export const adjustStock = async (id: string, data: AdjustStockRequest): Promise<RawMaterial> => {
+  try {
+    const response = await axiosInstance.post<RawMaterial>(`raw-materials/${id}/adjust-stock`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error adjusting stock:", error);
+    throw error;
+  }
+};
+
+// MES: Stock Movements
+export const getStockMovements = async (params?: {
+  raw_material_id?: string;
+  production_order_id?: string;
+  limit?: string;
+}): Promise<StockMovement[]> => {
+  try {
+    const response = await axiosInstance.get<StockMovement[]>("stock-movements", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock movements:", error);
+    throw error;
+  }
+};
+
+// MES: Production Order endpoints
+export const getProductionOrders = async (params?: {
+  status?: string;
+  product_id?: string;
+  device_id?: string;
+}): Promise<ProductionOrder[]> => {
+  try {
+    const response = await axiosInstance.get<ProductionOrder[]>("production-orders", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching production orders:", error);
+    throw error;
+  }
+};
+
+export const getProductionOrder = async (id: string): Promise<ProductionOrder> => {
+  try {
+    const response = await axiosInstance.get<ProductionOrder>(`production-orders/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching production order:", error);
+    throw error;
+  }
+};
+
+export const createProductionOrder = async (data: CreateProductionOrderRequest): Promise<ProductionOrder> => {
+  try {
+    const response = await axiosInstance.post<ProductionOrder>("production-orders", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating production order:", error);
+    throw error;
+  }
+};
+
+export const updateProductionOrder = async (
+  id: string,
+  data: Partial<CreateProductionOrderRequest>
+): Promise<ProductionOrder> => {
+  try {
+    const response = await axiosInstance.put<ProductionOrder>(`production-orders/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating production order:", error);
+    throw error;
+  }
+};
+
+export const deleteProductionOrder = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`production-orders/${id}`);
+  } catch (error) {
+    console.error("Error deleting production order:", error);
+    throw error;
+  }
+};
+
+export const updateOrderStatus = async (id: string, status: string): Promise<ProductionOrder> => {
+  try {
+    const response = await axiosInstance.put<ProductionOrder>(`production-orders/${id}/status`, { status });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating order status:", error);
     throw error;
   }
 };

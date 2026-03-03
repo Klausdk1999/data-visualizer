@@ -100,3 +100,114 @@ export interface CreateUserRequest {
   matricula?: string;
   rfid?: string;
 }
+
+// MES Types
+
+export interface Product {
+  id: number;
+  name: string;
+  sku?: string;
+  description?: string;
+  unit?: string;
+  category?: string;
+  is_active: boolean;
+  metadata?: Record<string, any>;
+  bom?: BillOfMaterials[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface RawMaterial {
+  id: number;
+  name: string;
+  sku?: string;
+  description?: string;
+  unit?: string;
+  stock_quantity: number;
+  min_stock?: number;
+  category?: string;
+  is_active: boolean;
+  metadata?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface BillOfMaterials {
+  id: number;
+  product_id: number;
+  product?: Product;
+  raw_material_id: number;
+  raw_material?: RawMaterial;
+  quantity: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ProductionOrder {
+  id: number;
+  product_id: number;
+  product?: Product;
+  quantity: number;
+  status: "planned" | "in_progress" | "completed" | "cancelled";
+  priority?: number;
+  device_id?: number;
+  device?: Device;
+  work_instructions?: string;
+  quality_notes?: string;
+  started_at?: string;
+  completed_at?: string;
+  metadata?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface StockMovement {
+  id: number;
+  raw_material_id: number;
+  raw_material?: RawMaterial;
+  production_order_id?: number;
+  movement_type: "in" | "out" | "adjustment";
+  quantity: number;
+  notes?: string;
+  created_at?: string;
+}
+
+export interface CreateProductRequest {
+  name: string;
+  sku?: string;
+  description?: string;
+  unit?: string;
+  category?: string;
+  is_active?: boolean;
+}
+
+export interface CreateRawMaterialRequest {
+  name: string;
+  sku?: string;
+  description?: string;
+  unit?: string;
+  stock_quantity?: number;
+  min_stock?: number;
+  category?: string;
+  is_active?: boolean;
+}
+
+export interface CreateBOMEntryRequest {
+  raw_material_id: number;
+  quantity: number;
+}
+
+export interface CreateProductionOrderRequest {
+  product_id: number;
+  quantity: number;
+  priority?: number;
+  device_id?: number;
+  work_instructions?: string;
+  quality_notes?: string;
+}
+
+export interface AdjustStockRequest {
+  quantity: number;
+  movement_type: "in" | "out" | "adjustment";
+  notes?: string;
+}
