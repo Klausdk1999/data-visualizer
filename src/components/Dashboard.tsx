@@ -19,18 +19,43 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  getProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getRawMaterials,
+  createRawMaterial,
+  updateRawMaterial,
+  deleteRawMaterial,
+  getProductionOrders,
+  createProductionOrder,
+  updateProductionOrder,
+  deleteProductionOrder,
+  updateOrderStatus,
+  adjustStock,
+  getProductBOM,
+  addBOMEntry,
+  deleteBOMEntry,
 } from "@/lib/requestHandlers";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut } from "lucide-react";
+import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList } from "lucide-react";
 import DashboardTab from "@/components/tabs/DashboardTab";
 import DevicesTab from "@/components/tabs/DevicesTab";
 import SignalsTab from "@/components/tabs/SignalsTab";
 import SignalValuesTab from "@/components/tabs/SignalValuesTab";
 import UsersTab from "@/components/tabs/UsersTab";
+import ProductsTab from "@/components/tabs/ProductsTab";
+import MaterialsTab from "@/components/tabs/MaterialsTab";
+import OrdersTab from "@/components/tabs/OrdersTab";
 import DeviceDialog from "@/components/dialogs/DeviceDialog";
 import SignalDialog from "@/components/dialogs/SignalDialog";
 import SignalValueDialog from "@/components/dialogs/SignalValueDialog";
 import UserDialog from "@/components/dialogs/UserDialog";
+import ProductDialog from "@/components/dialogs/ProductDialog";
+import RawMaterialDialog from "@/components/dialogs/RawMaterialDialog";
+import ProductionOrderDialog from "@/components/dialogs/ProductionOrderDialog";
+import StockAdjustDialog from "@/components/dialogs/StockAdjustDialog";
+import BOMDialog from "@/components/dialogs/BOMDialog";
 import type {
   User,
   Device,
@@ -40,9 +65,18 @@ import type {
   CreateSignalRequest,
   CreateSignalValueRequest,
   CreateUserRequest,
+  Product,
+  RawMaterial,
+  BillOfMaterials,
+  ProductionOrder,
+  CreateProductRequest,
+  CreateRawMaterialRequest,
+  CreateProductionOrderRequest,
+  CreateBOMEntryRequest,
+  AdjustStockRequest,
 } from "@/types";
 
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users";
+type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -69,8 +103,23 @@ export default function Dashboard({
   const [signalDialogOpen, setSignalDialogOpen] = useState(false);
   const [valueDialogOpen, setValueDialogOpen] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Device | Signal | User | null>(null);
+  const [editingItem, setEditingItem] = useState<Device | Signal | User | Product | RawMaterial | ProductionOrder | null>(null);
   const [error, setError] = useState<string>("");
+
+  // MES state
+  const [products, setProducts] = useState<Product[]>([]);
+  const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
+  const [productionOrders, setProductionOrders] = useState<ProductionOrder[]>([]);
+  const [bomEntries, setBomEntries] = useState<BillOfMaterials[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<RawMaterial | null>(null);
+
+  // MES dialog states
+  const [productDialogOpen, setProductDialogOpen] = useState(false);
+  const [materialDialogOpen, setMaterialDialogOpen] = useState(false);
+  const [orderDialogOpen, setOrderDialogOpen] = useState(false);
+  const [stockAdjustDialogOpen, setStockAdjustDialogOpen] = useState(false);
+  const [bomDialogOpen, setBomDialogOpen] = useState(false);
 
   // Update URL when tab changes
   const updateUrl = useCallback(
@@ -113,16 +162,22 @@ export default function Dashboard({
         return;
       }
 
-      const [devicesData, signalsData, valuesData, usersData] = await Promise.all([
+      const [devicesData, signalsData, valuesData, usersData, productsData, materialsData, ordersData] = await Promise.all([
         getDevices(),
         getSignals(),
         getSignalValues({ limit: "100" }),
         getUsers(),
+        getProducts(),
+        getRawMaterials(),
+        getProductionOrders(),
       ]);
       setDevices(devicesData);
       setSignals(signalsData);
       setSignalValues(valuesData);
       setUsers(usersData);
+      setProducts(productsData);
+      setRawMaterials(materialsData);
+      setProductionOrders(ordersData);
     } catch (error: any) {
       console.error("Error fetching data:", error);
       if (error.response?.status === 401) {
@@ -278,6 +333,159 @@ export default function Dashboard({
     }
   };
 
+  // Product select handler
+  const handleProductSelect = async (productId: number) => {
+    const newId = productId === selectedProduct ? null : productId;
+    setSelectedProduct(newId);
+    if (newId) {
+      try {
+        const bom = await getProductBOM(newId.toString());
+        setBomEntries(bom);
+      } catch (err) {
+        console.error("Error fetching BOM:", err);
+      }
+    } else {
+      setBomEntries([]);
+    }
+  };
+
+  // Product CRUD handlers
+  const handleCreateProduct = async (data: CreateProductRequest) => {
+    setError("");
+    try {
+      if (editingItem && "sku" in editingItem) {
+        await updateProduct((editingItem as Product).id.toString(), data);
+      } else {
+        await createProduct(data);
+      }
+      setProductDialogOpen(false);
+      setEditingItem(null);
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to save product");
+    }
+  };
+
+  const handleDeleteProduct = async (productId: number) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    try {
+      await deleteProduct(productId.toString());
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to delete product");
+    }
+  };
+
+  // BOM handlers
+  const handleAddBOMEntry = async (data: CreateBOMEntryRequest) => {
+    if (!selectedProduct) return;
+    setError("");
+    try {
+      await addBOMEntry(selectedProduct.toString(), data);
+      setBomDialogOpen(false);
+      const bom = await getProductBOM(selectedProduct.toString());
+      setBomEntries(bom);
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to add BOM entry");
+    }
+  };
+
+  const handleDeleteBOMEntry = async (bomId: number) => {
+    if (!confirm("Remove this material from the BOM?")) return;
+    try {
+      await deleteBOMEntry(bomId.toString());
+      if (selectedProduct) {
+        const bom = await getProductBOM(selectedProduct.toString());
+        setBomEntries(bom);
+      }
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to delete BOM entry");
+    }
+  };
+
+  // Raw Material CRUD handlers
+  const handleCreateRawMaterial = async (data: CreateRawMaterialRequest) => {
+    setError("");
+    try {
+      if (editingItem && "stock_quantity" in editingItem) {
+        await updateRawMaterial((editingItem as RawMaterial).id.toString(), data);
+      } else {
+        await createRawMaterial(data);
+      }
+      setMaterialDialogOpen(false);
+      setEditingItem(null);
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to save raw material");
+    }
+  };
+
+  const handleDeleteRawMaterial = async (materialId: number) => {
+    if (!confirm("Are you sure you want to delete this raw material?")) return;
+    try {
+      await deleteRawMaterial(materialId.toString());
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to delete raw material");
+    }
+  };
+
+  const handleAdjustStock = async (data: AdjustStockRequest) => {
+    if (!selectedMaterial) return;
+    setError("");
+    try {
+      await adjustStock(selectedMaterial.id.toString(), data);
+      setStockAdjustDialogOpen(false);
+      setSelectedMaterial(null);
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to adjust stock");
+    }
+  };
+
+  // Production Order CRUD handlers
+  const handleCreateOrder = async (data: CreateProductionOrderRequest) => {
+    setError("");
+    try {
+      if (editingItem && "status" in editingItem && "product_id" in editingItem) {
+        await updateProductionOrder((editingItem as ProductionOrder).id.toString(), data);
+      } else {
+        await createProductionOrder(data);
+      }
+      setOrderDialogOpen(false);
+      setEditingItem(null);
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to save production order");
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: number) => {
+    if (!confirm("Are you sure you want to delete this order?")) return;
+    try {
+      await deleteProductionOrder(orderId.toString());
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to delete order");
+    }
+  };
+
+  const handleUpdateOrderStatus = async (orderId: number, status: string) => {
+    const confirmMsg = status === "completed"
+      ? "Complete this order? Stock will be decremented based on the BOM."
+      : status === "cancelled"
+      ? "Cancel this order?"
+      : "Start this order?";
+    if (!confirm(confirmMsg)) return;
+    setError("");
+    try {
+      await updateOrderStatus(orderId.toString(), status);
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || "Failed to update order status");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
@@ -362,6 +570,41 @@ export default function Dashboard({
             <Activity className="w-4 h-4" />
             Signal Values
           </button>
+          <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
+          <button
+            onClick={() => handleTabChange("products")}
+            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+              activeTab === "products"
+                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+            }`}
+          >
+            <Package className="w-4 h-4" />
+            Products
+          </button>
+          <button
+            onClick={() => handleTabChange("materials")}
+            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+              activeTab === "materials"
+                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+            }`}
+          >
+            <Boxes className="w-4 h-4" />
+            Materials
+          </button>
+          <button
+            onClick={() => handleTabChange("orders")}
+            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+              activeTab === "orders"
+                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+            }`}
+          >
+            <ClipboardList className="w-4 h-4" />
+            Orders
+          </button>
+          <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
           <button
             onClick={() => handleTabChange("users")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
@@ -446,6 +689,41 @@ export default function Dashboard({
                 onDeleteUser={handleDeleteUser}
               />
             )}
+
+            {activeTab === "products" && (
+              <ProductsTab
+                products={products}
+                rawMaterials={rawMaterials}
+                selectedProduct={selectedProduct}
+                bomEntries={bomEntries}
+                onProductSelect={handleProductSelect}
+                onAddProduct={() => { setEditingItem(null); setProductDialogOpen(true); }}
+                onEditProduct={(product) => { setEditingItem(product); setProductDialogOpen(true); }}
+                onDeleteProduct={handleDeleteProduct}
+                onAddBOMEntry={() => setBomDialogOpen(true)}
+                onDeleteBOMEntry={handleDeleteBOMEntry}
+              />
+            )}
+
+            {activeTab === "materials" && (
+              <MaterialsTab
+                materials={rawMaterials}
+                onAddMaterial={() => { setEditingItem(null); setMaterialDialogOpen(true); }}
+                onEditMaterial={(material) => { setEditingItem(material); setMaterialDialogOpen(true); }}
+                onDeleteMaterial={handleDeleteRawMaterial}
+                onAdjustStock={(material) => { setSelectedMaterial(material); setStockAdjustDialogOpen(true); }}
+              />
+            )}
+
+            {activeTab === "orders" && (
+              <OrdersTab
+                orders={productionOrders}
+                onAddOrder={() => { setEditingItem(null); setOrderDialogOpen(true); }}
+                onEditOrder={(order) => { setEditingItem(order); setOrderDialogOpen(true); }}
+                onDeleteOrder={handleDeleteOrder}
+                onUpdateStatus={handleUpdateOrderStatus}
+              />
+            )}
           </>
         )}
       </div>
@@ -478,6 +756,43 @@ export default function Dashboard({
         onOpenChange={setUserDialogOpen}
         editingItem={editingItem as User | null}
         onSubmit={handleCreateUser}
+      />
+
+      <ProductDialog
+        open={productDialogOpen}
+        onOpenChange={setProductDialogOpen}
+        editingItem={editingItem as Product | null}
+        onSubmit={handleCreateProduct}
+      />
+
+      <RawMaterialDialog
+        open={materialDialogOpen}
+        onOpenChange={setMaterialDialogOpen}
+        editingItem={editingItem as RawMaterial | null}
+        onSubmit={handleCreateRawMaterial}
+      />
+
+      <ProductionOrderDialog
+        open={orderDialogOpen}
+        onOpenChange={setOrderDialogOpen}
+        editingItem={editingItem as ProductionOrder | null}
+        products={products}
+        devices={devices}
+        onSubmit={handleCreateOrder}
+      />
+
+      <StockAdjustDialog
+        open={stockAdjustDialogOpen}
+        onOpenChange={setStockAdjustDialogOpen}
+        materialName={selectedMaterial?.name || ""}
+        onSubmit={handleAdjustStock}
+      />
+
+      <BOMDialog
+        open={bomDialogOpen}
+        onOpenChange={setBomDialogOpen}
+        rawMaterials={rawMaterials}
+        onSubmit={handleAddBOMEntry}
       />
     </div>
   );

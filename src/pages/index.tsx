@@ -8,7 +8,7 @@ import {
 import Login from "@/components/Login";
 import Dashboard from "@/components/Dashboard";
 
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users";
+type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders";
 
 export default function Home() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function Home() {
   // Parse URL params for Dashboard
   const getInitialTab = (): TabType => {
     const tab = router.query.tab as string;
-    const validTabs: TabType[] = ["dashboard", "devices", "signals", "values", "users"];
+    const validTabs: TabType[] = ["dashboard", "devices", "signals", "values", "users", "products", "materials", "orders"];
     return validTabs.includes(tab as TabType) ? (tab as TabType) : "dashboard";
   };
 
