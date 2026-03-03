@@ -19,13 +19,21 @@ IoT Data Storage Dashboard - A web application for monitoring and managing IoT d
 src/
 ├── components/
 │   ├── dialogs/          # Modal dialogs for CRUD operations
+│   │   ├── BOMDialog.tsx
 │   │   ├── DeviceDialog.tsx
+│   │   ├── ProductDialog.tsx
+│   │   ├── ProductionOrderDialog.tsx
+│   │   ├── RawMaterialDialog.tsx
 │   │   ├── SignalDialog.tsx
 │   │   ├── SignalValueDialog.tsx
+│   │   ├── StockAdjustDialog.tsx
 │   │   └── UserDialog.tsx
 │   ├── tabs/             # Main dashboard tab components
 │   │   ├── DashboardTab.tsx
 │   │   ├── DevicesTab.tsx
+│   │   ├── MaterialsTab.tsx
+│   │   ├── OrdersTab.tsx
+│   │   ├── ProductsTab.tsx
 │   │   ├── SignalsTab.tsx
 │   │   ├── SignalValuesTab.tsx
 │   │   └── UsersTab.tsx
@@ -80,6 +88,17 @@ The backend API supports the following query parameters for signal values:
 - `to_date` - End date for time range (ISO 8601)
 - `limit` - Maximum number of records
 
+### MES Endpoints
+
+The backend also provides Manufacturing Execution System (MES) endpoints:
+
+- `/products` - Product CRUD and `/products/{id}/bom` for bill of materials management
+- `/raw-materials` - Raw material CRUD and `/raw-materials/{id}/adjust-stock` for stock adjustments
+- `/production-orders` - Production order CRUD with status transitions via `/production-orders/{id}/status`
+- `/production-orders/{id}/signal-values` - Signal values for the device linked to an order, filtered by the order's active time range
+- `/stock-movements` - Stock movement history
+- `/bom/{id}` - Individual BOM entry deletion
+
 ## URL Routing
 
 The dashboard supports URL-based navigation:
@@ -92,3 +111,6 @@ The dashboard supports URL-based navigation:
   - `&timespan=1h|24h|7d|30d` - Preset time ranges
   - `&from=YYYY-MM-DD&to=YYYY-MM-DD` - Custom date range
 - `/?tab=users` - User management
+- `/?tab=products` - Product management with BOM
+- `/?tab=materials` - Raw material inventory and stock
+- `/?tab=orders` - Production order tracking
