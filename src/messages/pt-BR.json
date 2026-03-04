@@ -80,7 +80,11 @@
     "confirmCompleteOrder": "Concluir esta ordem? O estoque será decrementado com base na lista de materiais.",
     "confirmCancelOrder": "Cancelar esta ordem?",
     "confirmStartOrder": "Iniciar esta ordem?",
-    "deviceType": "Tipo de Dispositivo"
+    "deviceType": "Tipo de Dispositivo",
+    "tokenCreated": "Dispositivo Criado com Sucesso",
+    "tokenWarning": "Salve este token agora — ele não será exibido novamente. Use-o como senha para MQTT ou como Bearer token para requisições REST.",
+    "copyToken": "Copiar",
+    "copied": "Copiado!"
   },
   "signals": {
     "title": "Configurações de Sinais",

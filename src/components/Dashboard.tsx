@@ -38,7 +38,7 @@ import {
   deleteBOMEntry,
 } from "@/lib/requestHandlers";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList, Copy, Check } from "lucide-react";
 import DashboardTab from "@/components/tabs/DashboardTab";
 import DevicesTab from "@/components/tabs/DevicesTab";
 import SignalsTab from "@/components/tabs/SignalsTab";
@@ -56,6 +56,13 @@ import RawMaterialDialog from "@/components/dialogs/RawMaterialDialog";
 import ProductionOrderDialog from "@/components/dialogs/ProductionOrderDialog";
 import StockAdjustDialog from "@/components/dialogs/StockAdjustDialog";
 import BOMDialog from "@/components/dialogs/BOMDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
@@ -122,6 +129,10 @@ export default function Dashboard({
   const [bomEntries, setBomEntries] = useState<BillOfMaterials[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<RawMaterial | null>(null);
+
+  // Device token dialog (shown after creating a new device)
+  const [newDeviceToken, setNewDeviceToken] = useState<string | null>(null);
+  const [tokenCopied, setTokenCopied] = useState(false);
 
   // MES dialog states
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -242,7 +253,11 @@ export default function Dashboard({
       if (editingItem && "device_type" in editingItem) {
         await updateDevice((editingItem as Device).id.toString(), deviceData);
       } else {
-        await createDevice(deviceData);
+        const result = await createDevice(deviceData);
+        if (result.auth_token) {
+          setNewDeviceToken(result.auth_token);
+          setTokenCopied(false);
+        }
       }
       setDeviceDialogOpen(false);
       setEditingItem(null);
@@ -807,6 +822,47 @@ export default function Dashboard({
         rawMaterials={rawMaterials}
         onSubmit={handleAddBOMEntry}
       />
+
+      {/* Device Token Dialog — shown once after creating a new device */}
+      <Dialog open={!!newDeviceToken} onOpenChange={() => setNewDeviceToken(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-gray-900 dark:text-white">
+              {t("devices.tokenCreated")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-3">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t("devices.tokenWarning")}
+            </p>
+            <div className="flex items-center gap-2">
+              <code className="flex-1 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm font-mono break-all text-gray-900 dark:text-gray-100">
+                {newDeviceToken}
+              </code>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  if (newDeviceToken) {
+                    navigator.clipboard.writeText(newDeviceToken);
+                    setTokenCopied(true);
+                    setTimeout(() => setTokenCopied(false), 2000);
+                  }
+                }}
+                className="flex items-center gap-1 shrink-0"
+              >
+                {tokenCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {tokenCopied ? t("devices.copied") : t("devices.copyToken")}
+              </Button>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setNewDeviceToken(null)}>
+              {t("common.close")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

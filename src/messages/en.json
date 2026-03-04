@@ -80,7 +80,11 @@
     "confirmCompleteOrder": "Complete this order? Stock will be decremented based on the BOM.",
     "confirmCancelOrder": "Cancel this order?",
     "confirmStartOrder": "Start this order?",
-    "deviceType": "Device Type"
+    "deviceType": "Device Type",
+    "tokenCreated": "Device Created Successfully",
+    "tokenWarning": "Save this auth token now — it won't be shown again. Use it as the password for MQTT or as the Bearer token for REST API requests.",
+    "copyToken": "Copy",
+    "copied": "Copied!"
   },
   "signals": {
     "title": "Signal Configurations",
