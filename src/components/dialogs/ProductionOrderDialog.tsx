@@ -69,20 +69,33 @@ export default function ProductionOrderDialog({
     c.name.toLowerCase().includes(customerInput.toLowerCase())
   );
 
-  // Convert ISO string to datetime-local input value
-  const toDatetimeLocal = (iso?: string) => {
+  // Convert ISO string to separate date and time values
+  const toDate = (iso?: string) => {
     if (!iso) return "";
     const d = new Date(iso);
     if (isNaN(d.getTime())) return "";
     const pad = (n: number) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  };
+
+  const toTime = (iso?: string) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  // Combine date + time inputs into ISO string
+  const combineDatetime = (date: string, time: string): string | undefined => {
+    if (!date) return undefined;
+    const datetime = time ? `${date}T${time}` : `${date}T00:00`;
+    return new Date(datetime).toISOString();
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const startedAt = formData.get("started_at") as string;
-    const completedAt = formData.get("completed_at") as string;
     const orderData: CreateProductionOrderRequest = {
       product_id: Number(formData.get("product_id")),
       quantity: Number(formData.get("quantity")),
@@ -93,8 +106,14 @@ export default function ProductionOrderDialog({
         ? Number(formData.get("device_id"))
         : undefined,
       customer_name: customerInput.trim() || undefined,
-      started_at: startedAt ? new Date(startedAt).toISOString() : undefined,
-      completed_at: completedAt ? new Date(completedAt).toISOString() : undefined,
+      started_at: combineDatetime(
+        formData.get("started_date") as string,
+        formData.get("started_time") as string
+      ),
+      completed_at: combineDatetime(
+        formData.get("completed_date") as string,
+        formData.get("completed_time") as string
+      ),
       work_instructions: (formData.get("work_instructions") as string) || undefined,
       quality_notes: (formData.get("quality_notes") as string) || undefined,
     };
@@ -211,29 +230,37 @@ export default function ProductionOrderDialog({
                 ))}
               </select>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="order-started-at" className="text-gray-700 dark:text-gray-300">
-                  {t("startDate")}
-                </Label>
+            <div>
+              <Label className="text-gray-700 dark:text-gray-300">{t("startDate")}</Label>
+              <div className="grid grid-cols-2 gap-2 mt-1">
                 <Input
-                  id="order-started-at"
-                  name="started_at"
-                  type="datetime-local"
-                  defaultValue={toDatetimeLocal(editingItem?.started_at)}
-                  className="mt-1"
+                  id="order-started-date"
+                  name="started_date"
+                  type="date"
+                  defaultValue={toDate(editingItem?.started_at)}
+                />
+                <Input
+                  id="order-started-time"
+                  name="started_time"
+                  type="time"
+                  defaultValue={toTime(editingItem?.started_at)}
                 />
               </div>
-              <div>
-                <Label htmlFor="order-completed-at" className="text-gray-700 dark:text-gray-300">
-                  {t("endDate")}
-                </Label>
+            </div>
+            <div>
+              <Label className="text-gray-700 dark:text-gray-300">{t("endDate")}</Label>
+              <div className="grid grid-cols-2 gap-2 mt-1">
                 <Input
-                  id="order-completed-at"
-                  name="completed_at"
-                  type="datetime-local"
-                  defaultValue={toDatetimeLocal(editingItem?.completed_at)}
-                  className="mt-1"
+                  id="order-completed-date"
+                  name="completed_date"
+                  type="date"
+                  defaultValue={toDate(editingItem?.completed_at)}
+                />
+                <Input
+                  id="order-completed-time"
+                  name="completed_time"
+                  type="time"
+                  defaultValue={toTime(editingItem?.completed_at)}
                 />
               </div>
             </div>

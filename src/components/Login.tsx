@@ -31,10 +31,10 @@ export default function Login({ onLoginSuccess, locale = "en", onLocaleChange }:
     setError("");
     setLoading(true);
 
-    try {
-      await login(email, password);
-      onLoginSuccess();
-    } catch (err: any) {
+    const result = await login(email, password).catch((err: any) => err);
+
+    if (result instanceof Error || result?.isAxiosError) {
+      const err = result;
       if (err.response?.status === 401) {
         setError(t("errorInvalidCredentials"));
       } else if (err.response?.status === 400) {
@@ -46,9 +46,11 @@ export default function Login({ onLoginSuccess, locale = "en", onLocaleChange }:
       } else {
         setError(err.response?.data || t("errorGeneric"));
       }
-    } finally {
-      setLoading(false);
+    } else {
+      onLoginSuccess();
     }
+
+    setLoading(false);
   };
 
   return (

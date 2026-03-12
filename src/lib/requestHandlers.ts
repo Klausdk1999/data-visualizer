@@ -93,17 +93,12 @@ axiosInstance.interceptors.response.use(
 
 // Auth endpoints
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
-  try {
-    const response = await axiosInstance.post<LoginResponse>("auth/login", { email, password });
-    if (response.data.token) {
-      localStorage.setItem("auth_token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-    }
-    return response.data;
-  } catch (error: any) {
-    console.error("Error logging in:", error);
-    throw error;
+  const response = await axiosInstance.post<LoginResponse>("auth/login", { email, password });
+  if (response.data.token) {
+    localStorage.setItem("auth_token", response.data.token);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
   }
+  return response.data;
 };
 
 export const logout = () => {

@@ -516,7 +516,12 @@ export default function Dashboard({
     setError("");
     try {
       if (editingItem && "status" in editingItem && "product_id" in editingItem) {
-        await updateProductionOrder((editingItem as ProductionOrder).id.toString(), data);
+        const orderId = (editingItem as ProductionOrder).id.toString();
+        await updateProductionOrder(orderId, data);
+        // Auto-set status to completed when end date is provided
+        if (data.completed_at) {
+          await updateOrderStatus(orderId, "completed");
+        }
       } else {
         await createProductionOrder(data);
       }
