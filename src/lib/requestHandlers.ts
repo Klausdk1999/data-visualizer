@@ -14,12 +14,17 @@ import type {
   RawMaterial,
   BillOfMaterials,
   ProductionOrder,
+  Customer,
   StockMovement,
   CreateProductRequest,
   CreateRawMaterialRequest,
   CreateBOMEntryRequest,
   CreateProductionOrderRequest,
   AdjustStockRequest,
+  Service,
+  TimeEntry,
+  CreateServiceRequest,
+  CreateTimeEntryRequest,
 } from "@/types";
 import type { TTNUplink, TTNDevice, TTNStats } from "@/types/ttn";
 
@@ -562,6 +567,18 @@ export const getStockMovements = async (params?: {
   }
 };
 
+// MES: Customer endpoints
+export const getCustomers = async (search?: string): Promise<Customer[]> => {
+  try {
+    const params = search ? { search } : undefined;
+    const response = await axiosInstance.get<Customer[]>("customers", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    throw error;
+  }
+};
+
 // MES: Production Order endpoints
 export const getProductionOrders = async (params?: {
   status?: string;
@@ -635,6 +652,91 @@ export const getOrderSignalValues = async (orderId: string): Promise<SignalValue
     return response.data;
   } catch (error) {
     console.error("Error fetching order signal values:", error);
+    throw error;
+  }
+};
+
+// MES: Service endpoints
+export const getServices = async (params?: { active?: string }): Promise<Service[]> => {
+  try {
+    const response = await axiosInstance.get<Service[]>("services", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    throw error;
+  }
+};
+
+export const createService = async (data: CreateServiceRequest): Promise<Service> => {
+  try {
+    const response = await axiosInstance.post<Service>("services", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating service:", error);
+    throw error;
+  }
+};
+
+export const updateService = async (id: string, data: Partial<CreateServiceRequest>): Promise<Service> => {
+  try {
+    const response = await axiosInstance.put<Service>(`services/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating service:", error);
+    throw error;
+  }
+};
+
+export const deleteService = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`services/${id}`);
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    throw error;
+  }
+};
+
+// MES: Time Entry endpoints
+export const getTimeEntries = async (params?: {
+  user_id?: string;
+  production_order_id?: string;
+  from_date?: string;
+  to_date?: string;
+}): Promise<TimeEntry[]> => {
+  try {
+    const response = await axiosInstance.get<TimeEntry[]>("time-entries", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching time entries:", error);
+    throw error;
+  }
+};
+
+export const createTimeEntry = async (data: CreateTimeEntryRequest): Promise<TimeEntry> => {
+  try {
+    const response = await axiosInstance.post<TimeEntry>("time-entries", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating time entry:", error);
+    throw error;
+  }
+};
+
+export const updateTimeEntry = async (id: string, data: Partial<CreateTimeEntryRequest>): Promise<TimeEntry> => {
+  try {
+    const response = await axiosInstance.put<TimeEntry>(`time-entries/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating time entry:", error);
+    throw error;
+  }
+};
+
+export const deleteTimeEntry = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`time-entries/${id}`);
+  } catch (error) {
+    console.error("Error deleting time entry:", error);
     throw error;
   }
 };

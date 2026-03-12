@@ -56,7 +56,10 @@
     "products": "Products",
     "materials": "Materials",
     "orders": "Orders",
-    "users": "Users"
+    "services": "Services",
+    "hours": "Hours",
+    "users": "Users",
+    "settings": "Settings"
   },
   "devices": {
     "title": "Devices",
@@ -148,8 +151,9 @@
     "createUser": "Create User",
     "email": "Email",
     "password": "Password",
-    "category": "Category",
-    "matricula": "Matricula",
+    "type": "Type",
+    "admin": "Admin",
+    "worker": "Worker",
     "rfid": "RFID"
   },
   "products": {
@@ -204,12 +208,45 @@
     "workInstructions": "Work Instructions",
     "qualityNotes": "Quality Notes",
     "selectProduct": "Select a product",
+    "customer": "Customer",
+    "customerPlaceholder": "Type to search or add new customer",
     "priority": "Priority",
     "started": "Started",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "completedDate": "Completed",
+    "searchPlaceholder": "Search orders...",
+    "allStatuses": "All statuses",
+    "clearFilters": "Clear",
     "signals": "Signals",
     "deviceSignalValues": "Device Signal Values during Order #{orderId}",
     "loadingSignalValues": "Loading signal values...",
     "noSignalValues": "No signal values found for this order's time range."
+  },
+  "services": {
+    "title": "Services",
+    "addService": "Add Service",
+    "editService": "Edit Service",
+    "createService": "Create Service",
+    "code": "Code",
+    "confirmDelete": "Are you sure you want to delete this service?"
+  },
+  "hours": {
+    "title": "Hours Worked",
+    "addEntry": "Add Entry",
+    "editEntry": "Edit Entry",
+    "createEntry": "Create Entry",
+    "worker": "Worker",
+    "order": "Production Order",
+    "service": "Service",
+    "day": "Day",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "observations": "Observations",
+    "selectOrder": "Select a production order",
+    "selectService": "Select a service",
+    "selectWorker": "Select a worker",
+    "confirmDelete": "Are you sure you want to delete this entry?"
   },
   "ttn": {
     "title": "TTN River Monitoring",

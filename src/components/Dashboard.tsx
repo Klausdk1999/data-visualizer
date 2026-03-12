@@ -36,9 +36,17 @@ import {
   getProductBOM,
   addBOMEntry,
   deleteBOMEntry,
+  getServices,
+  createService,
+  updateService,
+  deleteService,
+  getTimeEntries,
+  createTimeEntry,
+  updateTimeEntry,
+  deleteTimeEntry,
 } from "@/lib/requestHandlers";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList, Copy, Check } from "lucide-react";
+import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList, Copy, Check, Settings, ChevronDown, Clock, Wrench } from "lucide-react";
 import DashboardTab from "@/components/tabs/DashboardTab";
 import DevicesTab from "@/components/tabs/DevicesTab";
 import SignalsTab from "@/components/tabs/SignalsTab";
@@ -47,6 +55,8 @@ import UsersTab from "@/components/tabs/UsersTab";
 import ProductsTab from "@/components/tabs/ProductsTab";
 import MaterialsTab from "@/components/tabs/MaterialsTab";
 import OrdersTab from "@/components/tabs/OrdersTab";
+import ServicesTab from "@/components/tabs/ServicesTab";
+import HoursTab from "@/components/tabs/HoursTab";
 import DeviceDialog from "@/components/dialogs/DeviceDialog";
 import SignalDialog from "@/components/dialogs/SignalDialog";
 import SignalValueDialog from "@/components/dialogs/SignalValueDialog";
@@ -56,6 +66,8 @@ import RawMaterialDialog from "@/components/dialogs/RawMaterialDialog";
 import ProductionOrderDialog from "@/components/dialogs/ProductionOrderDialog";
 import StockAdjustDialog from "@/components/dialogs/StockAdjustDialog";
 import BOMDialog from "@/components/dialogs/BOMDialog";
+import ServiceDialog from "@/components/dialogs/ServiceDialog";
+import TimeEntryDialog from "@/components/dialogs/TimeEntryDialog";
 import {
   Dialog,
   DialogContent,
@@ -85,9 +97,13 @@ import type {
   CreateProductionOrderRequest,
   CreateBOMEntryRequest,
   AdjustStockRequest,
+  Service,
+  TimeEntry,
+  CreateServiceRequest,
+  CreateTimeEntryRequest,
 } from "@/types";
 
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders";
+type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders" | "services" | "hours";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -113,6 +129,7 @@ export default function Dashboard({
   const [selectedSignal, setSelectedSignal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Dialog states
   const [deviceDialogOpen, setDeviceDialogOpen] = useState(false);
@@ -140,6 +157,14 @@ export default function Dashboard({
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   const [stockAdjustDialogOpen, setStockAdjustDialogOpen] = useState(false);
   const [bomDialogOpen, setBomDialogOpen] = useState(false);
+
+  // Hours/Services state
+  const [services, setServices] = useState<Service[]>([]);
+  const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
+  const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
+  const [timeEntryDialogOpen, setTimeEntryDialogOpen] = useState(false);
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [editingTimeEntry, setEditingTimeEntry] = useState<TimeEntry | null>(null);
 
   // Update URL when tab changes
   const updateUrl = useCallback(
@@ -182,22 +207,41 @@ export default function Dashboard({
         return;
       }
 
-      const [devicesData, signalsData, valuesData, usersData, productsData, materialsData, ordersData] = await Promise.all([
-        getDevices(),
-        getSignals(),
-        getSignalValues({ limit: "100" }),
-        getUsers(),
-        getProducts(),
-        getRawMaterials(),
-        getProductionOrders(),
-      ]);
-      setDevices(devicesData);
-      setSignals(signalsData);
-      setSignalValues(valuesData);
-      setUsers(usersData);
-      setProducts(productsData);
-      setRawMaterials(materialsData);
-      setProductionOrders(ordersData);
+      const currentUser = getCurrentUser();
+      const isAdmin = currentUser?.type === "admin";
+
+      if (isAdmin) {
+        const [devicesData, signalsData, valuesData, usersData, productsData, materialsData, ordersData, servicesData, timeEntriesData] = await Promise.all([
+          getDevices(),
+          getSignals(),
+          getSignalValues({ limit: "100" }),
+          getUsers(),
+          getProducts(),
+          getRawMaterials(),
+          getProductionOrders(),
+          getServices(),
+          getTimeEntries(),
+        ]);
+        setDevices(devicesData);
+        setSignals(signalsData);
+        setSignalValues(valuesData);
+        setUsers(usersData);
+        setProducts(productsData);
+        setRawMaterials(materialsData);
+        setProductionOrders(ordersData);
+        setServices(servicesData);
+        setTimeEntries(timeEntriesData);
+      } else {
+        // Workers can only fetch: production orders (read), services (read), time entries (own)
+        const [ordersData, servicesData, timeEntriesData] = await Promise.all([
+          getProductionOrders(),
+          getServices(),
+          getTimeEntries(),
+        ]);
+        setProductionOrders(ordersData);
+        setServices(servicesData);
+        setTimeEntries(timeEntriesData);
+      }
     } catch (error: any) {
       console.error("Error fetching data:", error);
       if (error.response?.status === 401) {
@@ -510,6 +554,62 @@ export default function Dashboard({
     }
   };
 
+  // Service CRUD handlers
+  const handleCreateService = async (data: CreateServiceRequest) => {
+    setError("");
+    try {
+      if (editingService) {
+        await updateService(editingService.id.toString(), data);
+      } else {
+        await createService(data);
+      }
+      setServiceDialogOpen(false);
+      setEditingService(null);
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || t("errors.saveFailed"));
+    }
+  };
+
+  const handleDeleteService = async (serviceId: number) => {
+    if (!confirm(t("services.confirmDelete"))) return;
+    try {
+      await deleteService(serviceId.toString());
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || t("errors.deleteFailed"));
+    }
+  };
+
+  // Time Entry CRUD handlers
+  const handleCreateTimeEntry = async (data: CreateTimeEntryRequest) => {
+    setError("");
+    try {
+      if (editingTimeEntry) {
+        await updateTimeEntry(editingTimeEntry.id.toString(), data);
+      } else {
+        await createTimeEntry(data);
+      }
+      setTimeEntryDialogOpen(false);
+      setEditingTimeEntry(null);
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || t("errors.saveFailed"));
+    }
+  };
+
+  const handleDeleteTimeEntry = async (entryId: number) => {
+    if (!confirm(t("hours.confirmDelete"))) return;
+    try {
+      await deleteTimeEntry(entryId.toString());
+      fetchData();
+    } catch (err: any) {
+      setError(err.response?.data || t("errors.deleteFailed"));
+    }
+  };
+
+  const isWorker = user?.type === "worker";
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
@@ -552,8 +652,8 @@ export default function Dashboard({
       )}
 
       {/* Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div className="flex space-x-2 bg-white/50 backdrop-blur-xl rounded-2xl p-1.5 border border-white/30 shadow-sm dark:bg-gray-800/50 dark:border-white/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 relative z-20">
+        <div className="flex items-center space-x-2 bg-white/50 backdrop-blur-xl rounded-2xl p-1.5 border border-white/30 shadow-sm dark:bg-gray-800/50 dark:border-white/10">
           <button
             onClick={() => handleTabChange("dashboard")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
@@ -565,62 +665,7 @@ export default function Dashboard({
             <LayoutDashboard className="w-4 h-4" />
             {t("tabs.dashboard")}
           </button>
-          <button
-            onClick={() => handleTabChange("devices")}
-            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "devices"
-                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            <Cpu className="w-4 h-4" />
-            {t("tabs.devices")}
-          </button>
-          <button
-            onClick={() => handleTabChange("signals")}
-            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "signals"
-                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            <Radio className="w-4 h-4" />
-            {t("tabs.signals")}
-          </button>
-          <button
-            onClick={() => handleTabChange("values")}
-            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "values"
-                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            <Activity className="w-4 h-4" />
-            {t("tabs.values")}
-          </button>
           <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
-          <button
-            onClick={() => handleTabChange("products")}
-            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "products"
-                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            <Package className="w-4 h-4" />
-            {t("tabs.products")}
-          </button>
-          <button
-            onClick={() => handleTabChange("materials")}
-            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "materials"
-                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            <Boxes className="w-4 h-4" />
-            {t("tabs.materials")}
-          </button>
           <button
             onClick={() => handleTabChange("orders")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
@@ -632,18 +677,135 @@ export default function Dashboard({
             <ClipboardList className="w-4 h-4" />
             {t("tabs.orders")}
           </button>
-          <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
           <button
-            onClick={() => handleTabChange("users")}
+            onClick={() => handleTabChange("hours")}
             className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "users"
+              activeTab === "hours"
                 ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
                 : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
             }`}
           >
-            <Users className="w-4 h-4" />
-            {t("tabs.users")}
+            <Clock className="w-4 h-4" />
+            {t("tabs.hours")}
           </button>
+          {isWorker && (
+            <button
+              onClick={() => handleTabChange("services")}
+              className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+                activeTab === "services"
+                  ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                  : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+              }`}
+            >
+              <Wrench className="w-4 h-4" />
+              {t("tabs.services")}
+            </button>
+          )}
+          {!isWorker && (
+            <>
+              <button
+                onClick={() => handleTabChange("products")}
+                className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+                  activeTab === "products"
+                    ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                    : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                }`}
+              >
+                <Package className="w-4 h-4" />
+                {t("tabs.products")}
+              </button>
+              <button
+                onClick={() => handleTabChange("materials")}
+                className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+                  activeTab === "materials"
+                    ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                    : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                }`}
+              >
+                <Boxes className="w-4 h-4" />
+                {t("tabs.materials")}
+              </button>
+              <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
+              {/* Settings dropdown for IoT configuration tabs */}
+              <div className="relative z-50">
+                <button
+                  onClick={() => setSettingsOpen(!settingsOpen)}
+                  className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+                    ["devices", "signals", "values", "services"].includes(activeTab)
+                      ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                      : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                  }`}
+                >
+                  <Settings className="w-4 h-4" />
+                  {t("tabs.settings")}
+                  <ChevronDown className={`w-3 h-3 transition-transform ${settingsOpen ? "rotate-180" : ""}`} />
+                </button>
+                {settingsOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setSettingsOpen(false)} />
+                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[200px] bg-white/90 backdrop-blur-xl rounded-xl border border-white/30 shadow-lg dark:bg-gray-800/90 dark:border-white/10 py-1">
+                      <button
+                        onClick={() => { handleTabChange("devices"); setSettingsOpen(false); }}
+                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
+                          activeTab === "devices"
+                            ? "bg-blue-500/90 text-white"
+                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                        }`}
+                      >
+                        <Cpu className="w-4 h-4" />
+                        {t("tabs.devices")}
+                      </button>
+                      <button
+                        onClick={() => { handleTabChange("signals"); setSettingsOpen(false); }}
+                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
+                          activeTab === "signals"
+                            ? "bg-blue-500/90 text-white"
+                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                        }`}
+                      >
+                        <Radio className="w-4 h-4" />
+                        {t("tabs.signals")}
+                      </button>
+                      <button
+                        onClick={() => { handleTabChange("values"); setSettingsOpen(false); }}
+                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
+                          activeTab === "values"
+                            ? "bg-blue-500/90 text-white"
+                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                        }`}
+                      >
+                        <Activity className="w-4 h-4" />
+                        {t("tabs.values")}
+                      </button>
+                      <button
+                        onClick={() => { handleTabChange("services"); setSettingsOpen(false); }}
+                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
+                          activeTab === "services"
+                            ? "bg-blue-500/90 text-white"
+                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                        }`}
+                      >
+                        <Wrench className="w-4 h-4" />
+                        {t("tabs.services")}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+              <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
+              <button
+                onClick={() => handleTabChange("users")}
+                className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+                  activeTab === "users"
+                    ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+                    : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                }`}
+              >
+                <Users className="w-4 h-4" />
+                {t("tabs.users")}
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -746,10 +908,31 @@ export default function Dashboard({
             {activeTab === "orders" && (
               <OrdersTab
                 orders={productionOrders}
+                isWorker={isWorker}
                 onAddOrder={() => { setEditingItem(null); setOrderDialogOpen(true); }}
                 onEditOrder={(order) => { setEditingItem(order); setOrderDialogOpen(true); }}
                 onDeleteOrder={handleDeleteOrder}
                 onUpdateStatus={handleUpdateOrderStatus}
+              />
+            )}
+
+            {activeTab === "hours" && (
+              <HoursTab
+                timeEntries={isWorker ? timeEntries.filter(e => e.user_id === user?.id) : timeEntries}
+                isWorker={isWorker}
+                onAddEntry={() => { setEditingTimeEntry(null); setTimeEntryDialogOpen(true); }}
+                onEditEntry={(entry) => { setEditingTimeEntry(entry); setTimeEntryDialogOpen(true); }}
+                onDeleteEntry={handleDeleteTimeEntry}
+              />
+            )}
+
+            {activeTab === "services" && (
+              <ServicesTab
+                services={services}
+                isWorker={isWorker}
+                onAddService={() => { setEditingService(null); setServiceDialogOpen(true); }}
+                onEditService={(service) => { setEditingService(service); setServiceDialogOpen(true); }}
+                onDeleteService={handleDeleteService}
               />
             )}
           </>
@@ -821,6 +1004,24 @@ export default function Dashboard({
         onOpenChange={setBomDialogOpen}
         rawMaterials={rawMaterials}
         onSubmit={handleAddBOMEntry}
+      />
+
+      <ServiceDialog
+        open={serviceDialogOpen}
+        onOpenChange={setServiceDialogOpen}
+        editingItem={editingService}
+        onSubmit={handleCreateService}
+      />
+
+      <TimeEntryDialog
+        open={timeEntryDialogOpen}
+        onOpenChange={setTimeEntryDialogOpen}
+        editingItem={editingTimeEntry}
+        onSubmit={handleCreateTimeEntry}
+        productionOrders={productionOrders}
+        services={services}
+        users={users}
+        currentUser={user}
       />
 
       {/* Device Token Dialog — shown once after creating a new device */}

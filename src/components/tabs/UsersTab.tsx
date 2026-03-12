@@ -42,8 +42,7 @@ export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }:
               <TableHead>{tc("id")}</TableHead>
               <TableHead>{tc("name")}</TableHead>
               <TableHead>{t("email")}</TableHead>
-              <TableHead>{t("category")}</TableHead>
-              <TableHead>{t("matricula")}</TableHead>
+              <TableHead>{t("type")}</TableHead>
               <TableHead>{t("rfid")}</TableHead>
               <TableHead>{tc("status")}</TableHead>
               <TableHead>{tc("actions")}</TableHead>
@@ -56,10 +55,7 @@ export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }:
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.name}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.email || "-"}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
-                  {u.categoria || "-"}
-                </TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">
-                  {u.matricula || "-"}
+                  {u.type || "-"}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.rfid || "-"}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">

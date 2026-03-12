@@ -38,8 +38,8 @@ test.describe("Login Flow", () => {
 
   test("should login successfully with valid credentials", async ({ page }) => {
     // Fill in valid credentials (from seed script)
-    await page.fill('input[type="email"]', "test@example.com");
-    await page.fill('input[type="password"]', "password123");
+    await page.fill('input[type="email"]', "admin@test.com");
+    await page.fill('input[type="password"]', "admin123");
 
     // Click login button
     await page.click('button[type="submit"]');
@@ -51,8 +51,8 @@ test.describe("Login Flow", () => {
 
   test("should persist auth token in localStorage", async ({ page }) => {
     // Fill in valid credentials
-    await page.fill('input[type="email"]', "test@example.com");
-    await page.fill('input[type="password"]', "password123");
+    await page.fill('input[type="email"]', "admin@test.com");
+    await page.fill('input[type="password"]', "admin123");
 
     // Click login button
     await page.click('button[type="submit"]');

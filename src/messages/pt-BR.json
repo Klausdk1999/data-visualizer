@@ -56,7 +56,10 @@
     "products": "Produtos",
     "materials": "Materiais",
     "orders": "Ordens",
-    "users": "Usuários"
+    "services": "Serviços",
+    "hours": "Horas",
+    "users": "Usuários",
+    "settings": "Configurações"
   },
   "devices": {
     "title": "Dispositivos",
@@ -148,8 +151,9 @@
     "createUser": "Criar Usuário",
     "email": "Email",
     "password": "Senha",
-    "category": "Categoria",
-    "matricula": "Matrícula",
+    "type": "Tipo",
+    "admin": "Administrador",
+    "worker": "Trabalhador",
     "rfid": "RFID"
   },
   "products": {
@@ -204,12 +208,45 @@
     "workInstructions": "Instruções de Trabalho",
     "qualityNotes": "Notas de Qualidade",
     "selectProduct": "Selecione um produto",
+    "customer": "Cliente",
+    "customerPlaceholder": "Digite para buscar ou adicionar novo cliente",
     "priority": "Prioridade",
     "started": "Iniciada",
+    "startDate": "Data de Início",
+    "endDate": "Data de Término",
+    "completedDate": "Concluída",
+    "searchPlaceholder": "Buscar ordens...",
+    "allStatuses": "Todos os status",
+    "clearFilters": "Limpar",
     "signals": "Sinais",
     "deviceSignalValues": "Valores de Sinais do Dispositivo durante Ordem #{orderId}",
     "loadingSignalValues": "Carregando valores de sinais...",
     "noSignalValues": "Nenhum valor de sinal encontrado para o período desta ordem."
+  },
+  "services": {
+    "title": "Serviços",
+    "addService": "Adicionar Serviço",
+    "editService": "Editar Serviço",
+    "createService": "Criar Serviço",
+    "code": "Código",
+    "confirmDelete": "Tem certeza que deseja excluir este serviço?"
+  },
+  "hours": {
+    "title": "Horas Trabalhadas",
+    "addEntry": "Adicionar Registro",
+    "editEntry": "Editar Registro",
+    "createEntry": "Criar Registro",
+    "worker": "Trabalhador",
+    "order": "Ordem de Produção",
+    "service": "Serviço",
+    "day": "Dia",
+    "startTime": "Hora Início",
+    "endTime": "Hora Fim",
+    "observations": "Observações",
+    "selectOrder": "Selecione uma ordem de produção",
+    "selectService": "Selecione um serviço",
+    "selectWorker": "Selecione um trabalhador",
+    "confirmDelete": "Tem certeza que deseja excluir este registro?"
   },
   "ttn": {
     "title": "Monitoramento de Rios TTN",

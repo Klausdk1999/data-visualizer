@@ -8,7 +8,7 @@ import {
 import Login from "@/components/Login";
 import Dashboard from "@/components/Dashboard";
 
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders";
+type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders" | "services" | "hours";
 
 export default function Home(props: any) {
   const router = useRouter();
@@ -33,8 +33,8 @@ export default function Home(props: any) {
   // Parse URL params for Dashboard
   const getInitialTab = (): TabType => {
     const tab = router.query.tab as string;
-    const validTabs: TabType[] = ["dashboard", "devices", "signals", "values", "users", "products", "materials", "orders"];
-    return validTabs.includes(tab as TabType) ? (tab as TabType) : "dashboard";
+    const validTabs: TabType[] = ["dashboard", "devices", "signals", "values", "users", "products", "materials", "orders", "services", "hours"];
+    return validTabs.includes(tab as TabType) ? (tab as TabType) : "orders";
   };
 
   const handleLoginSuccess = () => {

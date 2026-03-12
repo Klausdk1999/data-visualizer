@@ -33,8 +33,7 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
       name: formData.get("name") as string,
       email: (formData.get("email") as string) || undefined,
       password: (formData.get("password") as string) || undefined,
-      categoria: (formData.get("categoria") as string) || undefined,
-      matricula: (formData.get("matricula") as string) || undefined,
+      type: (formData.get("type") as string) || "worker",
       rfid: (formData.get("rfid") as string) || undefined,
     };
     onSubmit(userData);
@@ -87,26 +86,18 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
               />
             </div>
             <div>
-              <Label htmlFor="user-categoria" className="text-gray-700 dark:text-gray-300">
-                {t("category")}
+              <Label htmlFor="user-type" className="text-gray-700 dark:text-gray-300">
+                {t("type")}
               </Label>
-              <Input
-                id="user-categoria"
-                name="categoria"
-                defaultValue={editingItem?.categoria}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="user-matricula" className="text-gray-700 dark:text-gray-300">
-                {t("matricula")}
-              </Label>
-              <Input
-                id="user-matricula"
-                name="matricula"
-                defaultValue={editingItem?.matricula}
-                className="mt-1"
-              />
+              <select
+                id="user-type"
+                name="type"
+                defaultValue={editingItem?.type || "worker"}
+                className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+              >
+                <option value="worker">{t("worker")}</option>
+                <option value="admin">{t("admin")}</option>
+              </select>
             </div>
             <div>
               <Label htmlFor="user-rfid" className="text-gray-700 dark:text-gray-300">

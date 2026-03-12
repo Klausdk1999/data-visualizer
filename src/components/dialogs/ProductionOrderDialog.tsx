@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,10 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { getCustomers } from "@/lib/requestHandlers";
 import type {
   ProductionOrder,
   Product,
   Device,
+  Customer,
   CreateProductionOrderRequest,
 } from "@/types";
 
@@ -40,9 +42,47 @@ export default function ProductionOrderDialog({
   const t = useTranslations("orders");
   const tc = useTranslations("common");
 
+  const [customerInput, setCustomerInput] = useState("");
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      setCustomerInput(editingItem?.customer?.name ?? "");
+      getCustomers().then(setCustomers).catch(() => {});
+    }
+  }, [open, editingItem]);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const filteredCustomers = customers.filter((c) =>
+    c.name.toLowerCase().includes(customerInput.toLowerCase())
+  );
+
+  // Convert ISO string to datetime-local input value
+  const toDatetimeLocal = (iso?: string) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    const startedAt = formData.get("started_at") as string;
+    const completedAt = formData.get("completed_at") as string;
     const orderData: CreateProductionOrderRequest = {
       product_id: Number(formData.get("product_id")),
       quantity: Number(formData.get("quantity")),
@@ -52,6 +92,9 @@ export default function ProductionOrderDialog({
       device_id: formData.get("device_id")
         ? Number(formData.get("device_id"))
         : undefined,
+      customer_name: customerInput.trim() || undefined,
+      started_at: startedAt ? new Date(startedAt).toISOString() : undefined,
+      completed_at: completedAt ? new Date(completedAt).toISOString() : undefined,
       work_instructions: (formData.get("work_instructions") as string) || undefined,
       quality_notes: (formData.get("quality_notes") as string) || undefined,
     };
@@ -86,6 +129,42 @@ export default function ProductionOrderDialog({
                   </option>
                 ))}
               </select>
+            </div>
+            <div>
+              <Label htmlFor="order-customer" className="text-gray-700 dark:text-gray-300">
+                {t("customer")}
+              </Label>
+              <div className="relative" ref={suggestionsRef}>
+                <Input
+                  id="order-customer"
+                  value={customerInput}
+                  onChange={(e) => {
+                    setCustomerInput(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  placeholder={t("customerPlaceholder")}
+                  className="mt-1"
+                  autoComplete="off"
+                />
+                {showSuggestions && customerInput && filteredCustomers.length > 0 && (
+                  <div className="absolute z-50 mt-1 w-full rounded-md border border-input bg-background shadow-lg max-h-40 overflow-y-auto">
+                    {filteredCustomers.map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
+                        onClick={() => {
+                          setCustomerInput(c.name);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        {c.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div>
               <Label htmlFor="order-quantity" className="text-gray-700 dark:text-gray-300">
@@ -131,6 +210,32 @@ export default function ProductionOrderDialog({
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="order-started-at" className="text-gray-700 dark:text-gray-300">
+                  {t("startDate")}
+                </Label>
+                <Input
+                  id="order-started-at"
+                  name="started_at"
+                  type="datetime-local"
+                  defaultValue={toDatetimeLocal(editingItem?.started_at)}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="order-completed-at" className="text-gray-700 dark:text-gray-300">
+                  {t("endDate")}
+                </Label>
+                <Input
+                  id="order-completed-at"
+                  name="completed_at"
+                  type="datetime-local"
+                  defaultValue={toDatetimeLocal(editingItem?.completed_at)}
+                  className="mt-1"
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="order-instructions" className="text-gray-700 dark:text-gray-300">

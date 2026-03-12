@@ -4,8 +4,7 @@ export interface User {
   id: number;
   name: string;
   email?: string;
-  categoria?: string;
-  matricula?: string;
+  type?: string;
   rfid?: string;
   is_active: boolean;
   created_at?: string;
@@ -96,8 +95,7 @@ export interface CreateUserRequest {
   name: string;
   email?: string;
   password?: string;
-  categoria?: string;
-  matricula?: string;
+  type?: string;
   rfid?: string;
 }
 
@@ -143,10 +141,19 @@ export interface BillOfMaterials {
   updated_at?: string;
 }
 
+export interface Customer {
+  id: number;
+  name: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface ProductionOrder {
   id: number;
   product_id: number;
   product?: Product;
+  customer_id?: number;
+  customer?: Customer;
   quantity: number;
   status: "planned" | "in_progress" | "completed" | "cancelled";
   priority?: number;
@@ -202,6 +209,9 @@ export interface CreateProductionOrderRequest {
   quantity: number;
   priority?: number;
   device_id?: number;
+  customer_name?: string;
+  started_at?: string;
+  completed_at?: string;
   work_instructions?: string;
   quality_notes?: string;
 }
@@ -210,4 +220,49 @@ export interface AdjustStockRequest {
   quantity: number;
   movement_type: "in" | "out" | "adjustment";
   notes?: string;
+}
+
+// Hours Worked Types
+
+export interface Service {
+  id: number;
+  code: string;
+  name: string;
+  description?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface TimeEntry {
+  id: number;
+  user_id: number;
+  user?: User;
+  production_order_id: number;
+  production_order?: ProductionOrder;
+  service_id: number;
+  service?: Service;
+  day: string;
+  start_time: string;
+  end_time: string;
+  observations?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CreateServiceRequest {
+  code: string;
+  name: string;
+  description?: string;
+  is_active?: boolean;
+}
+
+export interface CreateTimeEntryRequest {
+  user_id: number;
+  production_order_id: number;
+  service_id: number;
+  day: string;
+  start_time: string;
+  end_time: string;
+  observations?: string;
 }
