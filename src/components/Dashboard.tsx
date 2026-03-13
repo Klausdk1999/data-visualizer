@@ -820,7 +820,15 @@ export default function Dashboard({
           <div className="text-gray-700 dark:text-gray-300 text-center">{t("common.loading")}</div>
         ) : (
           <>
-            {activeTab === "dashboard" && <DashboardTab devices={devices} signals={signals} />}
+            {activeTab === "dashboard" && (
+                <DashboardTab
+                  devices={devices}
+                  signals={signals}
+                  orders={productionOrders}
+                  timeEntries={timeEntries}
+                  rawMaterials={rawMaterials}
+                />
+              )}
 
             {activeTab === "devices" && (
               <DevicesTab
