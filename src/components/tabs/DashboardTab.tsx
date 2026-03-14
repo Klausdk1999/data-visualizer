@@ -82,7 +82,7 @@ export default function DashboardTab({ devices, signals, orders, timeEntries, ra
       </CardHeader>
       <CardContent>
         {
-           <div className="grid grid-cols-2 gap-4 mb-6">
+           <div className="grid grid-cols-4 gap-4 mb-6">
            {[
              {
                label: "TOTAL DE ORDENS",

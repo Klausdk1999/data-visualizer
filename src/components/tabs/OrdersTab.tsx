@@ -298,13 +298,14 @@ export default function OrdersTab({
                 <TableHead>{t("device")}</TableHead>
                 <TableHead>{t("started")}</TableHead>
                 <TableHead>{t("completedDate")}</TableHead>
+                <TableHead>{t("plannedDeliveryDate")}</TableHead>
                 <TableHead>{tc("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center text-gray-500 py-8">
+                  <TableCell colSpan={11} className="text-center text-gray-500 py-8">
                     {tc("noData")}
                   </TableCell>
                 </TableRow>
@@ -336,6 +337,11 @@ export default function OrdersTab({
                     </TableCell>
                     <TableCell className="text-gray-900 dark:text-gray-100">
                       {order.completed_at ? new Date(order.completed_at).toLocaleString() : "-"}
+                    </TableCell>
+                    <TableCell className="text-gray-900 dark:text-gray-100">
+                      {order.planned_delivery_date
+                        ? new Date(order.planned_delivery_date).toLocaleDateString()
+                        : "-"}
                     </TableCell>
                     <TableCell className="text-gray-900 dark:text-gray-100">
                       <div className="flex space-x-2">

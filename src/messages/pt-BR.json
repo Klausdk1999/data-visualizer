@@ -191,6 +191,7 @@
     "out": "Saída"
   },
   "orders": {
+    "plannedDeliveryDate": "Data Prevista de Entrega",
     "title": "Ordens de Produção",
     "addOrder": "Adicionar Ordem",
     "editOrder": "Editar Ordem",

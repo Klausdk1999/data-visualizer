@@ -191,6 +191,7 @@
     "out": "Out"
   },
   "orders": {
+    "plannedDeliveryDate": "Planned Delivery Date",
     "title": "Production Orders",
     "addOrder": "Add Order",
     "editOrder": "Edit Order",

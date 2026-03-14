@@ -163,6 +163,7 @@ export interface ProductionOrder {
   quality_notes?: string;
   started_at?: string;
   completed_at?: string;
+  planned_delivery_date?: string;
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
@@ -212,6 +213,7 @@ export interface CreateProductionOrderRequest {
   customer_name?: string;
   started_at?: string;
   completed_at?: string;
+  planned_delivery_date?: string;
   work_instructions?: string;
   quality_notes?: string;
 }
