@@ -114,6 +114,7 @@ export default function ProductionOrderDialog({
         formData.get("completed_date") as string,
         formData.get("completed_time") as string
       ),
+      planned_delivery_date: combineDatetime(formData.get("planned_delivery_date") as string,"00:00"),
       work_instructions: (formData.get("work_instructions") as string) || undefined,
       quality_notes: (formData.get("quality_notes") as string) || undefined,
     };
@@ -263,6 +264,18 @@ export default function ProductionOrderDialog({
                   defaultValue={toTime(editingItem?.completed_at)}
                 />
               </div>
+            </div>
+            <div>
+              <Label htmlFor="order-delivery-date" className="text-gray-700 dark:text-gray-300">
+                {t("plannedDeliveryDate")}
+              </Label>
+              <Input
+                id="order-delivery-date"
+                name="planned_delivery_date"
+                type="date"
+                defaultValue={toDate(editingItem?.planned_delivery_date)}
+                className="mt-1"
+              />
             </div>
             <div>
               <Label htmlFor="order-instructions" className="text-gray-700 dark:text-gray-300">

@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { isOrderOverdue, orderOverdueDays } from "@/lib/orderUtils";
 import {
   Table,
   TableBody,
@@ -192,24 +193,42 @@ export default function OrdersTab({
     return Array.from(names);
   }, [orderSignalValues]);
 
-  function getStatusBadge(status: string) {
+  function getStatusBadge(order: ProductionOrder) {
+    const overdue = isOrderOverdue(order);
+    const days = orderOverdueDays(order);
+  
     const styles: Record<string, string> = {
-      planned: "bg-gray-100 text-gray-700",
-      in_progress: "bg-blue-100 text-blue-700",
-      completed: "bg-green-100 text-green-700",
-      cancelled: "bg-red-100 text-red-700",
+      planned:     "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+      in_progress: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400",
+      completed:   "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
+      cancelled:   "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
     };
     const labels: Record<string, string> = {
-      planned: t("planned"),
+      planned:     t("planned"),
       in_progress: t("inProgress"),
-      completed: t("completed"),
-      cancelled: t("cancelled"),
+      completed:   t("completed"),
+      cancelled:   t("cancelled"),
     };
+  
+    // Se está atrasada, sobrepõe o badge com visual de alerta
+    if (overdue) {
+      return (
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {/* Badge do status atual (planejada ou em andamento) */}
+          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${styles[order.status] ?? "bg-gray-100 text-gray-600"}`}>
+            {labels[order.status] ?? order.status}
+          </span>
+          {/* Badge de atraso */}
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold bg-red-600 text-white">
+            ⚠ {days > 0 && `${days}d`}
+          </span>
+        </div>
+      );
+    }
+  
     return (
-      <span
-        className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || "bg-gray-100 text-gray-700"}`}
-      >
-        {labels[status] || status}
+      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${styles[order.status] ?? "bg-gray-100 text-gray-600"}`}>
+        {labels[order.status] ?? order.status}
       </span>
     );
   }
@@ -298,13 +317,14 @@ export default function OrdersTab({
                 <TableHead>{t("device")}</TableHead>
                 <TableHead>{t("started")}</TableHead>
                 <TableHead>{t("completedDate")}</TableHead>
+                <TableHead>{t("plannedDeliveryDate")}</TableHead>
                 <TableHead>{tc("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center text-gray-500 py-8">
+                  <TableCell colSpan={11} className="text-center text-gray-500 py-8">
                     {tc("noData")}
                   </TableCell>
                 </TableRow>
@@ -324,7 +344,7 @@ export default function OrdersTab({
                     <TableCell className="text-gray-900 dark:text-gray-100">
                       {order.quantity}
                     </TableCell>
-                    <TableCell>{getStatusBadge(order.status)}</TableCell>
+                    <TableCell>{getStatusBadge(order)}</TableCell>
                     <TableCell className="text-gray-900 dark:text-gray-100">
                       {order.priority != null ? order.priority : "-"}
                     </TableCell>
@@ -336,6 +356,11 @@ export default function OrdersTab({
                     </TableCell>
                     <TableCell className="text-gray-900 dark:text-gray-100">
                       {order.completed_at ? new Date(order.completed_at).toLocaleString() : "-"}
+                    </TableCell>
+                    <TableCell className="text-gray-900 dark:text-gray-100">
+                      {order.planned_delivery_date
+                        ? new Date(order.planned_delivery_date).toLocaleDateString()
+                        : "-"}
                     </TableCell>
                     <TableCell className="text-gray-900 dark:text-gray-100">
                       <div className="flex space-x-2">
