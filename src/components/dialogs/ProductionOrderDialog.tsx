@@ -8,10 +8,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+
+import { printProductionOrder } from "@/lib/printOrder";
+import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X, Save } from "lucide-react";
+import { X, Save, Printer } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getCustomers } from "@/lib/requestHandlers";
 import type {
@@ -41,7 +44,8 @@ export default function ProductionOrderDialog({
 }: ProductionOrderDialogProps) {
   const t = useTranslations("orders");
   const tc = useTranslations("common");
-
+  const locale = useLocale();
+  const isPT = locale === "pt-BR";
   const [customerInput, setCustomerInput] = useState("");
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -303,6 +307,17 @@ export default function ProductionOrderDialog({
             </div>
           </div>
           <DialogFooter>
+            {editingItem && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => printProductionOrder(editingItem, locale)}
+                className="flex items-center gap-2 mr-auto"
+              >
+                <Printer className="w-4 h-4" />
+                {isPT ? "Imprimir OS" : "Print Order"}
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"

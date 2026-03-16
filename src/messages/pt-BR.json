@@ -191,6 +191,7 @@
     "out": "Saída"
   },
   "orders": {
+    "printOrder": "Imprimir OS",
     "plannedDeliveryDate": "Data Prevista de Entrega",
     "title": "Ordens de Produção",
     "addOrder": "Adicionar Ordem",
