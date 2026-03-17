@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { isOrderOverdue, orderOverdueDays } from "@/lib/orderUtils";
+import OrderSummaryDialog from "@/components/dialogs/OrderSummaryDialog";
 import {
   Table,
   TableBody,
@@ -13,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Trash2, Play, CheckCircle, XCircle, BarChart3, X, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { Plus, Edit, Trash2, Play, CheckCircle, XCircle, BarChart3, X, ArrowUp, ArrowDown, ArrowUpDown, FileText } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -64,6 +65,7 @@ export default function OrdersTab({
   const [selectedOrder, setSelectedOrder] = useState<ProductionOrder | null>(null);
   const [orderSignalValues, setOrderSignalValues] = useState<SignalValue[]>([]);
   const [loadingSignals, setLoadingSignals] = useState(false);
+  const [summaryOrder, setSummaryOrder] = useState<ProductionOrder | null>(null);
 
   // Filtering
   const [statusFilter, setStatusFilter] = useState<string>("");
@@ -364,6 +366,15 @@ export default function OrdersTab({
                     </TableCell>
                     <TableCell className="text-gray-900 dark:text-gray-100">
                       <div className="flex space-x-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setSummaryOrder(order)}
+                          className="flex items-center gap-1 text-gray-600 dark:text-gray-300"
+                        >
+                          <FileText className="w-3 h-3" />
+                          {t("summary")}
+                        </Button>
                         {order.device_id && (
                           <Button
                             size="sm"
@@ -438,6 +449,11 @@ export default function OrdersTab({
                             {tc("delete")}
                           </Button>
                         )}
+                        <OrderSummaryDialog
+        open={!!summaryOrder}
+        onOpenChange={(open) => { if (!open) setSummaryOrder(null); }}
+        order={summaryOrder}
+      />
                       </div>
                     </TableCell>
                   </TableRow>
