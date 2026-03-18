@@ -13,11 +13,13 @@
 ### Task 1: Install dependencies
 
 **Files:**
+
 - Modify: `package.json`
 
 **Step 1: Install all three packages**
 
 Run:
+
 ```bash
 cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && npm install next-themes next-intl framer-motion
 ```
@@ -25,9 +27,11 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && npm install next-themes 
 **Step 2: Verify installation**
 
 Run:
+
 ```bash
 cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && node -e "require('next-themes'); require('framer-motion'); console.log('OK')"
 ```
+
 Expected: `OK`
 
 **Step 3: Commit**
@@ -41,6 +45,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add package.json pac
 ### Task 2: Consolidate CSS and set up dark mode
 
 **Files:**
+
 - Modify: `src/styles/globals.css` — replace contents with merged CSS from `app/globals.css`
 - Modify: `components.json` — update CSS path to point to `src/styles/globals.css`
 - Delete: `app/globals.css` — no longer needed
@@ -216,9 +221,11 @@ Change the CSS path from `app/globals.css` to `src/styles/globals.css`:
 **Step 4: Verify build**
 
 Run:
+
 ```bash
 cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && npm run build
 ```
+
 Expected: Build succeeds with no errors.
 
 **Step 5: Commit**
@@ -232,6 +239,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add -A && git commit
 ### Task 3: Add ThemeProvider and theme toggle
 
 **Files:**
+
 - Modify: `src/pages/_app.tsx` — wrap with `ThemeProvider`
 - Create: `src/components/ui/theme-toggle.tsx` — Sun/Moon toggle button
 
@@ -265,11 +273,7 @@ export function ThemeToggle() {
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
     >
-      {theme === "dark" ? (
-        <Sun className="w-4 h-4" />
-      ) : (
-        <Moon className="w-4 h-4" />
-      )}
+      {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
     </Button>
   );
 }
@@ -323,9 +327,11 @@ Then in the header's right side `<div className="flex items-center space-x-4">` 
 **Step 4: Verify dark mode works**
 
 Run:
+
 ```bash
 cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && npm run dev
 ```
+
 Open browser, click the moon/sun toggle. Verify dark mode applies correctly.
 
 **Step 5: Commit**
@@ -339,6 +345,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/components/u
 ### Task 4: Set up i18n with next-intl
 
 **Files:**
+
 - Create: `src/messages/en.json`
 - Create: `src/messages/pt-BR.json`
 - Create: `src/lib/i18n.ts` — locale detection + persistence helper
@@ -880,9 +887,11 @@ export default function Document() {
 **Step 7: Verify build**
 
 Run:
+
 ```bash
 cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && npm run build
 ```
+
 Expected: Build succeeds.
 
 **Step 8: Commit**
@@ -896,6 +905,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/messages/ sr
 ### Task 5: Apply i18n to Login component
 
 **Files:**
+
 - Modify: `src/components/Login.tsx`
 
 **Step 1: Update Login to use translations**
@@ -903,16 +913,19 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/messages/ sr
 Replace hardcoded strings with `useTranslations()`. The Login component receives `locale` and `onLocaleChange` props (passed through from `_app.tsx` via `index.tsx`).
 
 Add at the top of the Login component:
+
 ```tsx
 import { useTranslations } from "next-intl";
 ```
 
 Inside the component function:
+
 ```tsx
 const t = useTranslations("login");
 ```
 
 Then replace:
+
 - `"IoT Dashboard Login"` → `t("title")`
 - `"Email"` → `t("email")`
 - `"user@example.com"` → `t("emailPlaceholder")`
@@ -937,26 +950,31 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/components/L
 ### Task 6: Apply i18n to Dashboard header and tabs
 
 **Files:**
+
 - Modify: `src/components/Dashboard.tsx`
 
 **Step 1: Add translations to Dashboard**
 
 Import and use translations:
+
 ```tsx
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 ```
 
 Inside the component:
+
 ```tsx
 const t = useTranslations();
 ```
 
 Replace in header:
+
 - `"IoT Data Storage Dashboard"` → `t("header.title")`
 - `"Logout"` → `t("header.logout")`
 
 Replace tab labels:
+
 - `"Dashboard"` → `t("tabs.dashboard")`
 - `"Devices"` → `t("tabs.devices")`
 - `"Signal Configurations"` → `t("tabs.signals")`
@@ -967,6 +985,7 @@ Replace tab labels:
 - `"Users"` → `t("tabs.users")`
 
 Replace error messages:
+
 - `"No authentication token found..."` → `t("errors.noToken")`
 - `"Authentication failed..."` → `t("errors.authFailed")`
 - `"Failed to fetch data..."` → `t("errors.fetchFailed")`
@@ -984,6 +1003,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/components/D
 ### Task 7: Apply i18n to tab components
 
 **Files:**
+
 - Modify: `src/components/tabs/DevicesTab.tsx`
 - Modify: `src/components/tabs/SignalsTab.tsx`
 - Modify: `src/components/tabs/SignalValuesTab.tsx`
@@ -998,6 +1018,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/components/D
 Add `import { useTranslations } from "next-intl";` at the top. Add `const t = useTranslations("<section>");` in the component body. Replace all hardcoded English strings (titles, button labels, table headers) with `t("key")` calls using the keys from the translation files.
 
 Pattern for each tab:
+
 - Card title → `t("title")`
 - "Add X" button → `t("addX")`
 - Table headers → `t("name")`, `t("type")`, etc.
@@ -1014,6 +1035,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/components/t
 ### Task 8: Apply i18n to dialog components
 
 **Files:**
+
 - Modify: `src/components/dialogs/DeviceDialog.tsx`
 - Modify: `src/components/dialogs/SignalDialog.tsx`
 - Modify: `src/components/dialogs/SignalValueDialog.tsx`
@@ -1027,6 +1049,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/components/t
 **Step 1: For each dialog component**
 
 Same pattern as tabs. Import `useTranslations`, replace hardcoded strings:
+
 - Dialog titles: `"Edit Device"` → `t("editDevice")`, `"Create Device"` → `t("createDevice")`
 - Labels: `"Name"` → `t("name")`, `"Description"` → `tc("description")`
 - Buttons: `"Save"` → `tc("save")`, `"Cancel"` → `tc("cancel")`
@@ -1042,6 +1065,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/components/d
 ### Task 9: Apply i18n to TTN components
 
 **Files:**
+
 - Modify: `src/pages/ttn/index.tsx`
 - Modify: `src/components/ttn/TTNChart.tsx`
 - Modify: `src/components/ttn/TTNDataTable.tsx`
@@ -1063,6 +1087,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/pages/ttn/ s
 ### Task 10: Redesign Login page with Framer Motion
 
 **Files:**
+
 - Modify: `src/components/Login.tsx` — complete rewrite
 - Modify: `src/styles/globals.css` — add animated gradient keyframes
 
@@ -1072,7 +1097,8 @@ Add at the end, inside a new `@layer utilities` block or after the existing one:
 
 ```css
 @keyframes gradient-shift {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -1081,7 +1107,8 @@ Add at the end, inside a new `@layer utilities` block or after the existing one:
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
   33% {
@@ -1165,15 +1192,19 @@ export default function Login({ onLoginSuccess, locale = "en", onLocaleChange }:
 
       {/* Floating decorative blobs */}
       <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-300/30 dark:bg-blue-500/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-300/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "-2s" }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-200/20 dark:bg-indigo-500/5 rounded-full blur-3xl animate-float" style={{ animationDelay: "-4s" }} />
+      <div
+        className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-300/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-float"
+        style={{ animationDelay: "-2s" }}
+      />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-200/20 dark:bg-indigo-500/5 rounded-full blur-3xl animate-float"
+        style={{ animationDelay: "-4s" }}
+      />
 
       {/* Top-right controls */}
       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
         <ThemeToggle />
-        {onLocaleChange && (
-          <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />
-        )}
+        {onLocaleChange && <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />}
       </div>
 
       {/* Login card */}
@@ -1193,12 +1224,8 @@ export default function Login({ onLoginSuccess, locale = "en", onLocaleChange }:
             >
               <LayoutDashboard className="w-7 h-7 text-white" />
             </motion.div>
-            <CardTitle className="text-2xl text-gray-900 dark:text-white">
-              {t("title")}
-            </CardTitle>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {t("subtitle")}
-            </p>
+            <CardTitle className="text-2xl text-gray-900 dark:text-white">{t("title")}</CardTitle>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t("subtitle")}</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -1253,11 +1280,7 @@ export default function Login({ onLoginSuccess, locale = "en", onLocaleChange }:
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full"
-                >
+                <Button type="submit" disabled={loading} className="w-full">
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -1298,11 +1321,13 @@ Note: The props are passed by `_app.tsx` via the `Component` render. The `index.
 **Step 4: Verify the login page**
 
 Run:
+
 ```bash
 cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && npm run dev
 ```
 
 Open browser. Verify:
+
 - Animated gradient background
 - Floating blobs
 - Card slides in with animation
@@ -1328,6 +1353,7 @@ cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && git add src/components/L
 ```bash
 cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && npm run build
 ```
+
 Expected: No errors.
 
 **Step 2: Run tests**
@@ -1335,6 +1361,7 @@ Expected: No errors.
 ```bash
 cd C:/Users/Klaus/Documents/Mestrado/data-visualizer && npm run test
 ```
+
 Note: The Login test may need updating for the new structure.
 
 **Step 3: Manual verification checklist**

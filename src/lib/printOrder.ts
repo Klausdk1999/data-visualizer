@@ -4,38 +4,40 @@ export function printProductionOrder(order: ProductionOrder, locale: string = "p
   const isPT = locale === "pt-BR";
 
   const labels = {
-    title:            isPT ? "ORDEM DE PRODUÇÃO" : "PRODUCTION ORDER",
-    orderNumber:      isPT ? "Número da Ordem" : "Order Number",
-    status:           isPT ? "Status" : "Status",
-    priority:         isPT ? "Prioridade" : "Priority",
-    product:          isPT ? "Produto" : "Product",
-    customer:         isPT ? "Cliente" : "Customer",
-    quantity:         isPT ? "Quantidade" : "Quantity",
-    device:           isPT ? "Dispositivo" : "Device",
-    createdAt:        isPT ? "Data de Criação" : "Created At",
-    startedAt:        isPT ? "Data de Início" : "Started At",
-    completedAt:      isPT ? "Data de Conclusão" : "Completed At",
-    plannedDelivery:  isPT ? "Previsão de Entrega" : "Planned Delivery",
+    title: isPT ? "ORDEM DE PRODUÇÃO" : "PRODUCTION ORDER",
+    orderNumber: isPT ? "Número da Ordem" : "Order Number",
+    status: isPT ? "Status" : "Status",
+    priority: isPT ? "Prioridade" : "Priority",
+    product: isPT ? "Produto" : "Product",
+    customer: isPT ? "Cliente" : "Customer",
+    quantity: isPT ? "Quantidade" : "Quantity",
+    device: isPT ? "Dispositivo" : "Device",
+    createdAt: isPT ? "Data de Criação" : "Created At",
+    startedAt: isPT ? "Data de Início" : "Started At",
+    completedAt: isPT ? "Data de Conclusão" : "Completed At",
+    plannedDelivery: isPT ? "Previsão de Entrega" : "Planned Delivery",
     workInstructions: isPT ? "Instruções de Trabalho" : "Work Instructions",
-    qualityNotes:     isPT ? "Notas de Qualidade" : "Quality Notes",
-    signature:        isPT ? "Assinatura / Responsável" : "Signature / Responsible",
-    receivedBy:       isPT ? "Recebido por" : "Received by",
-    date:             isPT ? "Data" : "Date",
-    observations:     isPT ? "Observações" : "Observations",
-    generatedAt:      isPT ? "Gerado em" : "Generated at",
+    qualityNotes: isPT ? "Notas de Qualidade" : "Quality Notes",
+    signature: isPT ? "Assinatura / Responsável" : "Signature / Responsible",
+    receivedBy: isPT ? "Recebido por" : "Received by",
+    date: isPT ? "Data" : "Date",
+    observations: isPT ? "Observações" : "Observations",
+    generatedAt: isPT ? "Gerado em" : "Generated at",
   };
 
   const statusMap: Record<string, string> = {
-    planned:     isPT ? "Planejada"    : "Planned",
+    planned: isPT ? "Planejada" : "Planned",
     in_progress: isPT ? "Em Andamento" : "In Progress",
-    completed:   isPT ? "Concluída"    : "Completed",
-    cancelled:   isPT ? "Cancelada"    : "Cancelled",
+    completed: isPT ? "Concluída" : "Completed",
+    cancelled: isPT ? "Cancelada" : "Cancelled",
   };
 
   const fmt = (iso?: string | null) => {
     if (!iso) return "—";
     return new Date(iso).toLocaleDateString(locale, {
-      day: "2-digit", month: "2-digit", year: "numeric",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   };
 
@@ -205,9 +207,9 @@ export function printProductionOrder(order: ProductionOrder, locale: string = "p
   <div class="section">
     <div class="section-title">${isPT ? "Identificação" : "Identification"}</div>
     <div class="fields-grid">
-      ${field(labels.product,   order.product?.name  ?? order.product_id)}
-      ${field(labels.customer,  order.customer?.name ?? "")}
-      ${field(labels.quantity,  order.quantity)}
+      ${field(labels.product, order.product?.name ?? order.product_id)}
+      ${field(labels.customer, order.customer?.name ?? "")}
+      ${field(labels.quantity, order.quantity)}
     </div>
   </div>
 
@@ -215,10 +217,10 @@ export function printProductionOrder(order: ProductionOrder, locale: string = "p
   <div class="section">
     <div class="section-title">${isPT ? "Datas" : "Dates"}</div>
     <div class="fields-grid">
-      ${field(labels.createdAt,       fmt(order.created_at))}
+      ${field(labels.createdAt, fmt(order.created_at))}
       ${field(labels.plannedDelivery, fmt(order.planned_delivery_date))}
-      ${field(labels.startedAt,       fmt(order.started_at))}
-      ${field(labels.completedAt,     fmt(order.completed_at))}
+      ${field(labels.startedAt, fmt(order.started_at))}
+      ${field(labels.completedAt, fmt(order.completed_at))}
     </div>
   </div>
 

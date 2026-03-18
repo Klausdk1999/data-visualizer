@@ -2,7 +2,11 @@
 
 import React from "react";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,8 +27,14 @@ interface TimeEntryDialogProps {
 }
 
 export default function TimeEntryDialog({
-  open, onOpenChange, editingItem, onSubmit,
-  productionOrders, services, users, currentUser,
+  open,
+  onOpenChange,
+  editingItem,
+  onSubmit,
+  productionOrders,
+  services,
+  users,
+  currentUser,
 }: TimeEntryDialogProps) {
   const t = useTranslations("hours");
   const tc = useTranslations("common");
@@ -108,31 +118,54 @@ export default function TimeEntryDialog({
                 className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
               >
                 <option value="">{t("selectService")}</option>
-                {services.filter(s => s.is_active).map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {service.code} - {service.name}
-                  </option>
-                ))}
+                {services
+                  .filter((s) => s.is_active)
+                  .map((service) => (
+                    <option key={service.id} value={service.id}>
+                      {service.code} - {service.name}
+                    </option>
+                  ))}
               </select>
             </div>
             <div>
               <Label htmlFor="entry-day" className="text-gray-700 dark:text-gray-300">
                 {t("day")} *
               </Label>
-              <Input id="entry-day" name="day" type="date" required defaultValue={editingItem?.day} className="mt-1" />
+              <Input
+                id="entry-day"
+                name="day"
+                type="date"
+                required
+                defaultValue={editingItem?.day}
+                className="mt-1"
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="entry-start" className="text-gray-700 dark:text-gray-300">
                   {t("startTime")} *
                 </Label>
-                <Input id="entry-start" name="start_time" type="time" required defaultValue={editingItem?.start_time} className="mt-1" />
+                <Input
+                  id="entry-start"
+                  name="start_time"
+                  type="time"
+                  required
+                  defaultValue={editingItem?.start_time}
+                  className="mt-1"
+                />
               </div>
               <div>
                 <Label htmlFor="entry-end" className="text-gray-700 dark:text-gray-300">
                   {t("endTime")} *
                 </Label>
-                <Input id="entry-end" name="end_time" type="time" required defaultValue={editingItem?.end_time} className="mt-1" />
+                <Input
+                  id="entry-end"
+                  name="end_time"
+                  type="time"
+                  required
+                  defaultValue={editingItem?.end_time}
+                  className="mt-1"
+                />
               </div>
             </div>
             <div>
@@ -149,7 +182,12 @@ export default function TimeEntryDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex items-center gap-2"
+            >
               <X className="w-4 h-4" />
               {tc("cancel")}
             </Button>

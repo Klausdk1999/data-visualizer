@@ -68,9 +68,7 @@ export default function MaterialsTab({
             {materials.map((material) => (
               <TableRow key={material.id}>
                 <TableCell className="text-gray-900 dark:text-gray-100">{material.id}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">
-                  {material.name}
-                </TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{material.name}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   {material.sku || "-"}
                 </TableCell>

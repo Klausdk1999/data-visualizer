@@ -269,9 +269,7 @@ export default function SignalValuesTab({
             </h3>
             <div className="flex flex-wrap gap-3 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl">
               {signals.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  {t("noSignals")}
-                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">{t("noSignals")}</p>
               ) : (
                 signals.map((signal) => {
                   const isSelected = selectedSignals.includes(signal.id);
@@ -296,10 +294,7 @@ export default function SignalValuesTab({
                       `}
                     >
                       {isSelected && (
-                        <span
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: color }}
-                        />
+                        <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
                       )}
                       {signal.name}
                       <span className="text-xs opacity-70">

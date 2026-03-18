@@ -4,7 +4,12 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,7 +24,11 @@ interface ServicesTabProps {
 }
 
 export default function ServicesTab({
-  services, isWorker, onAddService, onEditService, onDeleteService,
+  services,
+  isWorker,
+  onAddService,
+  onEditService,
+  onDeleteService,
 }: ServicesTabProps) {
   const t = useTranslations("services");
   const tc = useTranslations("common");
@@ -53,18 +62,30 @@ export default function ServicesTab({
                 <TableCell className="text-gray-900 dark:text-gray-100">{service.id}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{service.code}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{service.name}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{service.description || "-"}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {service.description || "-"}
+                </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   {service.is_active ? tc("active") : tc("inactive")}
                 </TableCell>
                 {!isWorker && (
                   <TableCell className="text-gray-900 dark:text-gray-100">
                     <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" onClick={() => onEditService(service)} className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onEditService(service)}
+                        className="flex items-center gap-1"
+                      >
                         <Edit className="w-3 h-3" />
                         {tc("edit")}
                       </Button>
-                      <Button size="sm" variant="destructive" onClick={() => onDeleteService(service.id)} className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => onDeleteService(service.id)}
+                        className="flex items-center gap-1"
+                      >
                         <Trash2 className="w-3 h-3" />
                         {tc("delete")}
                       </Button>

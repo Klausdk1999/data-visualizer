@@ -9,6 +9,7 @@
 **Tech Stack:** Go 1.25, mochi-mqtt (embedded broker), GORM, gorilla/mux | Next.js 15, React 18, shadcn/ui, Recharts, Axios, Tailwind CSS
 
 **Repos:**
+
 - Backend: `C:\Users\Klaus\Documents\Mestrado\go-data-storage`
 - Frontend: `C:\Users\Klaus\Documents\Mestrado\data-visualizer`
 
@@ -19,11 +20,13 @@
 ### Task 1: Add mochi-mqtt dependency to Go backend
 
 **Files:**
+
 - Modify: `go-data-storage/go.mod`
 
 **Step 1: Add the mochi-mqtt module**
 
 Run from `C:\Users\Klaus\Documents\Mestrado\go-data-storage`:
+
 ```bash
 go get github.com/mochi-mqtt/server/v2
 go get github.com/mochi-mqtt/server/v2/hooks/auth
@@ -47,12 +50,14 @@ git commit -m "feat: add mochi-mqtt embedded broker dependency"
 ### Task 2: Add .env variables for MQTT broker and generic device API
 
 **Files:**
+
 - Modify: `go-data-storage/.env.example`
 - Modify: `go-data-storage/.env` (if exists)
 
 **Step 1: Add new env vars to .env.example**
 
 Append to `go-data-storage/.env.example`:
+
 ```env
 
 # Embedded MQTT Broker
@@ -85,6 +90,7 @@ git commit -m "feat: add MQTT broker and device API env config"
 This handler receives JSON from any microcontroller via `POST /devices/data`. It auto-creates devices and signals if they don't exist.
 
 **Files:**
+
 - Create: `go-data-storage/internal/handlers/generic_data_handler.go`
 
 **Step 1: Write the handler**
@@ -359,6 +365,7 @@ git commit -m "feat: add generic device data POST endpoint with auto-creation"
 ### Task 4: Create the embedded MQTT broker
 
 **Files:**
+
 - Create: `go-data-storage/internal/mqtt/broker.go`
 
 **Step 1: Write the embedded broker**
@@ -578,6 +585,7 @@ git commit -m "feat: add embedded MQTT broker with device auth and message proce
 ### Task 5: Wire broker startup into main.go
 
 **Files:**
+
 - Modify: `go-data-storage/cmd/api/main.go`
 
 **Step 1: Add broker startup after MQTT client section**
@@ -642,6 +650,7 @@ Expected: `{"status":"ok"}` with 201 status
 **Step 3: Verify device was auto-created**
 
 Login first, then check devices:
+
 ```bash
 curl http://localhost:8080/devices -H "Authorization: Bearer <your-jwt-token>"
 ```
@@ -668,6 +677,7 @@ git commit -m "fix: Phase 1 testing adjustments"
 ### Task 7: Add MES models to Go backend
 
 **Files:**
+
 - Modify: `go-data-storage/internal/models/models.go`
 
 **Step 1: Add the new MES model structs**
@@ -785,6 +795,7 @@ git commit -m "feat: add MES models (Product, RawMaterial, BOM, ProductionOrder,
 ### Task 8: Create Products handler
 
 **Files:**
+
 - Create: `go-data-storage/internal/handlers/products_handler.go`
 
 **Step 1: Write the products handler**
@@ -1078,6 +1089,7 @@ git commit -m "feat: add Products and BOM CRUD handlers"
 ### Task 9: Create Raw Materials handler
 
 **Files:**
+
 - Create: `go-data-storage/internal/handlers/raw_materials_handler.go`
 
 **Step 1: Write the handler**
@@ -1384,6 +1396,7 @@ git commit -m "feat: add RawMaterials CRUD, stock adjustment, and stock movement
 ### Task 10: Create Production Orders handler
 
 **Files:**
+
 - Create: `go-data-storage/internal/handlers/production_orders_handler.go`
 
 **Step 1: Write the handler with stock decrement logic**
@@ -1747,6 +1760,7 @@ git commit -m "feat: add ProductionOrders handler with stock decrement on comple
 ### Task 11: Register all MES routes in main.go
 
 **Files:**
+
 - Modify: `go-data-storage/cmd/api/main.go`
 
 **Step 1: Add MES routes**
@@ -1793,6 +1807,7 @@ git commit -m "feat: register all MES API routes in main.go"
 ### Task 12: Create migration file for documentation
 
 **Files:**
+
 - Create: `go-data-storage/migrations/004_add_mes_tables.sql`
 
 **Step 1: Write the migration (documentation only — GORM auto-migrates)**
@@ -1894,6 +1909,7 @@ git commit -m "docs: add MES migration file for reference"
 ### Task 13: Add MES types to frontend
 
 **Files:**
+
 - Modify: `data-visualizer/src/types/index.ts`
 
 **Step 1: Add new interfaces**
@@ -2026,6 +2042,7 @@ git commit -m "feat: add MES type definitions"
 ### Task 14: Add MES API functions to requestHandlers
 
 **Files:**
+
 - Modify: `data-visualizer/src/lib/requestHandlers.ts`
 
 **Step 1: Add import of new types**
@@ -2034,12 +2051,25 @@ Update the import statement at the top of `requestHandlers.ts` to include the ne
 
 ```typescript
 import type {
-  User, Device, Signal, SignalValue,
+  User,
+  Device,
+  Signal,
+  SignalValue,
   LoginResponse,
-  CreateDeviceRequest, CreateSignalRequest, CreateSignalValueRequest, CreateUserRequest,
-  Product, RawMaterial, BillOfMaterials, ProductionOrder, StockMovement,
-  CreateProductRequest, CreateRawMaterialRequest, CreateBOMEntryRequest,
-  CreateProductionOrderRequest, AdjustStockRequest,
+  CreateDeviceRequest,
+  CreateSignalRequest,
+  CreateSignalValueRequest,
+  CreateUserRequest,
+  Product,
+  RawMaterial,
+  BillOfMaterials,
+  ProductionOrder,
+  StockMovement,
+  CreateProductRequest,
+  CreateRawMaterialRequest,
+  CreateBOMEntryRequest,
+  CreateProductionOrderRequest,
+  AdjustStockRequest,
 } from "@/types";
 ```
 
@@ -2049,7 +2079,10 @@ Append to `data-visualizer/src/lib/requestHandlers.ts`:
 
 ```typescript
 // MES: Product endpoints
-export const getProducts = async (params?: { category?: string; active?: string }): Promise<Product[]> => {
+export const getProducts = async (params?: {
+  category?: string;
+  active?: string;
+}): Promise<Product[]> => {
   const response = await axiosInstance.get<Product[]>("products", { params });
   return response.data;
 };
@@ -2064,7 +2097,10 @@ export const createProduct = async (data: CreateProductRequest): Promise<Product
   return response.data;
 };
 
-export const updateProduct = async (id: string, data: Partial<CreateProductRequest>): Promise<Product> => {
+export const updateProduct = async (
+  id: string,
+  data: Partial<CreateProductRequest>
+): Promise<Product> => {
   const response = await axiosInstance.put<Product>(`products/${id}`, data);
   return response.data;
 };
@@ -2079,7 +2115,10 @@ export const getProductBOM = async (productId: string): Promise<BillOfMaterials[
   return response.data;
 };
 
-export const addBOMEntry = async (productId: string, data: CreateBOMEntryRequest): Promise<BillOfMaterials> => {
+export const addBOMEntry = async (
+  productId: string,
+  data: CreateBOMEntryRequest
+): Promise<BillOfMaterials> => {
   const response = await axiosInstance.post<BillOfMaterials>(`products/${productId}/bom`, data);
   return response.data;
 };
@@ -2089,7 +2128,10 @@ export const deleteBOMEntry = async (id: string): Promise<void> => {
 };
 
 // MES: Raw Material endpoints
-export const getRawMaterials = async (params?: { category?: string; active?: string }): Promise<RawMaterial[]> => {
+export const getRawMaterials = async (params?: {
+  category?: string;
+  active?: string;
+}): Promise<RawMaterial[]> => {
   const response = await axiosInstance.get<RawMaterial[]>("raw-materials", { params });
   return response.data;
 };
@@ -2104,7 +2146,10 @@ export const createRawMaterial = async (data: CreateRawMaterialRequest): Promise
   return response.data;
 };
 
-export const updateRawMaterial = async (id: string, data: Partial<CreateRawMaterialRequest>): Promise<RawMaterial> => {
+export const updateRawMaterial = async (
+  id: string,
+  data: Partial<CreateRawMaterialRequest>
+): Promise<RawMaterial> => {
   const response = await axiosInstance.put<RawMaterial>(`raw-materials/${id}`, data);
   return response.data;
 };
@@ -2143,7 +2188,9 @@ export const getProductionOrder = async (id: string): Promise<ProductionOrder> =
   return response.data;
 };
 
-export const createProductionOrder = async (data: CreateProductionOrderRequest): Promise<ProductionOrder> => {
+export const createProductionOrder = async (
+  data: CreateProductionOrderRequest
+): Promise<ProductionOrder> => {
   const response = await axiosInstance.post<ProductionOrder>("production-orders", data);
   return response.data;
 };
@@ -2161,7 +2208,9 @@ export const deleteProductionOrder = async (id: string): Promise<void> => {
 };
 
 export const updateOrderStatus = async (id: string, status: string): Promise<ProductionOrder> => {
-  const response = await axiosInstance.put<ProductionOrder>(`production-orders/${id}/status`, { status });
+  const response = await axiosInstance.put<ProductionOrder>(`production-orders/${id}/status`, {
+    status,
+  });
   return response.data;
 };
 ```
@@ -2182,11 +2231,13 @@ git commit -m "feat: add MES API functions to request handlers"
 ### Task 15: Create ProductsTab component
 
 **Files:**
+
 - Create: `data-visualizer/src/components/tabs/ProductsTab.tsx`
 
 **Step 1: Create the component**
 
 Follow the same pattern as DevicesTab.tsx. Create `data-visualizer/src/components/tabs/ProductsTab.tsx` with:
+
 - Table with columns: ID, Name, SKU, Category, Unit, Status, Actions
 - Add Product button
 - Edit/Delete buttons per row
@@ -2213,13 +2264,15 @@ git commit -m "feat: add ProductsTab component with BOM sub-table"
 ### Task 16: Create MaterialsTab component
 
 **Files:**
+
 - Create: `data-visualizer/src/components/tabs/MaterialsTab.tsx`
 
 **Step 1: Create the component**
 
 Follow the DevicesTab pattern. Create with:
+
 - Table with columns: ID, Name, SKU, Category, Unit, Stock, Min Stock, Status, Actions
-- Stock level indicator: green if stock > min_stock*1.5, yellow if stock > min_stock, red if stock <= min_stock
+- Stock level indicator: green if stock > min_stock\*1.5, yellow if stock > min_stock, red if stock <= min_stock
 - Add Material button
 - Edit/Delete/Adjust Stock buttons per row
 - "Adjust Stock" opens a callback to the parent
@@ -2236,11 +2289,13 @@ git commit -m "feat: add MaterialsTab component with stock indicators"
 ### Task 17: Create OrdersTab component
 
 **Files:**
+
 - Create: `data-visualizer/src/components/tabs/OrdersTab.tsx`
 
 **Step 1: Create the component**
 
 Create with:
+
 - Table with columns: ID, Product, Quantity, Status, Priority, Device, Started, Completed, Actions
 - Status badges with colors: planned=gray, in_progress=blue, completed=green, cancelled=red
 - Add Order button
@@ -2260,6 +2315,7 @@ git commit -m "feat: add OrdersTab component with status transitions"
 ### Task 18: Create MES dialog components
 
 **Files:**
+
 - Create: `data-visualizer/src/components/dialogs/ProductDialog.tsx`
 - Create: `data-visualizer/src/components/dialogs/RawMaterialDialog.tsx`
 - Create: `data-visualizer/src/components/dialogs/ProductionOrderDialog.tsx`
@@ -2290,17 +2346,27 @@ git commit -m "feat: add MES dialog components (Product, Material, Order, Stock,
 ### Task 19: Update Dashboard.tsx with MES tabs and state
 
 **Files:**
+
 - Modify: `data-visualizer/src/components/Dashboard.tsx`
 
 **Step 1: Update TabType to include MES tabs**
 
 ```typescript
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders";
+type TabType =
+  | "dashboard"
+  | "devices"
+  | "signals"
+  | "values"
+  | "users"
+  | "products"
+  | "materials"
+  | "orders";
 ```
 
 **Step 2: Add MES state variables**
 
 Add alongside existing state:
+
 ```typescript
 const [products, setProducts] = useState<Product[]>([]);
 const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
@@ -2308,6 +2374,7 @@ const [productionOrders, setProductionOrders] = useState<ProductionOrder[]>([]);
 ```
 
 Add dialog states:
+
 ```typescript
 const [productDialogOpen, setProductDialogOpen] = useState(false);
 const [materialDialogOpen, setMaterialDialogOpen] = useState(false);
@@ -2321,16 +2388,18 @@ const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
 **Step 3: Update fetchData to include MES data**
 
 Add MES fetches to the `Promise.all`:
+
 ```typescript
-const [devicesData, signalsData, valuesData, usersData, productsData, materialsData, ordersData] = await Promise.all([
-  getDevices(),
-  getSignals(),
-  getSignalValues({ limit: "100" }),
-  getUsers(),
-  getProducts(),
-  getRawMaterials(),
-  getProductionOrders(),
-]);
+const [devicesData, signalsData, valuesData, usersData, productsData, materialsData, ordersData] =
+  await Promise.all([
+    getDevices(),
+    getSignals(),
+    getSignalValues({ limit: "100" }),
+    getUsers(),
+    getProducts(),
+    getRawMaterials(),
+    getProductionOrders(),
+  ]);
 ```
 
 **Step 4: Add MES CRUD handlers**
@@ -2361,6 +2430,7 @@ git commit -m "feat: integrate MES tabs, state, and CRUD handlers into Dashboard
 ### Task 20: Update index.tsx to accept new tab types
 
 **Files:**
+
 - Modify: `data-visualizer/src/pages/index.tsx`
 
 **Step 1: Update the valid tab list**
@@ -2381,6 +2451,7 @@ git commit -m "feat: accept MES tab types in URL routing"
 ### Task 21: Add order signal values endpoint to backend
 
 **Files:**
+
 - Modify: `go-data-storage/internal/handlers/production_orders_handler.go`
 
 **Step 1: Add handler for fetching device signals during order time range**
@@ -2459,15 +2530,19 @@ git commit -m "feat: add endpoint to fetch signal values linked to production or
 ### Task 22: Add order detail view with signal chart in frontend
 
 **Files:**
+
 - Modify: `data-visualizer/src/lib/requestHandlers.ts`
 - Modify: `data-visualizer/src/components/tabs/OrdersTab.tsx`
 
 **Step 1: Add API function**
 
 Add to `requestHandlers.ts`:
+
 ```typescript
 export const getOrderSignalValues = async (orderId: string): Promise<SignalValue[]> => {
-  const response = await axiosInstance.get<SignalValue[]>(`production-orders/${orderId}/signal-values`);
+  const response = await axiosInstance.get<SignalValue[]>(
+    `production-orders/${orderId}/signal-values`
+  );
   return response.data;
 };
 ```
@@ -2488,6 +2563,7 @@ git commit -m "feat: add signal values chart to production order detail view"
 ### Task 23: Update CLAUDE.md with new features
 
 **Files:**
+
 - Modify: `data-visualizer/CLAUDE.md`
 
 **Step 1: Update directory structure, key components, and URL routing sections**
@@ -2506,16 +2582,19 @@ git commit -m "docs: update CLAUDE.md with MES and MQTT features"
 ### Task 24: Final integration test
 
 **Step 1: Start backend**
+
 ```bash
 cd C:\Users\Klaus\Documents\Mestrado\go-data-storage && go run ./cmd/api/
 ```
 
 **Step 2: Start frontend**
+
 ```bash
 cd C:\Users\Klaus\Documents\Mestrado\data-visualizer && npm run dev
 ```
 
 **Step 3: Test MES workflow**
+
 1. Create a raw material (e.g., "Steel Rod", unit: "kg", stock: 100)
 2. Create a product (e.g., "Widget A", unit: "unit")
 3. Add BOM entry: Widget A needs 2kg of Steel Rod
@@ -2525,12 +2604,14 @@ cd C:\Users\Klaus\Documents\Mestrado\data-visualizer && npm run dev
 7. Check stock movements show the consumption
 
 **Step 4: Test generic device POST**
+
 ```bash
 curl -X POST http://localhost:8080/devices/data \
   -H "Content-Type: application/json" \
   -H "X-API-Key: <your-key>" \
   -d '{"device_id":"line-sensor-01","field_1":42.5,"field_2":1}'
 ```
+
 Verify in dashboard Signal Values tab.
 
 **Step 5: Fix any issues and commit**

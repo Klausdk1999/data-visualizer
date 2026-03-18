@@ -69,9 +69,7 @@ export default function TTNDashboard() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {t("dashboardTitle")}
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t("dashboardTitle")}</h1>
         {stats && (
           <div className="text-sm text-gray-600 dark:text-gray-400">
             {t("totalUplinks")}: {stats.total_uplinks} | {t("devices")}: {stats.unique_devices}

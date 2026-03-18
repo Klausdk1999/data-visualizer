@@ -14,7 +14,9 @@ export default function ParameterSelector({ value, onChange }: ParameterSelector
 
   return (
     <div className="flex items-center gap-4">
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("parameter")}:</label>
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        {t("parameter")}:
+      </label>
       <div className="flex gap-2">
         <button
           onClick={() => onChange("distance")}

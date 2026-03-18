@@ -22,12 +22,7 @@ interface BOMDialogProps {
   onSubmit: (data: CreateBOMEntryRequest) => void;
 }
 
-export default function BOMDialog({
-  open,
-  onOpenChange,
-  rawMaterials,
-  onSubmit,
-}: BOMDialogProps) {
+export default function BOMDialog({ open, onOpenChange, rawMaterials, onSubmit }: BOMDialogProps) {
   const t = useTranslations("products");
   const tc = useTranslations("common");
 
@@ -45,9 +40,7 @@ export default function BOMDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-gray-900 dark:text-white">
-            {t("addBomEntry")}
-          </DialogTitle>
+          <DialogTitle className="text-gray-900 dark:text-white">{t("addBomEntry")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">

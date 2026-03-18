@@ -85,11 +85,7 @@ export default function StockAdjustDialog({
               <Label htmlFor="adjust-notes" className="text-gray-700 dark:text-gray-300">
                 {tc("notes")}
               </Label>
-              <Input
-                id="adjust-notes"
-                name="notes"
-                className="mt-1"
-              />
+              <Input id="adjust-notes" name="notes" className="mt-1" />
             </div>
           </div>
           <DialogFooter>

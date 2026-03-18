@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  isAuthenticated,
-  logout,
-  setOnUnauthorizedCallback,
-} from "@/lib/requestHandlers";
+import { isAuthenticated, logout, setOnUnauthorizedCallback } from "@/lib/requestHandlers";
 import Login from "@/components/Login";
 import Dashboard from "@/components/Dashboard";
 
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders" | "services" | "hours";
+type TabType =
+  | "dashboard"
+  | "devices"
+  | "signals"
+  | "values"
+  | "users"
+  | "products"
+  | "materials"
+  | "orders"
+  | "services"
+  | "hours";
 
 export default function Home(props: any) {
   const router = useRouter();
@@ -33,7 +39,18 @@ export default function Home(props: any) {
   // Parse URL params for Dashboard
   const getInitialTab = (): TabType => {
     const tab = router.query.tab as string;
-    const validTabs: TabType[] = ["dashboard", "devices", "signals", "values", "users", "products", "materials", "orders", "services", "hours"];
+    const validTabs: TabType[] = [
+      "dashboard",
+      "devices",
+      "signals",
+      "values",
+      "users",
+      "products",
+      "materials",
+      "orders",
+      "services",
+      "hours",
+    ];
     return validTabs.includes(tab as TabType) ? (tab as TabType) : "orders";
   };
 
@@ -73,5 +90,12 @@ export default function Home(props: any) {
     );
   }
 
-  return <Dashboard onLogout={handleLogout} initialTab={getInitialTab()} locale={props.locale} onLocaleChange={props.onLocaleChange} />;
+  return (
+    <Dashboard
+      onLogout={handleLogout}
+      initialTab={getInitialTab()}
+      locale={props.locale}
+      onLocaleChange={props.onLocaleChange}
+    />
+  );
 }
