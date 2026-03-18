@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
 interface DialogProps {
@@ -12,16 +13,25 @@ interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Dialog = ({ open, onOpenChange, children }: DialogProps) => {
-  if (!open) return null;
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
 
-  return (
+  if (!open || !mounted) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
       onClick={() => onOpenChange(false)}
     >
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
-      <div onClick={(e) => e.stopPropagation()}>{children}</div>
-    </div>
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+      <div
+        className="relative z-[100] flex max-h-full w-full max-w-fit"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>,
+    document.body
   );
 };
 
@@ -30,7 +40,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
     <div
       ref={ref}
       className={cn(
-        "relative z-50 w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/30",
+        "w-full max-w-lg max-h-full overflow-y-auto bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/30",
         "dark:bg-gray-800/90 dark:border-white/10",
         className
       )}
