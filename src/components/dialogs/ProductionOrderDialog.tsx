@@ -54,7 +54,9 @@ export default function ProductionOrderDialog({
   useEffect(() => {
     if (open) {
       setCustomerInput(editingItem?.customer?.name ?? "");
-      getCustomers().then(setCustomers).catch(() => {});
+      getCustomers()
+        .then(setCustomers)
+        .catch(() => {});
     }
   }, [open, editingItem]);
 
@@ -103,12 +105,8 @@ export default function ProductionOrderDialog({
     const orderData: CreateProductionOrderRequest = {
       product_id: Number(formData.get("product_id")),
       quantity: Number(formData.get("quantity")),
-      priority: formData.get("priority")
-        ? Number(formData.get("priority"))
-        : undefined,
-      device_id: formData.get("device_id")
-        ? Number(formData.get("device_id"))
-        : undefined,
+      priority: formData.get("priority") ? Number(formData.get("priority")) : undefined,
+      device_id: formData.get("device_id") ? Number(formData.get("device_id")) : undefined,
       customer_name: customerInput.trim() || undefined,
       started_at: combineDatetime(
         formData.get("started_date") as string,
@@ -118,7 +116,10 @@ export default function ProductionOrderDialog({
         formData.get("completed_date") as string,
         formData.get("completed_time") as string
       ),
-      planned_delivery_date: combineDatetime(formData.get("planned_delivery_date") as string,"00:00"),
+      planned_delivery_date: combineDatetime(
+        formData.get("planned_delivery_date") as string,
+        "00:00"
+      ),
       work_instructions: (formData.get("work_instructions") as string) || undefined,
       quality_notes: (formData.get("quality_notes") as string) || undefined,
     };

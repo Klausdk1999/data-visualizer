@@ -19,6 +19,7 @@
 **Dependency**: `next-intl`
 
 ### File structure
+
 ```
 src/
   messages/
@@ -29,6 +30,7 @@ src/
 ```
 
 ### Integration
+
 - Configure `NextIntlClientProvider` in `_app.tsx`
 - Detect browser locale via `navigator.language`, default to `en`, store in `localStorage`
 - Replace all hardcoded strings with `useTranslations()` hook calls
@@ -37,6 +39,7 @@ src/
 - Update `_document.tsx` `lang` attribute dynamically
 
 ### Translation scope (~150-200 keys)
+
 - Login: title, labels, errors, button
 - Dashboard: tab names, table headers, dialog titles/labels, action buttons
 - TTN page: chart labels, stats, device info
@@ -47,6 +50,7 @@ src/
 **Dependency**: `framer-motion`
 
 ### Visual design
+
 - Animated gradient mesh background: 3-4 color blobs shifting via CSS `@keyframes`, theme-aware colors
 - Glassmorphic card: `backdrop-blur-xl`, `bg-white/70`, `shadow-2xl`, `rounded-2xl`
 - Card entrance: Framer Motion fade + slide up (spring, 0.5s)
@@ -74,6 +78,7 @@ _app.tsx
 No changes to API integration, routing, or data flow. All changes are UI/presentation layer.
 
 ## Dependencies to install
+
 - `next-themes`
 - `next-intl`
 - `framer-motion`

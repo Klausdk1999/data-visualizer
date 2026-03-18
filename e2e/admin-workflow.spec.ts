@@ -27,7 +27,7 @@ async function loginAsAdmin(page: Page) {
 
   // Dismiss any Next.js dev overlay that may intercept clicks
   await page.evaluate(() => {
-    document.querySelectorAll('nextjs-portal').forEach(el => el.remove());
+    document.querySelectorAll("nextjs-portal").forEach((el) => el.remove());
   });
 }
 
@@ -106,8 +106,7 @@ test.describe("Admin Workflow", () => {
 
     // Submit and wait for API response
     const responsePromise = page.waitForResponse(
-      (resp) =>
-        resp.url().includes("/production-orders") && resp.request().method() === "POST"
+      (resp) => resp.url().includes("/production-orders") && resp.request().method() === "POST"
     );
     await page.getByRole("button", { name: "Save" }).click();
     await responsePromise;

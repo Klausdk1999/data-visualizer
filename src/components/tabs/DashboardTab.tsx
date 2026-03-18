@@ -2,7 +2,16 @@
 
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gauge, ClipboardList, Wrench, CheckCircle, Clock, AlertTriangle, CalendarClock, PackageOpen } from "lucide-react";
+import {
+  Gauge,
+  ClipboardList,
+  Wrench,
+  CheckCircle,
+  Clock,
+  AlertTriangle,
+  CalendarClock,
+  PackageOpen,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ProductionOrder, TimeEntry, RawMaterial } from "@/types";
 
@@ -32,7 +41,7 @@ export default function DashboardTab({
     const diffDays = (today.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
     return diffDays <= dayFilter;
   });
- 
+
   const totalOrdens = filteredByPeriod.length;
   const emAndamento = filteredByPeriod.filter((o) => o.status === "in_progress").length;
   const concluidas = filteredByPeriod.filter((o) => o.status === "completed").length;
@@ -71,8 +80,7 @@ export default function DashboardTab({
     })
     .sort(
       (a, b) =>
-        new Date(a.planned_delivery_date!).getTime() -
-        new Date(b.planned_delivery_date!).getTime()
+        new Date(a.planned_delivery_date!).getTime() - new Date(b.planned_delivery_date!).getTime()
     );
 
   return (
@@ -84,10 +92,8 @@ export default function DashboardTab({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-
         {/* ══ SEÇÃO: ORDENS ══ */}
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-
           {/* Cabeçalho + filtro de período */}
           <div className="flex items-center justify-between flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2">
@@ -148,7 +154,9 @@ export default function DashboardTab({
                 className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${card.color} p-5 text-white`}
               >
                 <div className="absolute right-4 top-4">{card.icon}</div>
-                <p className="text-xs font-bold uppercase tracking-widest opacity-80">{card.label}</p>
+                <p className="text-xs font-bold uppercase tracking-widest opacity-80">
+                  {card.label}
+                </p>
                 <p className="mt-2 text-4xl font-black">{card.value}</p>
                 <p className="mt-1 text-xs opacity-60">{card.sub}</p>
               </div>
@@ -227,8 +235,8 @@ export default function DashboardTab({
               )}
             </div>
           </div>
-
-        </div>{/* ══ FIM SEÇÃO ORDENS ══ */}
+        </div>
+        {/* ══ FIM SEÇÃO ORDENS ══ */}
 
         {/* ══ SEÇÃO: ESTOQUE ══ */}
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
@@ -250,7 +258,8 @@ export default function DashboardTab({
                 <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
                 <p className="text-sm font-bold text-red-700 dark:text-red-400">
                   {lowStockItems.length}{" "}
-                  {lowStockItems.length === 1 ? "material abaixo" : "materiais abaixo"} do estoque mínimo
+                  {lowStockItems.length === 1 ? "material abaixo" : "materiais abaixo"} do estoque
+                  mínimo
                 </p>
               </div>
               <div className="h-40 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
@@ -289,8 +298,8 @@ export default function DashboardTab({
               </div>
             </div>
           )}
-        </div>{/* ══ FIM SEÇÃO ESTOQUE ══ */}
-
+        </div>
+        {/* ══ FIM SEÇÃO ESTOQUE ══ */}
       </CardContent>
     </Card>
   );

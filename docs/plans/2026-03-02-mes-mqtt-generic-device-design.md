@@ -29,6 +29,7 @@ Four independent phases, each delivering working features.
 **Auth:** `Authorization: Bearer <device_auth_token>` or `X-API-Key: <shared_key_from_env>`
 
 **Request format:**
+
 ```json
 {
   "device_id": "my-controller-01",
@@ -44,6 +45,7 @@ Four independent phases, each delivering working features.
 ```
 
 **Behavior:**
+
 - `device_id` is a string identifier (matches Device.Name in DB)
 - Fields 1-8 accept number, string, or null
 - If device doesn't exist → auto-create device + signals for each non-null field
@@ -56,6 +58,7 @@ Four independent phases, each delivering working features.
 **Library:** mochi-mqtt (pure Go, embeddable)
 
 **Configuration (.env):**
+
 ```env
 MQTT_ENABLED=true
 MQTT_PORT=1883
@@ -70,6 +73,7 @@ MQTT_SHARED_KEY=          # optional shared API key for devices
 **MQTT message payload:** Same JSON as POST route (without device_id, inferred from topic).
 
 **Authentication:**
+
 - Username: device name or device_id string
 - Password: device's `auth_token` from database
 - Validated against DB on connect
@@ -77,6 +81,7 @@ MQTT_SHARED_KEY=          # optional shared API key for devices
 **Processing:** Broker hook parses incoming messages on `devices/+/data` and stores values using the same logic as the POST handler.
 
 ### Backend Changes (go-data-storage)
+
 - New handler: `internal/handlers/generic_data_handler.go`
 - New embedded broker: `internal/mqtt/broker.go`
 - New auth hook for MQTT: `internal/mqtt/auth_hook.go`
@@ -84,6 +89,7 @@ MQTT_SHARED_KEY=          # optional shared API key for devices
 - New .env variables for MQTT config
 
 ### Frontend Changes (data-visualizer)
+
 - No frontend changes in Phase 1 (existing signal values UI already displays the data)
 
 ---
@@ -162,29 +168,31 @@ MQTT_SHARED_KEY=          # optional shared API key for devices
 
 ### API Endpoints (all require user auth)
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET/POST | `/products` | List/Create products |
-| GET/PUT/DELETE | `/products/{id}` | Product CRUD |
-| GET/POST | `/raw-materials` | List/Create raw materials |
-| GET/PUT/DELETE | `/raw-materials/{id}` | Material CRUD |
-| GET/POST | `/products/{id}/bom` | List/Add BOM entries |
-| DELETE | `/bom/{id}` | Remove BOM entry |
-| GET/POST | `/production-orders` | List/Create orders |
-| GET/PUT/DELETE | `/production-orders/{id}` | Order CRUD |
-| PUT | `/production-orders/{id}/status` | Status transition (auto-decrements stock on complete) |
-| GET | `/stock-movements` | List movements (filter: material_id, order_id) |
-| POST | `/raw-materials/{id}/adjust-stock` | Manual stock adjustment |
+| Method         | Route                              | Description                                           |
+| -------------- | ---------------------------------- | ----------------------------------------------------- |
+| GET/POST       | `/products`                        | List/Create products                                  |
+| GET/PUT/DELETE | `/products/{id}`                   | Product CRUD                                          |
+| GET/POST       | `/raw-materials`                   | List/Create raw materials                             |
+| GET/PUT/DELETE | `/raw-materials/{id}`              | Material CRUD                                         |
+| GET/POST       | `/products/{id}/bom`               | List/Add BOM entries                                  |
+| DELETE         | `/bom/{id}`                        | Remove BOM entry                                      |
+| GET/POST       | `/production-orders`               | List/Create orders                                    |
+| GET/PUT/DELETE | `/production-orders/{id}`          | Order CRUD                                            |
+| PUT            | `/production-orders/{id}/status`   | Status transition (auto-decrements stock on complete) |
+| GET            | `/stock-movements`                 | List movements (filter: material_id, order_id)        |
+| POST           | `/raw-materials/{id}/adjust-stock` | Manual stock adjustment                               |
 
 ### Stock Decrement Logic
 
 When a production order status changes to "completed":
+
 1. Look up the product's BOM entries
 2. For each BOM entry: decrement `raw_materials.stock_quantity` by `bom.quantity * order.quantity`
 3. Create a StockMovement record for each decrement (type="out", linked to the order)
 4. If any material would go negative → return error, don't complete the order
 
 ### Backend Changes (go-data-storage)
+
 - New models in `internal/models/` (or extend models.go)
 - New handlers: `products_handler.go`, `raw_materials_handler.go`, `production_orders_handler.go`, `stock_handler.go`
 - New migration: `004_add_mes_tables.sql`
@@ -197,12 +205,14 @@ When a production order status changes to "completed":
 ### New Dashboard Tabs
 
 **Products Tab** (`/?tab=products`)
+
 - Table: name, SKU, category, unit, status
 - Add/Edit/Delete dialog
 - Click product → BOM sub-table showing raw materials + quantities
 - Add/remove BOM entries inline
 
 **Materials Tab** (`/?tab=materials`)
+
 - Table: name, SKU, category, unit, stock quantity, min stock, status
 - Stock level indicators (green/yellow/red vs min_stock)
 - Add/Edit/Delete dialog
@@ -210,6 +220,7 @@ When a production order status changes to "completed":
 - Expandable stock movement history per material
 
 **Orders Tab** (`/?tab=orders`)
+
 - Table: ID, product, quantity, status, priority, device, started_at, completed_at
 - Status badges: planned=gray, in_progress=blue, completed=green, cancelled=red
 - Add order dialog: select product, quantity, optional device link, instructions
@@ -218,12 +229,15 @@ When a production order status changes to "completed":
 - Filter by status, product, device
 
 ### Navigation Update
+
 Group the 8 tabs:
+
 - **IoT**: Dashboard, Devices, Signals, Values
 - **MES**: Products, Materials, Orders
 - **Admin**: Users
 
 ### Frontend Changes (data-visualizer)
+
 - New types in `src/types/index.ts`
 - New API functions in `src/lib/requestHandlers.ts`
 - New tabs: `ProductsTab.tsx`, `MaterialsTab.tsx`, `OrdersTab.tsx`
@@ -235,16 +249,19 @@ Group the 8 tabs:
 ## Phase 4: MES + IoT Linking
 
 ### Device-Order Association (Display)
+
 - Production orders have optional `device_id` linking to a device
 - Orders tab: device dropdown when creating/editing orders
 - Order detail view: mini-chart of device signals during order's active time range (started_at → completed_at)
 
 ### Future Automation Hooks (documented, not implemented)
+
 - Counter signal tracking units produced → progress bar
 - Auto-complete order when counter reaches target
 - Quality signal → pause order if out of range
 
 ### Changes
+
 - Backend: Endpoint to fetch signal values for a device within an order's time range
 - Frontend: Order detail component with embedded signal chart
 

@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getTimeEntries } from "@/lib/requestHandlers";
 import { useTranslations, useLocale } from "next-intl";
 import { Clock, Calendar, User, Wrench, AlertTriangle } from "lucide-react";
@@ -28,15 +23,13 @@ function calcHours(start: string, end: string): number {
 function fmt(iso?: string | null, locale?: string): string {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString(locale ?? "pt-BR", {
-    day: "2-digit", month: "2-digit", year: "numeric",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 }
 
-export default function OrderSummaryDialog({
-  open,
-  onOpenChange,
-  order,
-}: OrderSummaryDialogProps) {
+export default function OrderSummaryDialog({ open, onOpenChange, order }: OrderSummaryDialogProps) {
   const locale = useLocale();
   const isPT = locale === "pt-BR";
   const t = useTranslations("orders");
@@ -62,23 +55,20 @@ export default function OrderSummaryDialog({
   if (!order) return null;
 
   // ── Cálculos do resumo ──
-  const totalHours = entries.reduce(
-    (acc, e) => acc + calcHours(e.start_time, e.end_time),
-    0
-  );
+  const totalHours = entries.reduce((acc, e) => acc + calcHours(e.start_time, e.end_time), 0);
 
   const statusMap: Record<string, string> = {
-    planned:     isPT ? "Planejada"    : "Planned",
+    planned: isPT ? "Planejada" : "Planned",
     in_progress: isPT ? "Em Andamento" : "In Progress",
-    completed:   isPT ? "Concluída"    : "Completed",
-    cancelled:   isPT ? "Cancelada"    : "Cancelled",
+    completed: isPT ? "Concluída" : "Completed",
+    cancelled: isPT ? "Cancelada" : "Cancelled",
   };
 
   const statusColor: Record<string, string> = {
-    planned:     "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+    planned: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
     in_progress: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400",
-    completed:   "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
-    cancelled:   "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
+    completed: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
+    cancelled: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
   };
 
   // Agrupa horas por colaborador para o resumo
@@ -90,18 +80,19 @@ export default function OrderSummaryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white flex items-center gap-2">
             {isPT ? `Resumo da Ordem #${order.id}` : `Order Summary #${order.id}`}
-            <span className={`ml-2 text-xs font-semibold px-2 py-1 rounded-full ${statusColor[order.status] ?? ""}`}>
+            <span
+              className={`ml-2 text-xs font-semibold px-2 py-1 rounded-full ${statusColor[order.status] ?? ""}`}
+            >
               {statusMap[order.status] ?? order.status}
             </span>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5 py-2">
-
           {/* ── Identificação ── */}
           <section>
             <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 border-b border-gray-200 dark:border-gray-700 pb-1">
@@ -109,8 +100,8 @@ export default function OrderSummaryDialog({
             </h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3">
               {[
-                [isPT ? "Produto"  : "Product",  order.product?.name  ?? order.product_id],
-                [isPT ? "Cliente"  : "Customer", order.customer?.name ?? "—"],
+                [isPT ? "Produto" : "Product", order.product?.name ?? order.product_id],
+                [isPT ? "Cliente" : "Customer", order.customer?.name ?? "—"],
                 [isPT ? "Quantidade" : "Quantity", order.quantity],
                 [isPT ? "Prioridade" : "Priority", order.priority ?? "—"],
               ].map(([label, value]) => (
@@ -134,10 +125,13 @@ export default function OrderSummaryDialog({
             </h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3">
               {[
-                [isPT ? "Criação"             : "Created",          fmt(order.created_at,             locale)],
-                [isPT ? "Previsão de Entrega" : "Planned Delivery", fmt(order.planned_delivery_date,  locale)],
-                [isPT ? "Início"              : "Started",          fmt(order.started_at,             locale)],
-                [isPT ? "Conclusão"           : "Completed",        fmt(order.completed_at,           locale)],
+                [isPT ? "Criação" : "Created", fmt(order.created_at, locale)],
+                [
+                  isPT ? "Previsão de Entrega" : "Planned Delivery",
+                  fmt(order.planned_delivery_date, locale),
+                ],
+                [isPT ? "Início" : "Started", fmt(order.started_at, locale)],
+                [isPT ? "Conclusão" : "Completed", fmt(order.completed_at, locale)],
               ].map(([label, value]) => (
                 <div key={String(label)}>
                   <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wide">
@@ -234,7 +228,6 @@ export default function OrderSummaryDialog({
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 min-w-0">
-
                               {/* Colaborador e serviço */}
                               <div className="flex items-center gap-3 flex-wrap">
                                 <span className="flex items-center gap-1 text-sm font-semibold text-gray-900 dark:text-gray-100">
@@ -266,9 +259,7 @@ export default function OrderSummaryDialog({
 
                             {/* Total de horas do lançamento */}
                             <div className="shrink-0 text-right">
-                              <p className="text-xs text-gray-400">
-                                {isPT ? "Horas" : "Hours"}
-                              </p>
+                              <p className="text-xs text-gray-400">{isPT ? "Horas" : "Hours"}</p>
                               <p className="text-lg font-black text-blue-600 dark:text-blue-400">
                                 {hours.toFixed(1)}h
                               </p>
@@ -310,7 +301,6 @@ export default function OrderSummaryDialog({
               )}
             </section>
           )}
-
         </div>
       </DialogContent>
     </Dialog>

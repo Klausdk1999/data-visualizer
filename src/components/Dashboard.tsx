@@ -46,7 +46,23 @@ import {
   deleteTimeEntry,
 } from "@/lib/requestHandlers";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList, Copy, Check, Settings, ChevronDown, Clock, Wrench } from "lucide-react";
+import {
+  LayoutDashboard,
+  Cpu,
+  Radio,
+  Activity,
+  Users,
+  LogOut,
+  Package,
+  Boxes,
+  ClipboardList,
+  Copy,
+  Check,
+  Settings,
+  ChevronDown,
+  Clock,
+  Wrench,
+} from "lucide-react";
 import DashboardTab from "@/components/tabs/DashboardTab";
 import DevicesTab from "@/components/tabs/DevicesTab";
 import SignalsTab from "@/components/tabs/SignalsTab";
@@ -103,7 +119,17 @@ import type {
   CreateTimeEntryRequest,
 } from "@/types";
 
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders" | "services" | "hours";
+type TabType =
+  | "dashboard"
+  | "devices"
+  | "signals"
+  | "values"
+  | "users"
+  | "products"
+  | "materials"
+  | "orders"
+  | "services"
+  | "hours";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -136,7 +162,9 @@ export default function Dashboard({
   const [signalDialogOpen, setSignalDialogOpen] = useState(false);
   const [valueDialogOpen, setValueDialogOpen] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Device | Signal | User | Product | RawMaterial | ProductionOrder | null>(null);
+  const [editingItem, setEditingItem] = useState<
+    Device | Signal | User | Product | RawMaterial | ProductionOrder | null
+  >(null);
   const [error, setError] = useState<string>("");
 
   // MES state
@@ -211,7 +239,17 @@ export default function Dashboard({
       const isAdmin = currentUser?.type === "admin";
 
       if (isAdmin) {
-        const [devicesData, signalsData, valuesData, usersData, productsData, materialsData, ordersData, servicesData, timeEntriesData] = await Promise.all([
+        const [
+          devicesData,
+          signalsData,
+          valuesData,
+          usersData,
+          productsData,
+          materialsData,
+          ordersData,
+          servicesData,
+          timeEntriesData,
+        ] = await Promise.all([
           getDevices(),
           getSignals(),
           getSignalValues({ limit: "100" }),
@@ -423,11 +461,15 @@ export default function Dashboard({
     try {
       if (editingItem && "sku" in editingItem) {
         await updateProduct((editingItem as Product).id.toString(), data);
+        setProductDialogOpen(false);
+        setEditingItem(null);
       } else {
-        await createProduct(data);
+        const newProduct = await createProduct(data);
+        // After creating, re-open dialog in edit mode so user can add BOM entries
+        setSelectedProduct(newProduct.id);
+        setBomEntries([]);
+        setEditingItem(newProduct);
       }
-      setProductDialogOpen(false);
-      setEditingItem(null);
       fetchData();
     } catch (err: any) {
       setError(err.response?.data || t("errors.saveFailed"));
@@ -450,7 +492,6 @@ export default function Dashboard({
     setError("");
     try {
       await addBOMEntry(selectedProduct.toString(), data);
-      setBomDialogOpen(false);
       const bom = await getProductBOM(selectedProduct.toString());
       setBomEntries(bom);
     } catch (err: any) {
@@ -544,11 +585,12 @@ export default function Dashboard({
   };
 
   const handleUpdateOrderStatus = async (orderId: number, status: string) => {
-    const confirmMsg = status === "completed"
-      ? t("devices.confirmCompleteOrder")
-      : status === "cancelled"
-      ? t("devices.confirmCancelOrder")
-      : t("devices.confirmStartOrder");
+    const confirmMsg =
+      status === "completed"
+        ? t("devices.confirmCompleteOrder")
+        : status === "cancelled"
+          ? t("devices.confirmCancelOrder")
+          : t("devices.confirmStartOrder");
     if (!confirm(confirmMsg)) return;
     setError("");
     try {
@@ -627,9 +669,7 @@ export default function Dashboard({
             </h1>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              {onLocaleChange && (
-                <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />
-              )}
+              {onLocaleChange && <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />}
               <span className="text-sm text-gray-700 dark:text-gray-300">
                 {user?.email || user?.name}
               </span>
@@ -743,14 +783,19 @@ export default function Dashboard({
                 >
                   <Settings className="w-4 h-4" />
                   {t("tabs.settings")}
-                  <ChevronDown className={`w-3 h-3 transition-transform ${settingsOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown
+                    className={`w-3 h-3 transition-transform ${settingsOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
                 {settingsOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setSettingsOpen(false)} />
                     <div className="absolute top-full left-0 mt-2 z-50 min-w-[200px] bg-white/90 backdrop-blur-xl rounded-xl border border-white/30 shadow-lg dark:bg-gray-800/90 dark:border-white/10 py-1">
                       <button
-                        onClick={() => { handleTabChange("devices"); setSettingsOpen(false); }}
+                        onClick={() => {
+                          handleTabChange("devices");
+                          setSettingsOpen(false);
+                        }}
                         className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
                           activeTab === "devices"
                             ? "bg-blue-500/90 text-white"
@@ -761,7 +806,10 @@ export default function Dashboard({
                         {t("tabs.devices")}
                       </button>
                       <button
-                        onClick={() => { handleTabChange("signals"); setSettingsOpen(false); }}
+                        onClick={() => {
+                          handleTabChange("signals");
+                          setSettingsOpen(false);
+                        }}
                         className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
                           activeTab === "signals"
                             ? "bg-blue-500/90 text-white"
@@ -772,7 +820,10 @@ export default function Dashboard({
                         {t("tabs.signals")}
                       </button>
                       <button
-                        onClick={() => { handleTabChange("values"); setSettingsOpen(false); }}
+                        onClick={() => {
+                          handleTabChange("values");
+                          setSettingsOpen(false);
+                        }}
                         className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
                           activeTab === "values"
                             ? "bg-blue-500/90 text-white"
@@ -783,7 +834,10 @@ export default function Dashboard({
                         {t("tabs.values")}
                       </button>
                       <button
-                        onClick={() => { handleTabChange("services"); setSettingsOpen(false); }}
+                        onClick={() => {
+                          handleTabChange("services");
+                          setSettingsOpen(false);
+                        }}
                         className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
                           activeTab === "services"
                             ? "bg-blue-500/90 text-white"
@@ -821,14 +875,14 @@ export default function Dashboard({
         ) : (
           <>
             {activeTab === "dashboard" && (
-                <DashboardTab
-                  devices={devices}
-                  signals={signals}
-                  orders={productionOrders}
-                  timeEntries={timeEntries}
-                  rawMaterials={rawMaterials}
-                />
-              )}
+              <DashboardTab
+                devices={devices}
+                signals={signals}
+                orders={productionOrders}
+                timeEntries={timeEntries}
+                rawMaterials={rawMaterials}
+              />
+            )}
 
             {activeTab === "devices" && (
               <DevicesTab
@@ -900,8 +954,15 @@ export default function Dashboard({
                 selectedProduct={selectedProduct}
                 bomEntries={bomEntries}
                 onProductSelect={handleProductSelect}
-                onAddProduct={() => { setEditingItem(null); setProductDialogOpen(true); }}
-                onEditProduct={(product) => { setEditingItem(product); setProductDialogOpen(true); }}
+                onAddProduct={() => {
+                  setEditingItem(null);
+                  setProductDialogOpen(true);
+                }}
+                onEditProduct={(product) => {
+                  setEditingItem(product);
+                  handleProductSelect(product.id);
+                  setProductDialogOpen(true);
+                }}
                 onDeleteProduct={handleDeleteProduct}
                 onAddBOMEntry={() => setBomDialogOpen(true)}
                 onDeleteBOMEntry={handleDeleteBOMEntry}
@@ -911,10 +972,19 @@ export default function Dashboard({
             {activeTab === "materials" && (
               <MaterialsTab
                 materials={rawMaterials}
-                onAddMaterial={() => { setEditingItem(null); setMaterialDialogOpen(true); }}
-                onEditMaterial={(material) => { setEditingItem(material); setMaterialDialogOpen(true); }}
+                onAddMaterial={() => {
+                  setEditingItem(null);
+                  setMaterialDialogOpen(true);
+                }}
+                onEditMaterial={(material) => {
+                  setEditingItem(material);
+                  setMaterialDialogOpen(true);
+                }}
                 onDeleteMaterial={handleDeleteRawMaterial}
-                onAdjustStock={(material) => { setSelectedMaterial(material); setStockAdjustDialogOpen(true); }}
+                onAdjustStock={(material) => {
+                  setSelectedMaterial(material);
+                  setStockAdjustDialogOpen(true);
+                }}
               />
             )}
 
@@ -922,8 +992,14 @@ export default function Dashboard({
               <OrdersTab
                 orders={productionOrders}
                 isWorker={isWorker}
-                onAddOrder={() => { setEditingItem(null); setOrderDialogOpen(true); }}
-                onEditOrder={(order) => { setEditingItem(order); setOrderDialogOpen(true); }}
+                onAddOrder={() => {
+                  setEditingItem(null);
+                  setOrderDialogOpen(true);
+                }}
+                onEditOrder={(order) => {
+                  setEditingItem(order);
+                  setOrderDialogOpen(true);
+                }}
                 onDeleteOrder={handleDeleteOrder}
                 onUpdateStatus={handleUpdateOrderStatus}
               />
@@ -931,10 +1007,18 @@ export default function Dashboard({
 
             {activeTab === "hours" && (
               <HoursTab
-                timeEntries={isWorker ? timeEntries.filter(e => e.user_id === user?.id) : timeEntries}
+                timeEntries={
+                  isWorker ? timeEntries.filter((e) => e.user_id === user?.id) : timeEntries
+                }
                 isWorker={isWorker}
-                onAddEntry={() => { setEditingTimeEntry(null); setTimeEntryDialogOpen(true); }}
-                onEditEntry={(entry) => { setEditingTimeEntry(entry); setTimeEntryDialogOpen(true); }}
+                onAddEntry={() => {
+                  setEditingTimeEntry(null);
+                  setTimeEntryDialogOpen(true);
+                }}
+                onEditEntry={(entry) => {
+                  setEditingTimeEntry(entry);
+                  setTimeEntryDialogOpen(true);
+                }}
                 onDeleteEntry={handleDeleteTimeEntry}
               />
             )}
@@ -943,8 +1027,14 @@ export default function Dashboard({
               <ServicesTab
                 services={services}
                 isWorker={isWorker}
-                onAddService={() => { setEditingService(null); setServiceDialogOpen(true); }}
-                onEditService={(service) => { setEditingService(service); setServiceDialogOpen(true); }}
+                onAddService={() => {
+                  setEditingService(null);
+                  setServiceDialogOpen(true);
+                }}
+                onEditService={(service) => {
+                  setEditingService(service);
+                  setServiceDialogOpen(true);
+                }}
                 onDeleteService={handleDeleteService}
               />
             )}
@@ -986,7 +1076,11 @@ export default function Dashboard({
         open={productDialogOpen}
         onOpenChange={setProductDialogOpen}
         editingItem={editingItem as Product | null}
+        rawMaterials={rawMaterials}
+        bomEntries={bomEntries}
         onSubmit={handleCreateProduct}
+        onAddBOMEntry={handleAddBOMEntry}
+        onDeleteBOMEntry={handleDeleteBOMEntry}
       />
 
       <RawMaterialDialog
@@ -1046,9 +1140,7 @@ export default function Dashboard({
             </DialogTitle>
           </DialogHeader>
           <div className="py-4 space-y-3">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t("devices.tokenWarning")}
-            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{t("devices.tokenWarning")}</p>
             <div className="flex items-center gap-2">
               <code className="flex-1 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm font-mono break-all text-gray-900 dark:text-gray-100">
                 {newDeviceToken}
@@ -1071,9 +1163,7 @@ export default function Dashboard({
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={() => setNewDeviceToken(null)}>
-              {t("common.close")}
-            </Button>
+            <Button onClick={() => setNewDeviceToken(null)}>{t("common.close")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
