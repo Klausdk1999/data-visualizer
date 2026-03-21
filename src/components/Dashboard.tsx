@@ -42,6 +42,7 @@ import {
   deleteService,
   getTimeEntries,
   createTimeEntry,
+  createTimeEntries,
   updateTimeEntry,
   deleteTimeEntry,
 } from "@/lib/requestHandlers";
@@ -587,13 +588,13 @@ export default function Dashboard({
   };
 
   // Time Entry CRUD handlers
-  const handleCreateTimeEntry = async (data: CreateTimeEntryRequest) => {
+  const handleCreateTimeEntry = async (entries: CreateTimeEntryRequest[]) => {
     setError("");
     try {
-      if (editingTimeEntry) {
-        await updateTimeEntry(editingTimeEntry.id.toString(), data);
+      if (editingTimeEntry && entries.length === 1) {
+        await updateTimeEntry(editingTimeEntry.id.toString(), entries[0]);
       } else {
-        await createTimeEntry(data);
+        await createTimeEntries(entries);
       }
       setTimeEntryDialogOpen(false);
       setEditingTimeEntry(null);

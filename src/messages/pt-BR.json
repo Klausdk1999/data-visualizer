@@ -249,7 +249,10 @@
     "selectOrder": "Selecione uma ordem de produção",
     "selectService": "Selecione um serviço",
     "selectWorker": "Selecione um trabalhador",
-    "confirmDelete": "Tem certeza que deseja excluir este registro?"
+    "confirmDelete": "Tem certeza que deseja excluir este registro?",
+    "addInterval": "Adicionar intervalo",
+    "removeInterval": "Remover",
+    "interval": "Intervalo"
   },
   "ttn": {
     "title": "Monitoramento de Rios TTN",

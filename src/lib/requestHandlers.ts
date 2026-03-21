@@ -717,6 +717,16 @@ export const createTimeEntry = async (data: CreateTimeEntryRequest): Promise<Tim
   }
 };
 
+export const createTimeEntries = async (data: CreateTimeEntryRequest[]): Promise<TimeEntry[]> => {
+  try {
+    const response = await axiosInstance.post<TimeEntry[]>("time-entries", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating time entries:", error);
+    throw error;
+  }
+};
+
 export const updateTimeEntry = async (id: string, data: Partial<CreateTimeEntryRequest>): Promise<TimeEntry> => {
   try {
     const response = await axiosInstance.put<TimeEntry>(`time-entries/${id}`, data);
