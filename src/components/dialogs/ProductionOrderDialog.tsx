@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { X, Save, Printer } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getCustomers } from "@/lib/requestHandlers";
+import { SearchableSelect } from "@/components/ui/combobox";
 import type {
   ProductionOrder,
   Product,
@@ -49,11 +50,20 @@ export default function ProductionOrderDialog({
   const [customerInput, setCustomerInput] = useState("");
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [productId, setProductId] = useState("");
+  const [deviceId, setDeviceId] = useState("");
   const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  const productOptions = products.map((p) => ({ value: String(p.id), label: p.name }));
+  const deviceOptions = [
+    ...devices.map((d) => ({ value: String(d.id), label: d.name })),
+  ];
 
   useEffect(() => {
     if (open) {
       setCustomerInput(editingItem?.customer?.name ?? "");
+      setProductId(editingItem?.product_id ? String(editingItem.product_id) : "");
+      setDeviceId(editingItem?.device_id ? String(editingItem.device_id) : "");
       getCustomers().then(setCustomers).catch(() => {});
     }
   }, [open, editingItem]);
@@ -101,14 +111,12 @@ export default function ProductionOrderDialog({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const orderData: CreateProductionOrderRequest = {
-      product_id: Number(formData.get("product_id")),
+      product_id: Number(productId),
       quantity: Number(formData.get("quantity")),
       priority: formData.get("priority")
         ? Number(formData.get("priority"))
         : undefined,
-      device_id: formData.get("device_id")
-        ? Number(formData.get("device_id"))
-        : undefined,
+      device_id: deviceId ? Number(deviceId) : undefined,
       customer_name: customerInput.trim() || undefined,
       started_at: combineDatetime(
         formData.get("started_date") as string,
@@ -139,20 +147,16 @@ export default function ProductionOrderDialog({
               <Label htmlFor="order-product" className="text-gray-700 dark:text-gray-300">
                 {t("product")} *
               </Label>
-              <select
+              <SearchableSelect
                 id="order-product"
-                name="product_id"
+                options={productOptions}
+                value={productId}
+                onChange={setProductId}
+                placeholder={t("selectProduct")}
+                searchPlaceholder={tc("search")}
+                notFoundText={tc("noResults")}
                 required
-                defaultValue={editingItem?.product_id ?? ""}
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <option value="">{t("selectProduct")}</option>
-                {products.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
             <div>
               <Label htmlFor="order-customer" className="text-gray-700 dark:text-gray-300">
@@ -221,19 +225,15 @@ export default function ProductionOrderDialog({
               <Label htmlFor="order-device" className="text-gray-700 dark:text-gray-300">
                 {t("device")}
               </Label>
-              <select
+              <SearchableSelect
                 id="order-device"
-                name="device_id"
-                defaultValue={editingItem?.device_id ?? ""}
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <option value="">{tc("none")}</option>
-                {devices.map((device) => (
-                  <option key={device.id} value={device.id}>
-                    {device.name}
-                  </option>
-                ))}
-              </select>
+                options={[{ value: "", label: tc("none") }, ...deviceOptions]}
+                value={deviceId}
+                onChange={setDeviceId}
+                placeholder={tc("none")}
+                searchPlaceholder={tc("search")}
+                notFoundText={tc("noResults")}
+              />
             </div>
             <div>
               <Label className="text-gray-700 dark:text-gray-300">{t("startDate")}</Label>

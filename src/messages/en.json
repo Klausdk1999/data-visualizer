@@ -27,7 +27,9 @@
     "notes": "Notes",
     "none": "None",
     "priority": "Priority",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "search": "Search...",
+    "noResults": "No results found"
   },
   "login": {
     "title": "IoT Dashboard",

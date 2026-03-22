@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SearchableSelect } from "@/components/ui/combobox";
 import type { TimeEntry, CreateTimeEntryRequest, ProductionOrder, Service, User } from "@/types";
 
 // A single interval row (without user_id / day, which are shared)
 interface IntervalEntry {
-  id: string; // local key only
+  id: string;
   production_order_id: string;
   service_id: string;
   start_time: string;
@@ -54,7 +55,16 @@ export default function TimeEntryDialog({
   const [day, setDay] = useState<string>("");
   const [intervals, setIntervals] = useState<IntervalEntry[]>([emptyInterval()]);
 
-  // Reset form whenever the dialog opens/closes or editingItem changes
+  // Build option lists
+  const userOptions = users.map((u) => ({ value: String(u.id), label: u.name }));
+  const orderOptions = productionOrders.map((o) => ({
+    value: String(o.id),
+    label: `OP #${o.id} – ${o.product?.name ?? `Product #${o.product_id}`}`,
+  }));
+  const serviceOptions = services
+    .filter((s) => s.is_active)
+    .map((s) => ({ value: String(s.id), label: `${s.code} – ${s.name}` }));
+
   useEffect(() => {
     if (open) {
       if (editingItem) {
@@ -112,9 +122,6 @@ export default function TimeEntryDialog({
     onSubmit(entries);
   };
 
-  const selectClass =
-    "mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100";
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -129,23 +136,18 @@ export default function TimeEntryDialog({
             {/* Shared: Worker selector */}
             {!isWorker && (
               <div>
-                <Label htmlFor="entry-user" className="text-gray-700 dark:text-gray-300">
+                <Label className="text-gray-700 dark:text-gray-300">
                   {t("worker")} *
                 </Label>
-                <select
-                  id="entry-user"
-                  required
+                <SearchableSelect
+                  options={userOptions}
                   value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  className={selectClass}
-                >
-                  <option value="">{t("selectWorker")}</option>
-                  {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setUserId}
+                  placeholder={t("selectWorker")}
+                  searchPlaceholder={tc("search")}
+                  notFoundText={tc("noResults")}
+                  required
+                />
               </div>
             )}
 
@@ -171,7 +173,6 @@ export default function TimeEntryDialog({
                   key={interval.id}
                   className="relative rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4"
                 >
-                  {/* Interval header */}
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                       {t("interval")} {index + 1}
@@ -194,21 +195,15 @@ export default function TimeEntryDialog({
                       <Label className="text-gray-700 dark:text-gray-300">
                         {t("order")} *
                       </Label>
-                      <select
-                        required
+                      <SearchableSelect
+                        options={orderOptions}
                         value={interval.production_order_id}
-                        onChange={(e) =>
-                          updateInterval(interval.id, "production_order_id", e.target.value)
-                        }
-                        className={selectClass}
-                      >
-                        <option value="">{t("selectOrder")}</option>
-                        {productionOrders.map((order) => (
-                          <option key={order.id} value={order.id}>
-                            OP #{order.id} - {order.product?.name || `Product #${order.product_id}`}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(v) => updateInterval(interval.id, "production_order_id", v)}
+                        placeholder={t("selectOrder")}
+                        searchPlaceholder={tc("search")}
+                        notFoundText={tc("noResults")}
+                        required
+                      />
                     </div>
 
                     {/* Service */}
@@ -216,21 +211,15 @@ export default function TimeEntryDialog({
                       <Label className="text-gray-700 dark:text-gray-300">
                         {t("service")} *
                       </Label>
-                      <select
-                        required
+                      <SearchableSelect
+                        options={serviceOptions}
                         value={interval.service_id}
-                        onChange={(e) =>
-                          updateInterval(interval.id, "service_id", e.target.value)
-                        }
-                        className={selectClass}
-                      >
-                        <option value="">{t("selectService")}</option>
-                        {services.filter((s) => s.is_active).map((service) => (
-                          <option key={service.id} value={service.id}>
-                            {service.code} - {service.name}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(v) => updateInterval(interval.id, "service_id", v)}
+                        placeholder={t("selectService")}
+                        searchPlaceholder={tc("search")}
+                        notFoundText={tc("noResults")}
+                        required
+                      />
                     </div>
 
                     {/* Start / End times */}
