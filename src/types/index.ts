@@ -144,8 +144,18 @@ export interface BillOfMaterials {
 export interface Customer {
   id: number;
   name: string;
+  phone: string;
+  cnpj?: string;
+  address?: string;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface CreateCustomerRequest {
+  name: string;
+  phone: string;
+  cnpj?: string;
+  address?: string;
 }
 
 export interface ProductionOrder {

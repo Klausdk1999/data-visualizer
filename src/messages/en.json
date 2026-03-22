@@ -61,7 +61,8 @@
     "services": "Services",
     "hours": "Hours",
     "users": "Users",
-    "settings": "Settings"
+    "settings": "Settings",
+    "customers": "Customers"
   },
   "devices": {
     "title": "Devices",
@@ -227,6 +228,21 @@
     "deviceSignalValues": "Device Signal Values during Order #{orderId}",
     "loadingSignalValues": "Loading signal values...",
     "noSignalValues": "No signal values found for this order's time range."
+  },
+  "customers": {
+    "title": "Customers",
+    "addCustomer": "Add Customer",
+    "editCustomer": "Edit Customer",
+    "createCustomer": "Create Customer",
+    "phone": "Phone",
+    "cnpj": "CNPJ",
+    "address": "Address",
+    "confirmDelete": "Are you sure you want to delete this customer?",
+    "searchPlaceholder": "Search customers...",
+    "noPhone": "No phone",
+    "noCnpj": "CNPJ not provided",
+    "noAddress": "Address not provided",
+    "selectCustomer": "Select a customer"
   },
   "services": {
     "title": "Services",

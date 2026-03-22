@@ -61,7 +61,8 @@
     "services": "Serviços",
     "hours": "Horas",
     "users": "Usuários",
-    "settings": "Configurações"
+    "settings": "Configurações",
+    "customers": "Clientes"
   },
   "devices": {
     "title": "Dispositivos",
@@ -227,6 +228,21 @@
     "deviceSignalValues": "Valores de Sinais do Dispositivo durante Ordem #{orderId}",
     "loadingSignalValues": "Carregando valores de sinais...",
     "noSignalValues": "Nenhum valor de sinal encontrado para o período desta ordem."
+  },
+  "customers": {
+    "title": "Clientes",
+    "addCustomer": "Adicionar Cliente",
+    "editCustomer": "Editar Cliente",
+    "createCustomer": "Criar Cliente",
+    "phone": "Telefone",
+    "cnpj": "CNPJ",
+    "address": "Endereço",
+    "confirmDelete": "Tem certeza que deseja excluir este cliente?",
+    "searchPlaceholder": "Buscar clientes...",
+    "noPhone": "Sem telefone",
+    "noCnpj": "CNPJ não informado",
+    "noAddress": "Endereço não informado",
+    "selectCustomer": "Selecione um cliente"
   },
   "services": {
     "title": "Serviços",

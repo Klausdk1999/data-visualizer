@@ -25,6 +25,7 @@ import type {
   TimeEntry,
   CreateServiceRequest,
   CreateTimeEntryRequest,
+  CreateCustomerRequest,
 } from "@/types";
 import type { TTNUplink, TTNDevice, TTNStats } from "@/types/ttn";
 
@@ -570,6 +571,35 @@ export const getCustomers = async (search?: string): Promise<Customer[]> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching customers:", error);
+    throw error;
+  }
+};
+
+export const createCustomer = async (data: CreateCustomerRequest): Promise<Customer> => {
+  try {
+    const response = await axiosInstance.post<Customer>("customers", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating customer:", error);
+    throw error;
+  }
+};
+
+export const updateCustomer = async (id: string, data: Partial<CreateCustomerRequest>): Promise<Customer> => {
+  try {
+    const response = await axiosInstance.put<Customer>(`customers/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating customer:", error);
+    throw error;
+  }
+};
+
+export const deleteCustomer = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`customers/${id}`);
+  } catch (error) {
+    console.error("Error deleting customer:", error);
     throw error;
   }
 };

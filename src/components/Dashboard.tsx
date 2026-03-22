@@ -45,9 +45,13 @@ import {
   createTimeEntries,
   updateTimeEntry,
   deleteTimeEntry,
+  getCustomers,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
 } from "@/lib/requestHandlers";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList, Copy, Check, Settings, ChevronDown, Clock, Wrench } from "lucide-react";
+import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList, Copy, Check, Settings, ChevronDown, Clock, Wrench, UserSquare } from "lucide-react";
 import DashboardTab from "@/components/tabs/DashboardTab";
 import DevicesTab from "@/components/tabs/DevicesTab";
 import SignalsTab from "@/components/tabs/SignalsTab";
@@ -58,6 +62,7 @@ import MaterialsTab from "@/components/tabs/MaterialsTab";
 import OrdersTab from "@/components/tabs/OrdersTab";
 import ServicesTab from "@/components/tabs/ServicesTab";
 import HoursTab from "@/components/tabs/HoursTab";
+import CustomersTab from "@/components/tabs/CustomersTab";
 import DeviceDialog from "@/components/dialogs/DeviceDialog";
 import SignalDialog from "@/components/dialogs/SignalDialog";
 import SignalValueDialog from "@/components/dialogs/SignalValueDialog";
@@ -69,6 +74,7 @@ import StockAdjustDialog from "@/components/dialogs/StockAdjustDialog";
 import BOMDialog from "@/components/dialogs/BOMDialog";
 import ServiceDialog from "@/components/dialogs/ServiceDialog";
 import TimeEntryDialog from "@/components/dialogs/TimeEntryDialog";
+import CustomerDialog from "@/components/dialogs/CustomerDialog";
 import {
   Dialog,
   DialogContent,
@@ -93,6 +99,7 @@ import type {
   RawMaterial,
   BillOfMaterials,
   ProductionOrder,
+  Customer,
   CreateProductRequest,
   CreateRawMaterialRequest,
   CreateProductionOrderRequest,
@@ -102,9 +109,10 @@ import type {
   TimeEntry,
   CreateServiceRequest,
   CreateTimeEntryRequest,
+  CreateCustomerRequest,
 } from "@/types";
 
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders" | "services" | "hours";
+type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders" | "services" | "hours" | "customers";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -167,6 +175,11 @@ export default function Dashboard({
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [editingTimeEntry, setEditingTimeEntry] = useState<TimeEntry | null>(null);
 
+  // Customers state
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customerDialogOpen, setCustomerDialogOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+
   // Update URL when tab changes
   const updateUrl = useCallback(
     (tab: TabType, extraParams?: Record<string, string>) => {
@@ -212,7 +225,7 @@ export default function Dashboard({
       const isAdmin = currentUser?.type === "admin";
 
       if (isAdmin) {
-        const [devicesData, signalsData, valuesData, usersData, productsData, materialsData, ordersData, servicesData, timeEntriesData] = await Promise.all([
+        const [devicesData, signalsData, valuesData, usersData, productsData, materialsData, ordersData, servicesData, timeEntriesData, customersData] = await Promise.all([
           getDevices(),
           getSignals(),
           getSignalValues({ limit: "100" }),
@@ -222,6 +235,7 @@ export default function Dashboard({
           getProductionOrders(),
           getServices(),
           getTimeEntries(),
+          getCustomers(),
         ]);
         setDevices(devicesData);
         setSignals(signalsData);
@@ -232,6 +246,7 @@ export default function Dashboard({
         setProductionOrders(ordersData);
         setServices(servicesData);
         setTimeEntries(timeEntriesData);
+        setCustomers(customersData);
       } else {
         // Workers can only fetch: production orders (read), services (read), time entries (own)
         const [ordersData, servicesData, timeEntriesData] = await Promise.all([
@@ -614,6 +629,35 @@ export default function Dashboard({
     }
   };
 
+  // Customer CRUD handlers
+  const handleCreateCustomer = async (data: CreateCustomerRequest) => {
+    setError("");
+    try {
+      if (editingCustomer) {
+        await updateCustomer(editingCustomer.id.toString(), data);
+      } else {
+        await createCustomer(data);
+      }
+      setCustomerDialogOpen(false);
+      setEditingCustomer(null);
+      const updatedCustomers = await getCustomers();
+      setCustomers(updatedCustomers);
+    } catch (err: any) {
+      setError(err.response?.data || t("errors.saveFailed"));
+    }
+  };
+
+  const handleDeleteCustomer = async (customerId: number) => {
+    if (!confirm(t("customers.confirmDelete"))) return;
+    try {
+      await deleteCustomer(customerId.toString());
+      const updatedCustomers = await getCustomers();
+      setCustomers(updatedCustomers);
+    } catch (err: any) {
+      setError(err.response?.data || t("errors.deleteFailed"));
+    }
+  };
+
   const isWorker = user?.type === "worker";
 
   return (
@@ -737,7 +781,7 @@ export default function Dashboard({
                 <button
                   onClick={() => setSettingsOpen(!settingsOpen)}
                   className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-                    ["devices", "signals", "values", "services"].includes(activeTab)
+                    ["devices", "signals", "values", "services", "customers"].includes(activeTab)
                       ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
                       : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
                   }`}
@@ -793,6 +837,17 @@ export default function Dashboard({
                       >
                         <Wrench className="w-4 h-4" />
                         {t("tabs.services")}
+                      </button>
+                      <button
+                        onClick={() => { handleTabChange("customers"); setSettingsOpen(false); }}
+                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
+                          activeTab === "customers"
+                            ? "bg-blue-500/90 text-white"
+                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                        }`}
+                      >
+                        <UserSquare className="w-4 h-4" />
+                        {t("tabs.customers")}
                       </button>
                     </div>
                   </>
@@ -949,6 +1004,15 @@ export default function Dashboard({
                 onDeleteService={handleDeleteService}
               />
             )}
+
+            {activeTab === "customers" && (
+              <CustomersTab
+                customers={customers}
+                onAddCustomer={() => { setEditingCustomer(null); setCustomerDialogOpen(true); }}
+                onEditCustomer={(customer) => { setEditingCustomer(customer); setCustomerDialogOpen(true); }}
+                onDeleteCustomer={handleDeleteCustomer}
+              />
+            )}
           </>
         )}
       </div>
@@ -1003,6 +1067,7 @@ export default function Dashboard({
         editingItem={editingItem as ProductionOrder | null}
         products={products}
         devices={devices}
+        customers={customers}
         onSubmit={handleCreateOrder}
       />
 
@@ -1036,6 +1101,13 @@ export default function Dashboard({
         services={services}
         users={users}
         currentUser={user}
+      />
+
+      <CustomerDialog
+        open={customerDialogOpen}
+        onOpenChange={setCustomerDialogOpen}
+        editingItem={editingCustomer}
+        onSubmit={handleCreateCustomer}
       />
 
       {/* Device Token Dialog — shown once after creating a new device */}
