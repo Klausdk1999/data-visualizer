@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { getCurrentUser } from "@/lib/requestHandlers";
+import EquipmentTab from "@/components/tabs/EquipmentTab";
 import {
   getDevices,
   getSignals,
@@ -51,7 +52,7 @@ import {
   deleteCustomer,
 } from "@/lib/requestHandlers";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList, Copy, Check, Settings, ChevronDown, Clock, Wrench, UserSquare } from "lucide-react";
+import { LayoutDashboard, Cpu, Radio, Activity, Users, LogOut, Package, Boxes, ClipboardList, Copy, Check, Settings, ChevronDown, Clock, Wrench, UserSquare, Monitor } from "lucide-react";
 import DashboardTab from "@/components/tabs/DashboardTab";
 import DevicesTab from "@/components/tabs/DevicesTab";
 import SignalsTab from "@/components/tabs/SignalsTab";
@@ -112,7 +113,7 @@ import type {
   CreateCustomerRequest,
 } from "@/types";
 
-type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders" | "services" | "hours" | "customers";
+type TabType = "dashboard" | "devices" | "signals" | "values" | "users" | "products" | "materials" | "orders" | "services" | "hours" | "customers" | "equipment";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -738,6 +739,17 @@ export default function Dashboard({
             <Clock className="w-4 h-4" />
             {t("tabs.hours")}
           </button>
+          <button
+  onClick={() => handleTabChange("equipment")}
+  className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
+    activeTab === "equipment"
+      ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
+      : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
+  }`}
+>
+  <Monitor className="w-4 h-4" />
+  {t("tabs.equipment")}
+</button>
           {isWorker && (
             <button
               onClick={() => handleTabChange("services")}
@@ -1013,6 +1025,9 @@ export default function Dashboard({
                 onDeleteCustomer={handleDeleteCustomer}
               />
             )}
+            {activeTab === "equipment" && (
+  <EquipmentTab devices={devices} />
+)}
           </>
         )}
       </div>

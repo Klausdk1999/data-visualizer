@@ -51,6 +51,7 @@
     "logout": "Sair"
   },
   "tabs": {
+    "equipment": "Equipamentos",
     "dashboard": "Painel",
     "devices": "Dispositivos",
     "signals": "Configurações de Sinais",

@@ -11,6 +11,7 @@ import { X, Save, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SearchableSelect } from "@/components/ui/combobox";
 import type { TimeEntry, CreateTimeEntryRequest, ProductionOrder, Service, User } from "@/types";
+import { useFormNavigation } from "@/lib/useFormNavigation";
 
 // A single interval row (without user_id / day, which are shared)
 interface IntervalEntry {
@@ -50,7 +51,7 @@ export default function TimeEntryDialog({
   const tc = useTranslations("common");
 
   const isWorker = currentUser?.type === "worker";
-
+  const handleKeyDown = useFormNavigation();
   const [userId, setUserId] = useState<string>("");
   const [day, setDay] = useState<string>("");
   const [intervals, setIntervals] = useState<IntervalEntry[]>([emptyInterval()]);
@@ -97,8 +98,33 @@ export default function TimeEntryDialog({
     []
   );
 
-  const addInterval = () => setIntervals((prev) => [...prev, emptyInterval()]);
-
+  //const addInterval = () => setIntervals((prev) => [...prev, emptyInterval()]);
+  const addInterval = () => {
+    // 1. Criamos o ID do novo intervalo antes de adicioná-lo
+    const newIntervalId = crypto.randomUUID();
+    const newInterval = { ...emptyInterval(), id: newIntervalId };
+    
+    setIntervals((prev) => [...prev, newInterval]);
+  
+    // 2. Aguardamos o React renderizar o componente na tela (100ms)
+    setTimeout(() => {
+      // 3. Buscamos o container da nova Ordem de Produção
+      const container = document.getElementById(`container-order-${newIntervalId}`);
+      
+      if (container) {
+        // Procura o input real do Combobox ou o botão que o aciona
+        const comboboxInput = container.querySelector('input:not([type="hidden"]), [role="combobox"]') as HTMLElement;
+        
+        if (comboboxInput) {
+          comboboxInput.focus();
+          
+          // Opcional (HACK de UI): Se quiser que a lista já caia aberta, descomente a linha abaixo. 
+          // Ele simula um clique para forçar a abertura das opções do componente UI.
+          // comboboxInput.click(); 
+        }
+      }
+    }, 100);
+  };
   const removeInterval = (id: string) =>
     setIntervals((prev) => prev.filter((i) => i.id !== id));
 
@@ -131,7 +157,7 @@ export default function TimeEntryDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}onKeyDown={handleKeyDown}>
           <div className="space-y-4 py-4">
             {/* Shared: Worker selector */}
             {!isWorker && (

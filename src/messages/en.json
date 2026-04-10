@@ -51,6 +51,7 @@
     "logout": "Logout"
   },
   "tabs": {
+    "equipment": "Equipment",
     "dashboard": "Dashboard",
     "devices": "Devices",
     "signals": "Signal Configurations",
