@@ -6,11 +6,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
  * Login helper: fills the login form, submits, waits for navigation,
  * and returns the auth token from localStorage.
  */
-async function login(
-  page: Page,
-  email: string,
-  password: string
-): Promise<string> {
+async function login(page: Page, email: string, password: string): Promise<string> {
   await page.goto("/");
   await page.fill('input[type="email"]', email);
   await page.fill('input[type="password"]', password);
@@ -21,12 +17,10 @@ async function login(
 
   // Dismiss any Next.js dev overlay that may intercept clicks
   await page.evaluate(() => {
-    document.querySelectorAll('nextjs-portal').forEach(el => el.remove());
+    document.querySelectorAll("nextjs-portal").forEach((el) => el.remove());
   });
 
-  const token = await page.evaluate(() =>
-    localStorage.getItem("auth_token")
-  );
+  const token = await page.evaluate(() => localStorage.getItem("auth_token"));
   expect(token).toBeTruthy();
   return token as string;
 }
@@ -40,28 +34,19 @@ test.describe("Permission Enforcement", () => {
       page.locator('button:has-text("Users"), [role="tab"]:has-text("Users")')
     ).not.toBeVisible();
     await expect(
-      page.locator(
-        'button:has-text("Products"), [role="tab"]:has-text("Products")'
-      )
+      page.locator('button:has-text("Products"), [role="tab"]:has-text("Products")')
     ).not.toBeVisible();
     await expect(
-      page.locator(
-        'button:has-text("Materials"), [role="tab"]:has-text("Materials")'
-      )
+      page.locator('button:has-text("Materials"), [role="tab"]:has-text("Materials")')
     ).not.toBeVisible();
 
     // Settings dropdown should not be visible
     await expect(
-      page.locator(
-        'button:has-text("Settings"), [role="tab"]:has-text("Settings")'
-      )
+      page.locator('button:has-text("Settings"), [role="tab"]:has-text("Settings")')
     ).not.toBeVisible();
   });
 
-  test("worker gets 403 on admin-only API endpoints", async ({
-    page,
-    request,
-  }) => {
+  test("worker gets 403 on admin-only API endpoints", async ({ page, request }) => {
     const token = await login(page, "worker@test.com", "worker123");
 
     const headers = { Authorization: `Bearer ${token}` };
@@ -91,15 +76,10 @@ test.describe("Permission Enforcement", () => {
     expect(deleteRes.status()).toBe(403);
   });
 
-  test("worker can only access own time entries via API", async ({
-    page,
-    request,
-  }) => {
+  test("worker can only access own time entries via API", async ({ page, request }) => {
     const token = await login(page, "worker@test.com", "worker123");
 
-    const user = await page.evaluate(() =>
-      JSON.parse(localStorage.getItem("user") || "{}")
-    );
+    const user = await page.evaluate(() => JSON.parse(localStorage.getItem("user") || "{}"));
     expect(user.id).toBeTruthy();
 
     const headers = { Authorization: `Bearer ${token}` };
@@ -145,21 +125,11 @@ test.describe("Permission Enforcement", () => {
   test("admin can see all tabs", async ({ page }) => {
     await login(page, "admin@test.com", "admin123");
 
-    const tabNames = [
-      "Dashboard",
-      "Orders",
-      "Hours",
-      "Products",
-      "Materials",
-      "Settings",
-      "Users",
-    ];
+    const tabNames = ["Dashboard", "Orders", "Hours", "Products", "Materials", "Settings", "Users"];
 
     for (const name of tabNames) {
       await expect(
-        page.locator(
-          `button:has-text("${name}"), [role="tab"]:has-text("${name}")`
-        )
+        page.locator(`button:has-text("${name}"), [role="tab"]:has-text("${name}")`)
       ).toBeVisible();
     }
   });

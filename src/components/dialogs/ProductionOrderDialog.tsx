@@ -109,7 +109,10 @@ export default function ProductionOrderDialog({
         formData.get("completed_date") as string,
         formData.get("completed_time") as string
       ),
-      planned_delivery_date: combineDatetime(formData.get("planned_delivery_date") as string,"00:00"),
+      planned_delivery_date: combineDatetime(
+        formData.get("planned_delivery_date") as string,
+        "00:00"
+      ),
       work_instructions: (formData.get("work_instructions") as string) || undefined,
       quality_notes: (formData.get("quality_notes") as string) || undefined,
     };

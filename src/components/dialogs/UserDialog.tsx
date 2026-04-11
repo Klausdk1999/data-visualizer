@@ -75,7 +75,8 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
             </div>
             <div>
               <Label htmlFor="user-password" className="text-gray-700 dark:text-gray-300">
-                {t("password")}{!editingItem && " *"}
+                {t("password")}
+                {!editingItem && " *"}
               </Label>
               <Input
                 id="user-password"

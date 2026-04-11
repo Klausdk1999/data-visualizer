@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,8 +48,14 @@ interface TimeEntryDialogProps {
 }
 
 export default function TimeEntryDialog({
-  open, onOpenChange, editingItem, onSubmit,
-  productionOrders, services, users, currentUser,
+  open,
+  onOpenChange,
+  editingItem,
+  onSubmit,
+  productionOrders,
+  services,
+  users,
+  currentUser,
 }: TimeEntryDialogProps) {
   const t = useTranslations("hours");
   const tc = useTranslations("common");

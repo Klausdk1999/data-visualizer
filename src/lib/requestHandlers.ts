@@ -409,7 +409,10 @@ export const getTTNStats = async (): Promise<TTNStats> => {
 };
 
 // MES: Product endpoints
-export const getProducts = async (params?: { category?: string; active?: string }): Promise<Product[]> => {
+export const getProducts = async (params?: {
+  category?: string;
+  active?: string;
+}): Promise<Product[]> => {
   try {
     const response = await axiosInstance.get<Product[]>("products", { params });
     return response.data;
@@ -439,7 +442,10 @@ export const createProduct = async (data: CreateProductRequest): Promise<Product
   }
 };
 
-export const updateProduct = async (id: string, data: Partial<CreateProductRequest>): Promise<Product> => {
+export const updateProduct = async (
+  id: string,
+  data: Partial<CreateProductRequest>
+): Promise<Product> => {
   try {
     const response = await axiosInstance.put<Product>(`products/${id}`, data);
     return response.data;
@@ -469,7 +475,10 @@ export const getProductBOM = async (productId: string): Promise<BillOfMaterials[
   }
 };
 
-export const addBOMEntry = async (productId: string, data: CreateBOMEntryRequest): Promise<BillOfMaterials> => {
+export const addBOMEntry = async (
+  productId: string,
+  data: CreateBOMEntryRequest
+): Promise<BillOfMaterials> => {
   try {
     const response = await axiosInstance.post<BillOfMaterials>(`products/${productId}/bom`, data);
     return response.data;
@@ -489,7 +498,10 @@ export const deleteBOMEntry = async (id: string): Promise<void> => {
 };
 
 // MES: Raw Material endpoints
-export const getRawMaterials = async (params?: { category?: string; active?: string }): Promise<RawMaterial[]> => {
+export const getRawMaterials = async (params?: {
+  category?: string;
+  active?: string;
+}): Promise<RawMaterial[]> => {
   try {
     const response = await axiosInstance.get<RawMaterial[]>("raw-materials", { params });
     return response.data;
@@ -519,7 +531,10 @@ export const createRawMaterial = async (data: CreateRawMaterialRequest): Promise
   }
 };
 
-export const updateRawMaterial = async (id: string, data: Partial<CreateRawMaterialRequest>): Promise<RawMaterial> => {
+export const updateRawMaterial = async (
+  id: string,
+  data: Partial<CreateRawMaterialRequest>
+): Promise<RawMaterial> => {
   try {
     const response = await axiosInstance.put<RawMaterial>(`raw-materials/${id}`, data);
     return response.data;
@@ -540,7 +555,10 @@ export const deleteRawMaterial = async (id: string): Promise<void> => {
 
 export const adjustStock = async (id: string, data: AdjustStockRequest): Promise<RawMaterial> => {
   try {
-    const response = await axiosInstance.post<RawMaterial>(`raw-materials/${id}/adjust-stock`, data);
+    const response = await axiosInstance.post<RawMaterial>(
+      `raw-materials/${id}/adjust-stock`,
+      data
+    );
     return response.data;
   } catch (error) {
     console.error("Error adjusting stock:", error);
@@ -629,7 +647,9 @@ export const getProductionOrder = async (id: string): Promise<ProductionOrder> =
   }
 };
 
-export const createProductionOrder = async (data: CreateProductionOrderRequest): Promise<ProductionOrder> => {
+export const createProductionOrder = async (
+  data: CreateProductionOrderRequest
+): Promise<ProductionOrder> => {
   try {
     const response = await axiosInstance.post<ProductionOrder>("production-orders", data);
     return response.data;
@@ -663,7 +683,9 @@ export const deleteProductionOrder = async (id: string): Promise<void> => {
 
 export const updateOrderStatus = async (id: string, status: string): Promise<ProductionOrder> => {
   try {
-    const response = await axiosInstance.put<ProductionOrder>(`production-orders/${id}/status`, { status });
+    const response = await axiosInstance.put<ProductionOrder>(`production-orders/${id}/status`, {
+      status,
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating order status:", error);
@@ -673,7 +695,9 @@ export const updateOrderStatus = async (id: string, status: string): Promise<Pro
 
 export const getOrderSignalValues = async (orderId: string): Promise<SignalValue[]> => {
   try {
-    const response = await axiosInstance.get<SignalValue[]>(`production-orders/${orderId}/signal-values`);
+    const response = await axiosInstance.get<SignalValue[]>(
+      `production-orders/${orderId}/signal-values`
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching order signal values:", error);
@@ -702,7 +726,10 @@ export const createService = async (data: CreateServiceRequest): Promise<Service
   }
 };
 
-export const updateService = async (id: string, data: Partial<CreateServiceRequest>): Promise<Service> => {
+export const updateService = async (
+  id: string,
+  data: Partial<CreateServiceRequest>
+): Promise<Service> => {
   try {
     const response = await axiosInstance.put<Service>(`services/${id}`, data);
     return response.data;
@@ -747,7 +774,9 @@ export const createTimeEntry = async (data: CreateTimeEntryRequest): Promise<Tim
   }
 };
 
-export const createTimeEntries = async (data: CreateTimeEntryRequest[]): Promise<TimeEntry[]> => {
+export const createTimeEntries = async (
+  data: CreateTimeEntryRequest[]
+): Promise<TimeEntry[]> => {
   try {
     const response = await axiosInstance.post<TimeEntry[]>("time-entries", data);
     return response.data;
@@ -757,7 +786,10 @@ export const createTimeEntries = async (data: CreateTimeEntryRequest[]): Promise
   }
 };
 
-export const updateTimeEntry = async (id: string, data: Partial<CreateTimeEntryRequest>): Promise<TimeEntry> => {
+export const updateTimeEntry = async (
+  id: string,
+  data: Partial<CreateTimeEntryRequest>
+): Promise<TimeEntry> => {
   try {
     const response = await axiosInstance.put<TimeEntry>(`time-entries/${id}`, data);
     return response.data;

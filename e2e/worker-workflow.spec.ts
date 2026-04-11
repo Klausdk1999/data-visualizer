@@ -25,7 +25,7 @@ async function loginAsWorker(page: Page) {
 
   // Dismiss any Next.js dev overlay that may intercept clicks
   await page.evaluate(() => {
-    document.querySelectorAll('nextjs-portal').forEach(el => el.remove());
+    document.querySelectorAll("nextjs-portal").forEach((el) => el.remove());
   });
 }
 
@@ -58,7 +58,9 @@ test.describe("Worker Workflow", () => {
     await expect(page.getByRole("heading", { name: "Services" })).toBeVisible({ timeout: 5000 });
 
     // Verify seeded services appear in the table (exact: true to avoid matching description cells)
-    await expect(page.getByRole("cell", { name: "Assembly", exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole("cell", { name: "Assembly", exact: true })).toBeVisible({
+      timeout: 5000,
+    });
     await expect(page.getByRole("cell", { name: "Quality Control", exact: true })).toBeVisible();
     await expect(page.getByRole("cell", { name: "Packaging", exact: true })).toBeVisible();
 

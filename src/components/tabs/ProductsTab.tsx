@@ -70,7 +70,9 @@ export default function ProductsTab({
               {products.map((product) => (
                 <TableRow
                   key={product.id}
-                  className={selectedProduct === product.id ? "bg-blue-100/50 dark:bg-blue-900/30" : ""}
+                  className={
+                    selectedProduct === product.id ? "bg-blue-100/50 dark:bg-blue-900/30" : ""
+                  }
                 >
                   <TableCell className="text-gray-900 dark:text-gray-100">{product.id}</TableCell>
                   <TableCell

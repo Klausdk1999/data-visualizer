@@ -4,7 +4,12 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,7 +24,11 @@ interface HoursTabProps {
 }
 
 export default function HoursTab({
-  timeEntries, isWorker, onAddEntry, onEditEntry, onDeleteEntry,
+  timeEntries,
+  isWorker,
+  onAddEntry,
+  onEditEntry,
+  onDeleteEntry,
 }: HoursTabProps) {
   const t = useTranslations("hours");
   const tc = useTranslations("common");
@@ -65,18 +74,30 @@ export default function HoursTab({
                   {entry.user?.name || "-"}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{entry.day}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">{entry.start_time}</TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">
+                  {entry.start_time}
+                </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{entry.end_time}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100 max-w-[200px] truncate">
                   {entry.observations || "-"}
                 </TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   <div className="flex space-x-2">
-                    <Button size="sm" variant="outline" onClick={() => onEditEntry(entry)} className="flex items-center gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onEditEntry(entry)}
+                      className="flex items-center gap-1"
+                    >
                       <Edit className="w-3 h-3" />
                       {tc("edit")}
                     </Button>
-                    <Button size="sm" variant="destructive" onClick={() => onDeleteEntry(entry.id)} className="flex items-center gap-1">
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => onDeleteEntry(entry.id)}
+                      className="flex items-center gap-1"
+                    >
                       <Trash2 className="w-3 h-3" />
                       {tc("delete")}
                     </Button>

@@ -54,9 +54,7 @@ export default function UsersTab({ users, onAddUser, onEditUser, onDeleteUser }:
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.id}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.name}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.email || "-"}</TableCell>
-                <TableCell className="text-gray-900 dark:text-gray-100">
-                  {u.type || "-"}
-                </TableCell>
+                <TableCell className="text-gray-900 dark:text-gray-100">{u.type || "-"}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">{u.rfid || "-"}</TableCell>
                 <TableCell className="text-gray-900 dark:text-gray-100">
                   {u.is_active ? tc("active") : tc("inactive")}

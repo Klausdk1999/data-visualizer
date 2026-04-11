@@ -60,15 +60,19 @@ export default function Login({ onLoginSuccess, locale = "en", onLocaleChange }:
 
       {/* Floating decorative blobs */}
       <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-300/30 dark:bg-blue-500/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-300/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "-2s" }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-200/20 dark:bg-indigo-500/5 rounded-full blur-3xl animate-float" style={{ animationDelay: "-4s" }} />
+      <div
+        className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-300/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-float"
+        style={{ animationDelay: "-2s" }}
+      />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-200/20 dark:bg-indigo-500/5 rounded-full blur-3xl animate-float"
+        style={{ animationDelay: "-4s" }}
+      />
 
       {/* Top-right controls */}
       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
         <ThemeToggle />
-        {onLocaleChange && (
-          <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />
-        )}
+        {onLocaleChange && <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />}
       </div>
 
       {/* Login card */}
@@ -88,12 +92,8 @@ export default function Login({ onLoginSuccess, locale = "en", onLocaleChange }:
             >
               <LayoutDashboard className="w-7 h-7 text-white" />
             </motion.div>
-            <CardTitle className="text-2xl text-gray-900 dark:text-white">
-              {t("title")}
-            </CardTitle>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {t("subtitle")}
-            </p>
+            <CardTitle className="text-2xl text-gray-900 dark:text-white">{t("title")}</CardTitle>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t("subtitle")}</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -148,11 +148,7 @@ export default function Login({ onLoginSuccess, locale = "en", onLocaleChange }:
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full"
-                >
+                <Button type="submit" disabled={loading} className="w-full">
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />

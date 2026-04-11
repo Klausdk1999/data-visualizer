@@ -2,7 +2,11 @@
 
 import React from "react";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +23,10 @@ interface ServiceDialogProps {
 }
 
 export default function ServiceDialog({
-  open, onOpenChange, editingItem, onSubmit,
+  open,
+  onOpenChange,
+  editingItem,
+  onSubmit,
 }: ServiceDialogProps) {
   const t = useTranslations("services");
   const tc = useTranslations("common");
@@ -49,23 +56,45 @@ export default function ServiceDialog({
               <Label htmlFor="service-code" className="text-gray-700 dark:text-gray-300">
                 {t("code")} *
               </Label>
-              <Input id="service-code" name="code" required defaultValue={editingItem?.code} className="mt-1" />
+              <Input
+                id="service-code"
+                name="code"
+                required
+                defaultValue={editingItem?.code}
+                className="mt-1"
+              />
             </div>
             <div>
               <Label htmlFor="service-name" className="text-gray-700 dark:text-gray-300">
                 {tc("name")} *
               </Label>
-              <Input id="service-name" name="name" required defaultValue={editingItem?.name} className="mt-1" />
+              <Input
+                id="service-name"
+                name="name"
+                required
+                defaultValue={editingItem?.name}
+                className="mt-1"
+              />
             </div>
             <div>
               <Label htmlFor="service-description" className="text-gray-700 dark:text-gray-300">
                 {tc("description")}
               </Label>
-              <Input id="service-description" name="description" defaultValue={editingItem?.description} className="mt-1" />
+              <Input
+                id="service-description"
+                name="description"
+                defaultValue={editingItem?.description}
+                className="mt-1"
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex items-center gap-2"
+            >
               <X className="w-4 h-4" />
               {tc("cancel")}
             </Button>

@@ -40,9 +40,7 @@ export default function RawMaterialDialog({
       description: (formData.get("description") as string) || undefined,
       unit: (formData.get("unit") as string) || undefined,
       category: (formData.get("category") as string) || undefined,
-      min_stock: formData.get("min_stock")
-        ? Number(formData.get("min_stock"))
-        : undefined,
+      min_stock: formData.get("min_stock") ? Number(formData.get("min_stock")) : undefined,
     };
     onSubmit(materialData);
   };
