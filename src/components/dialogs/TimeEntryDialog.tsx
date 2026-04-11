@@ -165,10 +165,11 @@ export default function TimeEntryDialog({
             {/* Shared: Worker selector */}
             {!isWorker && (
               <div>
-                <Label className="text-gray-700 dark:text-gray-300">
+                <Label htmlFor="entry-worker" className="text-gray-700 dark:text-gray-300">
                   {t("worker")} *
                 </Label>
                 <SearchableSelect
+                  id="entry-worker"
                   options={userOptions}
                   value={userId}
                   onChange={setUserId}

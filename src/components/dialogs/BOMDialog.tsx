@@ -58,10 +58,11 @@ export default function BOMDialog({ open, onOpenChange, rawMaterials, onSubmit }
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div>
-              <Label className="text-gray-700 dark:text-gray-300">
+              <Label htmlFor="bom-material" className="text-gray-700 dark:text-gray-300">
                 {t("rawMaterial")} *
               </Label>
               <SearchableSelect
+                id="bom-material"
                 options={materialOptions}
                 value={rawMaterialId}
                 onChange={setRawMaterialId}
