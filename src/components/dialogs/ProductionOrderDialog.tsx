@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save, Printer } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { getCustomers } from "@/lib/requestHandlers";
+import { SearchableSelect } from "@/components/ui/combobox";
 import type {
   ProductionOrder,
   Product,
@@ -31,6 +31,7 @@ interface ProductionOrderDialogProps {
   editingItem: ProductionOrder | null;
   products: Product[];
   devices: Device[];
+  customers: Customer[];
   onSubmit: (data: CreateProductionOrderRequest) => void;
 }
 
@@ -40,40 +41,28 @@ export default function ProductionOrderDialog({
   editingItem,
   products,
   devices,
+  customers,
   onSubmit,
 }: ProductionOrderDialogProps) {
   const t = useTranslations("orders");
   const tc = useTranslations("common");
   const locale = useLocale();
   const isPT = locale === "pt-BR";
-  const [customerInput, setCustomerInput] = useState("");
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const [customerId, setCustomerId] = useState("");
+  const [productId, setProductId] = useState("");
+  const [deviceId, setDeviceId] = useState("");
+
+  const productOptions = products.map((p) => ({ value: String(p.id), label: p.name }));
+  const deviceOptions = devices.map((d) => ({ value: String(d.id), label: d.name }));
+  const customerOptions = customers.map((c) => ({ value: String(c.id), label: c.name }));
 
   useEffect(() => {
     if (open) {
-      setCustomerInput(editingItem?.customer?.name ?? "");
-      getCustomers()
-        .then(setCustomers)
-        .catch(() => {});
+      setProductId(editingItem?.product_id ? String(editingItem.product_id) : "");
+      setDeviceId(editingItem?.device_id ? String(editingItem.device_id) : "");
+      setCustomerId(editingItem?.customer_id ? String(editingItem.customer_id) : "");
     }
   }, [open, editingItem]);
-
-  // Close suggestions on outside click
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  const filteredCustomers = customers.filter((c) =>
-    c.name.toLowerCase().includes(customerInput.toLowerCase())
-  );
 
   // Convert ISO string to separate date and time values
   const toDate = (iso?: string) => {
@@ -102,12 +91,16 @@ export default function ProductionOrderDialog({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    // Find the customer name from the selected customer id
+    const selectedCustomer = customers.find((c) => String(c.id) === customerId);
     const orderData: CreateProductionOrderRequest = {
-      product_id: Number(formData.get("product_id")),
+      product_id: Number(productId),
       quantity: Number(formData.get("quantity")),
-      priority: formData.get("priority") ? Number(formData.get("priority")) : undefined,
-      device_id: formData.get("device_id") ? Number(formData.get("device_id")) : undefined,
-      customer_name: customerInput.trim() || undefined,
+      priority: formData.get("priority")
+        ? Number(formData.get("priority"))
+        : undefined,
+      device_id: deviceId ? Number(deviceId) : undefined,
+      customer_name: selectedCustomer?.name || undefined,
       started_at: combineDatetime(
         formData.get("started_date") as string,
         formData.get("started_time") as string
@@ -140,56 +133,30 @@ export default function ProductionOrderDialog({
               <Label htmlFor="order-product" className="text-gray-700 dark:text-gray-300">
                 {t("product")} *
               </Label>
-              <select
+              <SearchableSelect
                 id="order-product"
-                name="product_id"
+                options={productOptions}
+                value={productId}
+                onChange={setProductId}
+                placeholder={t("selectProduct")}
+                searchPlaceholder={tc("search")}
+                notFoundText={tc("noResults")}
                 required
-                defaultValue={editingItem?.product_id ?? ""}
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <option value="">{t("selectProduct")}</option>
-                {products.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
             <div>
               <Label htmlFor="order-customer" className="text-gray-700 dark:text-gray-300">
                 {t("customer")}
               </Label>
-              <div className="relative" ref={suggestionsRef}>
-                <Input
-                  id="order-customer"
-                  value={customerInput}
-                  onChange={(e) => {
-                    setCustomerInput(e.target.value);
-                    setShowSuggestions(true);
-                  }}
-                  onFocus={() => setShowSuggestions(true)}
-                  placeholder={t("customerPlaceholder")}
-                  className="mt-1"
-                  autoComplete="off"
-                />
-                {showSuggestions && customerInput && filteredCustomers.length > 0 && (
-                  <div className="absolute z-50 mt-1 w-full rounded-md border border-input bg-background shadow-lg max-h-40 overflow-y-auto">
-                    {filteredCustomers.map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
-                        onClick={() => {
-                          setCustomerInput(c.name);
-                          setShowSuggestions(false);
-                        }}
-                      >
-                        {c.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <SearchableSelect
+                id="order-customer"
+                options={[{ value: "", label: tc("none") }, ...customerOptions]}
+                value={customerId}
+                onChange={setCustomerId}
+                placeholder={tc("none")}
+                searchPlaceholder={tc("search")}
+                notFoundText={tc("noResults")}
+              />
             </div>
             <div>
               <Label htmlFor="order-quantity" className="text-gray-700 dark:text-gray-300">
@@ -222,19 +189,15 @@ export default function ProductionOrderDialog({
               <Label htmlFor="order-device" className="text-gray-700 dark:text-gray-300">
                 {t("device")}
               </Label>
-              <select
+              <SearchableSelect
                 id="order-device"
-                name="device_id"
-                defaultValue={editingItem?.device_id ?? ""}
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <option value="">{tc("none")}</option>
-                {devices.map((device) => (
-                  <option key={device.id} value={device.id}>
-                    {device.name}
-                  </option>
-                ))}
-              </select>
+                options={[{ value: "", label: tc("none") }, ...deviceOptions]}
+                value={deviceId}
+                onChange={setDeviceId}
+                placeholder={tc("none")}
+                searchPlaceholder={tc("search")}
+                notFoundText={tc("noResults")}
+              />
             </div>
             <div>
               <Label className="text-gray-700 dark:text-gray-300">{t("startDate")}</Label>

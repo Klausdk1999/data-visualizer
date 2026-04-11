@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SearchableSelect } from "@/components/ui/combobox";
 import type { RawMaterial, CreateBOMEntryRequest } from "@/types";
 
 interface BOMDialogProps {
@@ -26,11 +27,23 @@ export default function BOMDialog({ open, onOpenChange, rawMaterials, onSubmit }
   const t = useTranslations("products");
   const tc = useTranslations("common");
 
+  const [rawMaterialId, setRawMaterialId] = useState("");
+
+  const materialOptions = rawMaterials.map((m) => ({
+    value: String(m.id),
+    label: m.name,
+  }));
+
+  // Reset on open
+  useEffect(() => {
+    if (open) setRawMaterialId("");
+  }, [open]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const bomData: CreateBOMEntryRequest = {
-      raw_material_id: Number(formData.get("raw_material_id")),
+      raw_material_id: Number(rawMaterialId),
       quantity: Number(formData.get("quantity")),
     };
     onSubmit(bomData);
@@ -48,20 +61,16 @@ export default function BOMDialog({ open, onOpenChange, rawMaterials, onSubmit }
               <Label htmlFor="bom-material" className="text-gray-700 dark:text-gray-300">
                 {t("rawMaterial")} *
               </Label>
-              <select
+              <SearchableSelect
                 id="bom-material"
-                name="raw_material_id"
+                options={materialOptions}
+                value={rawMaterialId}
+                onChange={setRawMaterialId}
+                placeholder={t("selectMaterial")}
+                searchPlaceholder={tc("search")}
+                notFoundText={tc("noResults")}
                 required
-                defaultValue=""
-                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <option value="">{t("selectMaterial")}</option>
-                {rawMaterials.map((material) => (
-                  <option key={material.id} value={material.id}>
-                    {material.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
             <div>
               <Label htmlFor="bom-quantity" className="text-gray-700 dark:text-gray-300">

@@ -27,7 +27,9 @@
     "notes": "Notas",
     "none": "Nenhum",
     "priority": "Prioridade",
-    "quantity": "Quantidade"
+    "quantity": "Quantidade",
+    "search": "Pesquisar...",
+    "noResults": "Nenhum resultado encontrado"
   },
   "login": {
     "title": "IoT Dashboard",
@@ -49,6 +51,7 @@
     "logout": "Sair"
   },
   "tabs": {
+    "equipment": "Equipamentos",
     "dashboard": "Painel",
     "devices": "Dispositivos",
     "signals": "Configurações de Sinais",
@@ -59,7 +62,8 @@
     "services": "Serviços",
     "hours": "Horas",
     "users": "Usuários",
-    "settings": "Configurações"
+    "settings": "Configurações",
+    "customers": "Clientes"
   },
   "devices": {
     "title": "Dispositivos",
@@ -226,6 +230,21 @@
     "loadingSignalValues": "Carregando valores de sinais...",
     "noSignalValues": "Nenhum valor de sinal encontrado para o período desta ordem."
   },
+  "customers": {
+    "title": "Clientes",
+    "addCustomer": "Adicionar Cliente",
+    "editCustomer": "Editar Cliente",
+    "createCustomer": "Criar Cliente",
+    "phone": "Telefone",
+    "cnpj": "CNPJ",
+    "address": "Endereço",
+    "confirmDelete": "Tem certeza que deseja excluir este cliente?",
+    "searchPlaceholder": "Buscar clientes...",
+    "noPhone": "Sem telefone",
+    "noCnpj": "CNPJ não informado",
+    "noAddress": "Endereço não informado",
+    "selectCustomer": "Selecione um cliente"
+  },
   "services": {
     "title": "Serviços",
     "addService": "Adicionar Serviço",
@@ -249,7 +268,10 @@
     "selectOrder": "Selecione uma ordem de produção",
     "selectService": "Selecione um serviço",
     "selectWorker": "Selecione um trabalhador",
-    "confirmDelete": "Tem certeza que deseja excluir este registro?"
+    "confirmDelete": "Tem certeza que deseja excluir este registro?",
+    "addInterval": "Adicionar intervalo",
+    "removeInterval": "Remover",
+    "interval": "Intervalo"
   },
   "ttn": {
     "title": "Monitoramento de Rios TTN",

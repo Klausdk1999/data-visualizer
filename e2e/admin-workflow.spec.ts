@@ -95,14 +95,12 @@ test.describe("Admin Workflow", () => {
     // Wait for dialog to appear
     await expect(page.getByText("Create Order")).toBeVisible({ timeout: 5000 });
 
-    // Select the first product from the dropdown
-    await page.locator("#order-product").selectOption({ index: 1 });
+    // Select the first product from the dropdown (SearchableSelect combobox)
+    await page.locator("#order-product").click();
+    await page.locator('[role="option"]').first().click();
 
     // Fill quantity
     await page.locator("#order-quantity").fill("25");
-
-    // Fill customer name
-    await page.locator("#order-customer").fill("Test Customer");
 
     // Submit and wait for API response
     const responsePromise = page.waitForResponse(
@@ -114,8 +112,8 @@ test.describe("Admin Workflow", () => {
     // Wait for dialog to close and table to refresh
     await page.waitForTimeout(1000);
 
-    // Verify the new order appears — check for quantity and customer in table
-    await expect(page.getByText("Test Customer")).toBeVisible({ timeout: 5000 });
+    // Verify the new order appears — check for quantity in table
+    await expect(page.getByRole("cell", { name: "25" }).first()).toBeVisible({ timeout: 5000 });
   });
 
   test("admin can register a new worker", async ({ page }) => {
