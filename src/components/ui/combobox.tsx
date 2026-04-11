@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useId } from "react";
 import { ChevronDown, Search, X } from "lucide-react";
 
 export interface SelectOption {
@@ -35,6 +35,8 @@ export function SearchableSelect({
   const [query, setQuery] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const generatedId = useId();
+  const listboxId = `${generatedId}-listbox`;
 
   const selectedOption = options.find((o) => o.value === value);
 
@@ -103,11 +105,13 @@ export function SearchableSelect({
       {/* Trigger button */}
       <button
         type="button"
+        role="combobox"
         id={id}
         onClick={openDropdown}
         className={triggerClasses}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-controls={listboxId}
       >
         <span className={selectedOption ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-500"}>
           {selectedOption ? selectedOption.label : placeholder}
@@ -157,7 +161,7 @@ export function SearchableSelect({
           </div>
 
           {/* Options list */}
-          <div className="max-h-52 overflow-y-auto" role="listbox">
+          <div className="max-h-52 overflow-y-auto" role="listbox" id={listboxId}>
             {filtered.length === 0 ? (
               <p className="px-3 py-4 text-sm text-center text-gray-400 dark:text-gray-500">
                 {notFoundText}

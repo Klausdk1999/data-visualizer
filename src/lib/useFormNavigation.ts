@@ -8,7 +8,14 @@ export function useFormNavigation() {
       // 1. Exceção do Combobox (SearchableSelect)
       const isCombobox = target.getAttribute("role") === "combobox";
       const isExpanded = target.getAttribute("aria-expanded") === "true";
+      // If dropdown is open, let Enter propagate so the search input can select the first option
       if (isCombobox && isExpanded) return;
+      // If dropdown is closed, click to open it and stop
+      if (isCombobox && !isExpanded) {
+        e.preventDefault();
+        target.click();
+        return;
+      }
 
       // 2. Lógica Aprimorada do Textarea (Observações)
       if (target.tagName === "TEXTAREA") {
