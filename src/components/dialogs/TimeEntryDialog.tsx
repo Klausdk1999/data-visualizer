@@ -211,10 +211,11 @@ export default function TimeEntryDialog({
                   <div className="space-y-3">
                     {/* Order */}
                     <div>
-                      <Label className="text-gray-700 dark:text-gray-300">
+                      <Label htmlFor={index === 0 ? "entry-order" : undefined} className="text-gray-700 dark:text-gray-300">
                         {t("order")} *
                       </Label>
                       <SearchableSelect
+                        id={index === 0 ? "entry-order" : undefined}
                         options={orderOptions}
                         value={interval.production_order_id}
                         onChange={(v) => updateInterval(interval.id, "production_order_id", v)}
@@ -227,10 +228,11 @@ export default function TimeEntryDialog({
 
                     {/* Service */}
                     <div>
-                      <Label className="text-gray-700 dark:text-gray-300">
+                      <Label htmlFor={index === 0 ? "entry-service" : undefined} className="text-gray-700 dark:text-gray-300">
                         {t("service")} *
                       </Label>
                       <SearchableSelect
+                        id={index === 0 ? "entry-service" : undefined}
                         options={serviceOptions}
                         value={interval.service_id}
                         onChange={(v) => updateInterval(interval.id, "service_id", v)}
@@ -244,10 +246,11 @@ export default function TimeEntryDialog({
                     {/* Start / End times */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-gray-700 dark:text-gray-300">
+                        <Label htmlFor={index === 0 ? "entry-start" : undefined} className="text-gray-700 dark:text-gray-300">
                           {t("startTime")} *
                         </Label>
                         <Input
+                          id={index === 0 ? "entry-start" : undefined}
                           type="time"
                           required
                           value={interval.start_time}
@@ -258,10 +261,11 @@ export default function TimeEntryDialog({
                         />
                       </div>
                       <div>
-                        <Label className="text-gray-700 dark:text-gray-300">
+                        <Label htmlFor={index === 0 ? "entry-end" : undefined} className="text-gray-700 dark:text-gray-300">
                           {t("endTime")} *
                         </Label>
                         <Input
+                          id={index === 0 ? "entry-end" : undefined}
                           type="time"
                           required
                           value={interval.end_time}
@@ -275,10 +279,11 @@ export default function TimeEntryDialog({
 
                     {/* Observations */}
                     <div>
-                      <Label className="text-gray-700 dark:text-gray-300">
+                      <Label htmlFor={index === 0 ? "entry-observations" : undefined} className="text-gray-700 dark:text-gray-300">
                         {t("observations")}
                       </Label>
                       <textarea
+                        id={index === 0 ? "entry-observations" : undefined}
                         rows={2}
                         value={interval.observations}
                         onChange={(e) =>

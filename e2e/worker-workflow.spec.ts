@@ -106,11 +106,13 @@ test.describe("Worker Workflow", () => {
     // Worker should NOT see the user/worker dropdown (auto-filled)
     await expect(page.locator("#entry-user")).not.toBeVisible();
 
-    // Select first available production order
-    await page.locator("#entry-order").selectOption({ index: 1 });
+    // Select first available production order via SearchableSelect combobox
+    await page.locator("#entry-order").click();
+    await page.locator('[role="option"]').first().click();
 
-    // Select Assembly service (label format is "CODE - Name")
-    await page.locator("#entry-service").selectOption({ label: "SVC-001 - Assembly" });
+    // Select Assembly service via SearchableSelect combobox (label format is "CODE – Name")
+    await page.locator("#entry-service").click();
+    await page.locator('[role="option"]').filter({ hasText: "Assembly" }).click();
 
     // Fill day with today's date
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
