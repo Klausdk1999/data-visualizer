@@ -78,6 +78,13 @@ export default function OrderSummaryDialog({ open, onOpenChange, order }: OrderS
     byCollaborator[name] = (byCollaborator[name] ?? 0) + calcHours(e.start_time, e.end_time);
   });
 
+  // Agrupa horas por serviço para o resumo
+  const byService: Record<string, number> = {};
+  entries.forEach((e) => {
+    const name = e.service?.name ?? (isPT ? `Serviço ID ${e.service_id}` : `Service ID ${e.service_id}`);
+    byService[name] = (byService[name] ?? 0) + calcHours(e.start_time, e.end_time);
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
@@ -182,6 +189,36 @@ export default function OrderSummaryDialog({ open, onOpenChange, order }: OrderS
                     {totalHours.toFixed(1)}h
                   </span>
                 </div>
+
+                {/* Resumo por serviço */}
+                {Object.keys(byService).length > 0 && (
+                  <div className="mb-4 space-y-1.5">
+                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1">
+                      <Wrench className="w-3 h-3" />
+                      {isPT ? "Por serviço" : "By service"}
+                    </p>
+                    {Object.entries(byService)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([name, hours]) => (
+                        <div key={name} className="flex items-center gap-3">
+                          <div className="w-32 shrink-0">
+                            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+                              {name}
+                            </p>
+                          </div>
+                          <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-purple-500 rounded-full"
+                              style={{ width: `${(hours / totalHours) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-bold text-gray-700 dark:text-gray-300 w-12 text-right">
+                            {hours.toFixed(1)}h
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                )}
 
                 {/* Resumo por colaborador */}
                 {Object.keys(byCollaborator).length > 1 && (
