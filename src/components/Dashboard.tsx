@@ -42,7 +42,6 @@ import {
   updateService,
   deleteService,
   getTimeEntries,
-  createTimeEntry,
   createTimeEntries,
   updateTimeEntry,
   deleteTimeEntry,
