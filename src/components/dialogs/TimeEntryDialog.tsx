@@ -100,28 +100,21 @@ export default function TimeEntryDialog({
 
   //const addInterval = () => setIntervals((prev) => [...prev, emptyInterval()]);
   const addInterval = () => {
-    // 1. Criamos o ID do novo intervalo antes de adicioná-lo
-    const newIntervalId = crypto.randomUUID();
-    const newInterval = { ...emptyInterval(), id: newIntervalId };
-    
+    const newInterval = emptyInterval();
+
     setIntervals((prev) => [...prev, newInterval]);
-  
-    // 2. Aguardamos o React renderizar o componente na tela (100ms)
+
+    // Aguarda o React renderizar o novo intervalo antes de mover o foco.
     setTimeout(() => {
-      // 3. Buscamos o container da nova Ordem de Produção
-      const container = document.getElementById(`container-order-${newIntervalId}`);
-      
-      if (container) {
-        // Procura o input real do Combobox ou o botão que o aciona
-        const comboboxInput = container.querySelector('input:not([type="hidden"]), [role="combobox"]') as HTMLElement;
-        
-        if (comboboxInput) {
-          comboboxInput.focus();
-          
-          // Opcional (HACK de UI): Se quiser que a lista já caia aberta, descomente a linha abaixo. 
-          // Ele simula um clique para forçar a abertura das opções do componente UI.
-          // comboboxInput.click(); 
-        }
+      // Foca o último combobox renderizado, que corresponde ao intervalo recém-adicionado.
+      const comboboxes = document.querySelectorAll('[role="combobox"]');
+      const lastCombobox = comboboxes[comboboxes.length - 1] as HTMLElement | undefined;
+
+      if (lastCombobox) {
+        lastCombobox.focus();
+
+        // Opcional (HACK de UI): Se quiser que a lista já caia aberta, descomente a linha abaixo.
+        // lastCombobox.click();
       }
     }, 100);
   };
