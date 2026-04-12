@@ -65,6 +65,24 @@
     "settings": "Configurações",
     "customers": "Clientes"
   },
+  "sidebar": {
+    "monitoring": "Monitoramento",
+    "mes": "MES",
+    "settings": "Configurações",
+    "dashboard": "Painel",
+    "equipment": "Equipamentos",
+    "orders": "Ordens",
+    "hours": "Horas",
+    "products": "Produtos",
+    "materials": "Materiais",
+    "customers": "Clientes",
+    "devices": "Dispositivos",
+    "signals": "Sinais",
+    "values": "Valores de Sinais",
+    "services": "Serviços",
+    "users": "Usuários",
+    "logout": "Sair"
+  },
   "devices": {
     "title": "Dispositivos",
     "addDevice": "Adicionar Dispositivo",

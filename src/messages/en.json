@@ -65,6 +65,24 @@
     "settings": "Settings",
     "customers": "Customers"
   },
+  "sidebar": {
+    "monitoring": "Monitoring",
+    "mes": "MES",
+    "settings": "Settings",
+    "dashboard": "Dashboard",
+    "equipment": "Equipment",
+    "orders": "Orders",
+    "hours": "Hours",
+    "products": "Products",
+    "materials": "Materials",
+    "customers": "Customers",
+    "devices": "Devices",
+    "signals": "Signals",
+    "values": "Signal Values",
+    "services": "Services",
+    "users": "Users",
+    "logout": "Logout"
+  },
   "devices": {
     "title": "Devices",
     "addDevice": "Add Device",

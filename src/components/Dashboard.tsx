@@ -52,24 +52,11 @@ import {
 } from "@/lib/requestHandlers";
 import { Button } from "@/components/ui/button";
 import {
-  LayoutDashboard,
-  Cpu,
-  Radio,
-  Activity,
-  Users,
-  LogOut,
-  Package,
-  Boxes,
-  ClipboardList,
   Copy,
   Check,
-  Settings,
-  ChevronDown,
-  Clock,
-  Wrench,
-  UserSquare,
-  Monitor,
 } from "lucide-react";
+import Sidebar from "@/components/Sidebar";
+import type { TabType } from "@/components/Sidebar";
 import DashboardTab from "@/components/tabs/DashboardTab";
 import DevicesTab from "@/components/tabs/DevicesTab";
 import SignalsTab from "@/components/tabs/SignalsTab";
@@ -100,9 +87,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useTranslations } from "next-intl";
-import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import type { Locale } from "@/lib/i18n";
 import type {
   User,
@@ -130,20 +115,6 @@ import type {
   CreateCustomerRequest,
 } from "@/types";
 
-type TabType =
-  | "dashboard"
-  | "devices"
-  | "signals"
-  | "values"
-  | "users"
-  | "products"
-  | "materials"
-  | "orders"
-  | "services"
-  | "hours"
-  | "customers"
-  | "equipment";
-
 interface DashboardProps {
   onLogout: () => void;
   initialTab?: TabType;
@@ -168,7 +139,7 @@ export default function Dashboard({
   const [selectedSignal, setSelectedSignal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Dialog states
   const [deviceDialogOpen, setDeviceDialogOpen] = useState(false);
@@ -708,240 +679,31 @@ export default function Dashboard({
   const isWorker = user?.type === "worker";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Header */}
-      <div className="w-full bg-white/70 backdrop-blur-xl border-b border-white/30 shadow-sm dark:bg-gray-800/70 dark:border-white/10 rounded-b-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
-              <LayoutDashboard className="w-6 h-6" />
-              {t("header.title")}
-            </h1>
-            <div className="flex items-center space-x-4">
-              <ThemeToggle />
-              {onLocaleChange && <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />}
-              <span className="text-sm text-gray-700 dark:text-gray-300">
-                {user?.email || user?.name}
-              </span>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={onLogout}
-                className="flex items-center gap-2"
-              >
-                <LogOut className="w-4 h-4" />
-                {t("header.logout")}
-              </Button>
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
+      <Sidebar
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        userType={user?.type || ""}
+        userName={user?.name || user?.email || ""}
+        onLogout={onLogout}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        locale={locale}
+        onLocaleChange={onLocaleChange}
+      />
+
+      <main className={`flex-1 transition-all duration-200 ${sidebarCollapsed ? "ml-16" : "ml-60"}`}>
+        {/* Error Message */}
+        {error && (
+          <div className="px-4 sm:px-6 lg:px-8 mt-4">
+            <div className="bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-xl shadow-md border border-red-400/30">
+              {error}
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Error Message */}
-      {error && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-xl shadow-md border border-red-400/30">
-            {error}
-          </div>
-        </div>
-      )}
-
-      {/* Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 relative z-20">
-        <div className="flex items-center space-x-2 bg-white/50 backdrop-blur-xl rounded-2xl p-1.5 border border-white/30 shadow-sm dark:bg-gray-800/50 dark:border-white/10">
-          <button
-            onClick={() => handleTabChange("dashboard")}
-            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "dashboard"
-                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            <LayoutDashboard className="w-4 h-4" />
-            {t("tabs.dashboard")}
-          </button>
-          <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
-          <button
-            onClick={() => handleTabChange("orders")}
-            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "orders"
-                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            <ClipboardList className="w-4 h-4" />
-            {t("tabs.orders")}
-          </button>
-          <button
-            onClick={() => handleTabChange("hours")}
-            className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-              activeTab === "hours"
-                ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-            }`}
-          >
-            <Clock className="w-4 h-4" />
-            {t("tabs.hours")}
-          </button>
-          <button
-  onClick={() => handleTabChange("equipment")}
-  className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-    activeTab === "equipment"
-      ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-      : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-  }`}
->
-  <Monitor className="w-4 h-4" />
-  {t("tabs.equipment")}
-</button>
-          {isWorker && (
-            <button
-              onClick={() => handleTabChange("services")}
-              className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-                activeTab === "services"
-                  ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                  : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-              }`}
-            >
-              <Wrench className="w-4 h-4" />
-              {t("tabs.services")}
-            </button>
-          )}
-          {!isWorker && (
-            <>
-              <button
-                onClick={() => handleTabChange("products")}
-                className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-                  activeTab === "products"
-                    ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                    : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                }`}
-              >
-                <Package className="w-4 h-4" />
-                {t("tabs.products")}
-              </button>
-              <button
-                onClick={() => handleTabChange("materials")}
-                className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-                  activeTab === "materials"
-                    ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                    : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                }`}
-              >
-                <Boxes className="w-4 h-4" />
-                {t("tabs.materials")}
-              </button>
-              <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
-              {/* Settings dropdown for IoT configuration tabs */}
-              <div className="relative z-50">
-                <button
-                  onClick={() => setSettingsOpen(!settingsOpen)}
-                  className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-                    ["devices", "signals", "values", "services", "customers"].includes(activeTab)
-                      ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                      : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                  }`}
-                >
-                  <Settings className="w-4 h-4" />
-                  {t("tabs.settings")}
-                  <ChevronDown
-                    className={`w-3 h-3 transition-transform ${settingsOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {settingsOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setSettingsOpen(false)} />
-                    <div className="absolute top-full left-0 mt-2 z-50 min-w-[200px] bg-white/90 backdrop-blur-xl rounded-xl border border-white/30 shadow-lg dark:bg-gray-800/90 dark:border-white/10 py-1">
-                      <button
-                        onClick={() => {
-                          handleTabChange("devices");
-                          setSettingsOpen(false);
-                        }}
-                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
-                          activeTab === "devices"
-                            ? "bg-blue-500/90 text-white"
-                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                        }`}
-                      >
-                        <Cpu className="w-4 h-4" />
-                        {t("tabs.devices")}
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleTabChange("signals");
-                          setSettingsOpen(false);
-                        }}
-                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
-                          activeTab === "signals"
-                            ? "bg-blue-500/90 text-white"
-                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                        }`}
-                      >
-                        <Radio className="w-4 h-4" />
-                        {t("tabs.signals")}
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleTabChange("values");
-                          setSettingsOpen(false);
-                        }}
-                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
-                          activeTab === "values"
-                            ? "bg-blue-500/90 text-white"
-                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                        }`}
-                      >
-                        <Activity className="w-4 h-4" />
-                        {t("tabs.values")}
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleTabChange("services");
-                          setSettingsOpen(false);
-                        }}
-                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
-                          activeTab === "services"
-                            ? "bg-blue-500/90 text-white"
-                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                        }`}
-                      >
-                        <Wrench className="w-4 h-4" />
-                        {t("tabs.services")}
-                      </button>
-                      <button
-                        onClick={() => { handleTabChange("customers"); setSettingsOpen(false); }}
-                        className={`w-full px-4 py-2.5 flex items-center gap-2 text-left font-medium transition-all ${
-                          activeTab === "customers"
-                            ? "bg-blue-500/90 text-white"
-                            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                        }`}
-                      >
-                        <UserSquare className="w-4 h-4" />
-                        {t("tabs.customers")}
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-              <span className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
-              <button
-                onClick={() => handleTabChange("users")}
-                className={`px-5 py-2.5 flex items-center gap-2 rounded-xl font-medium transition-all ${
-                  activeTab === "users"
-                    ? "bg-blue-500/90 backdrop-blur-sm text-white shadow-lg ring-2 ring-blue-400/30 scale-105"
-                    : "text-gray-700 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-gray-700/50"
-                }`}
-              >
-                <Users className="w-4 h-4" />
-                {t("tabs.users")}
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Content */}
+        <div className="px-4 sm:px-6 lg:px-8 py-8">
         {loading ? (
           <div className="text-gray-700 dark:text-gray-300 text-center">{t("common.loading")}</div>
         ) : (
@@ -1125,6 +887,7 @@ export default function Dashboard({
           </>
         )}
       </div>
+      </main>
 
       {/* Dialogs */}
       <DeviceDialog
