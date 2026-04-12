@@ -28,6 +28,7 @@ import type {
   CreateCustomerRequest,
 } from "@/types";
 import type { TTNUplink, TTNDevice, TTNStats } from "@/types/ttn";
+import type { UserPreferences } from "@/types/widgets";
 
 // Use relative path when behind nginx, or full URL for direct access
 const getBaseURL = () => {
@@ -804,6 +805,30 @@ export const deleteTimeEntry = async (id: string): Promise<void> => {
     await axiosInstance.delete(`time-entries/${id}`);
   } catch (error) {
     console.error("Error deleting time entry:", error);
+    throw error;
+  }
+};
+
+// User Preferences endpoints
+export const getUserPreferences = async (userId: number): Promise<UserPreferences> => {
+  try {
+    const response = await axiosInstance.get<UserPreferences>(`users/${userId}/preferences`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user preferences:", error);
+    throw error;
+  }
+};
+
+export const updateUserPreferences = async (
+  userId: number,
+  prefs: Partial<UserPreferences>
+): Promise<UserPreferences> => {
+  try {
+    const response = await axiosInstance.put<UserPreferences>(`users/${userId}/preferences`, prefs);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user preferences:", error);
     throw error;
   }
 };
