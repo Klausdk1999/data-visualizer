@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { getSignalValues } from "@/lib/requestHandlers";
 import type { SignalValue } from "@/types";
 import type { Timespan } from "@/types/widgets";
@@ -50,8 +50,12 @@ export function useWidgetData({
   const [loading, setLoading] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Stabilize signalIds reference to prevent infinite re-render loops
+  const signalIdsKey = signalIds.join(",");
+  const stableSignalIds = useMemo(() => signalIds, [signalIdsKey]);
+
   const fetchData = useCallback(async () => {
-    if (signalIds.length === 0) {
+    if (stableSignalIds.length === 0) {
       setDataMap({});
       return;
     }
@@ -60,7 +64,7 @@ export function useWidgetData({
       const { from_date, to_date } = getTimespanRange(timespan);
       const newMap: Record<number, SignalValue[]> = {};
       await Promise.all(
-        signalIds.map(async (id) => {
+        stableSignalIds.map(async (id) => {
           const params: Record<string, string> = {
             signal_id: id.toString(),
             from_date,
@@ -79,7 +83,7 @@ export function useWidgetData({
     } finally {
       setLoading(false);
     }
-  }, [signalIds, timespan, limit]);
+  }, [stableSignalIds, timespan, limit]);
 
   useEffect(() => {
     fetchData();
@@ -97,6 +101,11 @@ export function useWidgetData({
 
   return { dataMap, loading, refresh: fetchData };
 }
+
+export const CHART_COLORS = [
+  "#3B82F6", "#EF4444", "#10B981", "#F59E0B",
+  "#8B5CF6", "#EC4899", "#06B6D4", "#F97316",
+];
 
 /** Get latest value from a signal's data array */
 export function getLatestValue(values: SignalValue[]): SignalValue | undefined {

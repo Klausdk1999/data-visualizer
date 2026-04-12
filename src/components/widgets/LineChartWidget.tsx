@@ -15,14 +15,9 @@ import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TimespanSelector } from "./TimespanSelector";
-import { useWidgetData, formatShortTime } from "./useWidgetData";
+import { useWidgetData, formatShortTime, CHART_COLORS } from "./useWidgetData";
 import type { WidgetConfig, Timespan } from "@/types/widgets";
 import type { Signal } from "@/types";
-
-const CHART_COLORS = [
-  "#3B82F6", "#EF4444", "#10B981", "#F59E0B",
-  "#8B5CF6", "#EC4899", "#06B6D4", "#F97316",
-];
 
 interface LineChartWidgetProps {
   config: WidgetConfig;

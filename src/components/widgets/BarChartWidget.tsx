@@ -13,14 +13,9 @@ import {
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TimespanSelector } from "./TimespanSelector";
-import { useWidgetData, getLatestValue } from "./useWidgetData";
+import { useWidgetData, getLatestValue, CHART_COLORS } from "./useWidgetData";
 import type { WidgetConfig, Timespan } from "@/types/widgets";
 import type { Signal } from "@/types";
-
-const CHART_COLORS = [
-  "#3B82F6", "#EF4444", "#10B981", "#F59E0B",
-  "#8B5CF6", "#EC4899", "#06B6D4", "#F97316",
-];
 
 interface BarChartWidgetProps {
   config: WidgetConfig;
