@@ -710,7 +710,6 @@ export default function Dashboard({
           <>
             {activeTab === "dashboard" && (
               <DashboardTab
-                devices={devices}
                 signals={signals}
                 orders={productionOrders}
                 timeEntries={timeEntries}

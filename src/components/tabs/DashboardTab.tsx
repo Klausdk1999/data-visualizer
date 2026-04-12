@@ -19,7 +19,6 @@ import type { ProductionOrder, TimeEntry, RawMaterial, Signal } from "@/types";
 import type { GridLayout, WidgetConfig } from "@/types/widgets";
 
 interface DashboardTabProps {
-  devices: unknown[];
   signals: Signal[];
   orders: ProductionOrder[];
   timeEntries: TimeEntry[];
@@ -50,11 +49,11 @@ export default function DashboardTab({
     savePreferences({ dashboard: { layout: dashLayout, widgets } });
   };
 
-  // ── today declarado primeiro, pois é usado em todos os cálculos abaixo ──
+  // ── today declared first, used in all calculations below ──
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // ── KPIs filtrados por período ──
+  // ── KPIs filtered by period ──
   const filteredByPeriod = orders.filter((o) => {
     const created = new Date(o.created_at || "");
     const diffDays = (today.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
@@ -76,19 +75,19 @@ export default function DashboardTab({
       return acc + Math.max(0, (eh * 60 + em - (sh * 60 + sm)) / 60);
     }, 0);
 
-  // ── Estoque baixo ──
+  // ── Low stock ──
   const lowStockItems = rawMaterials.filter(
     (m) => m.min_stock !== undefined && m.min_stock !== null && m.stock_quantity <= m.min_stock
   );
 
-  // ── Ordens atrasadas ──
+  // ── Overdue orders ──
   const overdueOrders = orders.filter((o) => {
     if (o.status === "completed" || o.status === "cancelled") return false;
     if (!o.planned_delivery_date) return false;
     return new Date(o.planned_delivery_date) < today;
   });
 
-  // ── Próximas a vencer (7 dias) ──
+  // ── Upcoming deliveries (7 days) ──
   const upcomingOrders = orders
     .filter((o) => {
       if (o.status === "completed" || o.status === "cancelled") return false;
@@ -109,13 +108,13 @@ export default function DashboardTab({
         <CardHeader>
           <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
             <Gauge className="w-5 h-5" />
-            Widgets
+            {t("widgets")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {prefsLoading ? (
             <div className="flex items-center justify-center py-12 text-sm text-gray-400">
-              Loading widgets...
+              {t("loadingWidgets")}
             </div>
           ) : (
             <WidgetGrid
@@ -143,7 +142,7 @@ export default function DashboardTab({
             <div className="flex items-center justify-between flex-wrap gap-2">
               <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2">
                 <ClipboardList className="w-4 h-4" />
-                Ordens de Produção
+                {t("productionOrders")}
               </h3>
               <div className="flex gap-1 bg-gray-100 dark:bg-gray-700/60 rounded-lg p-1">
                 {([7, 15, 30] as const).map((d) => (
@@ -166,30 +165,30 @@ export default function DashboardTab({
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {[
                 {
-                  label: "TOTAL DE ORDENS",
+                  label: t("totalOrders"),
                   value: totalOrdens,
-                  sub: "ordens cadastradas",
+                  sub: t("registeredOrders"),
                   color: "from-blue-500 to-blue-700",
                   icon: <ClipboardList className="w-10 h-10 opacity-20" />,
                 },
                 {
-                  label: "EM ANDAMENTO",
+                  label: t("inProgress"),
                   value: emAndamento,
-                  sub: "ordens ativas",
+                  sub: t("activeOrders2"),
                   color: "from-yellow-500 to-yellow-600",
                   icon: <Wrench className="w-10 h-10 opacity-20" />,
                 },
                 {
-                  label: "CONCLUÍDAS",
+                  label: t("completed"),
                   value: concluidas,
-                  sub: "ordens finalizadas",
+                  sub: t("completedOrders"),
                   color: "from-green-500 to-green-700",
                   icon: <CheckCircle className="w-10 h-10 opacity-20" />,
                 },
                 {
-                  label: "TOTAL DE HORAS",
+                  label: t("totalHours"),
                   value: `${totalHoras.toFixed(1)}h`,
-                  sub: "horas registradas",
+                  sub: t("registeredHours"),
                   color: "from-violet-500 to-violet-700",
                   icon: <Clock className="w-10 h-10 opacity-20" />,
                 },
@@ -214,8 +213,7 @@ export default function DashboardTab({
                 <AlertTriangle className="w-5 h-5 shrink-0" />
                 <div>
                   <p className="text-sm font-bold">
-                    {overdueOrders.length}{" "}
-                    {overdueOrders.length === 1 ? "ordem atrasada" : "ordens atrasadas"}
+                    {t(overdueOrders.length === 1 ? "overdueOrderOne" : "overdueOrderMany", { count: overdueOrders.length })}
                   </p>
                   <p className="text-xs opacity-75">
                     {overdueOrders.map((o) => o.product?.name || `#${o.id}`).join(", ")}
@@ -229,13 +227,13 @@ export default function DashboardTab({
               <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                 <CalendarClock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                 <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Próximas entregas (7 dias)
+                  {t("upcomingDeliveries")}
                 </p>
               </div>
               <div className="h-36 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
                 {upcomingOrders.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-sm text-gray-400 dark:text-gray-500">
-                    Nenhuma entrega prevista nos próximos 7 dias
+                    {t("noUpcomingDeliveries")}
                   </div>
                 ) : (
                   upcomingOrders.map((order) => {
@@ -251,17 +249,17 @@ export default function DashboardTab({
                       >
                         <div className="flex-1 min-w-0 mr-4">
                           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                            {order.product?.name || `Ordem #${order.id}`}
+                            {order.product?.name || `${t("order")} #${order.id}`}
                           </p>
                           <p className="text-xs text-gray-400 truncate">
-                            {order.customer?.name || "Sem cliente"} · Qtd: {order.quantity}
+                            {order.customer?.name || t("noCustomer")} · {t("qty")}: {order.quantity}
                           </p>
                         </div>
                         <div className="flex items-center gap-3 shrink-0">
                           <div className="text-right">
-                            <p className="text-xs text-gray-400">Entrega</p>
+                            <p className="text-xs text-gray-400">{t("delivery")}</p>
                             <p className="text-xs font-semibold text-gray-700 dark:text-gray-200">
-                              {delivery.toLocaleDateString("pt-BR")}
+                              {delivery.toLocaleDateString()}
                             </p>
                           </div>
                           <span
@@ -271,7 +269,7 @@ export default function DashboardTab({
                                 : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
                             }`}
                           >
-                            {diffDays === 0 ? "Hoje" : `${diffDays}d`}
+                            {diffDays === 0 ? t("today") : `${diffDays}d`}
                           </span>
                         </div>
                       </div>
@@ -286,14 +284,14 @@ export default function DashboardTab({
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2">
               <PackageOpen className="w-4 h-4" />
-              Estoque de Materiais
+              {t("materialStock")}
             </h3>
 
             {lowStockItems.length === 0 ? (
               <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800 px-4 py-3">
                 <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0" />
                 <p className="text-sm font-medium text-green-700 dark:text-green-400">
-                  Estoque de materiais sem alertas
+                  {t("stockNoAlerts")}
                 </p>
               </div>
             ) : (
@@ -301,9 +299,7 @@ export default function DashboardTab({
                 <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/30 px-4 py-2.5 border-b border-red-200 dark:border-red-800">
                   <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
                   <p className="text-sm font-bold text-red-700 dark:text-red-400">
-                    {lowStockItems.length}{" "}
-                    {lowStockItems.length === 1 ? "material abaixo" : "materiais abaixo"} do estoque
-                    mínimo
+                    {t(lowStockItems.length === 1 ? "materialsBelowOne" : "materialsBelowMany", { count: lowStockItems.length })}
                   </p>
                 </div>
                 <div className="h-40 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
@@ -322,7 +318,7 @@ export default function DashboardTab({
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <div className="text-right">
-                          <p className="text-xs text-gray-400 dark:text-gray-500">Atual</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500">{t("current")}</p>
                           <p className="text-sm font-black text-red-600 dark:text-red-400">
                             {item.stock_quantity}{" "}
                             <span className="font-normal text-xs">{item.unit || "un"}</span>
@@ -330,7 +326,7 @@ export default function DashboardTab({
                         </div>
                         <div className="w-px h-8 bg-gray-200 dark:bg-gray-600" />
                         <div className="text-right">
-                          <p className="text-xs text-gray-400 dark:text-gray-500">Mínimo</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500">{t("minimum")}</p>
                           <p className="text-sm font-bold text-gray-600 dark:text-gray-300">
                             {item.min_stock}{" "}
                             <span className="font-normal text-xs">{item.unit || "un"}</span>

@@ -5,7 +5,7 @@ import { ArrowLeft, Wifi, WifiOff, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WidgetGrid } from "@/components/widgets";
 import { usePreferences } from "@/hooks/usePreferences";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import type { Device, Signal, User } from "@/types";
 import type { GridLayout, WidgetConfig } from "@/types/widgets";
 
@@ -22,12 +22,11 @@ interface EquipmentTabProps {
 function DeviceList({
   devices,
   onSelect,
-  isPT,
 }: {
   devices: Device[];
   onSelect: (d: Device) => void;
-  isPT: boolean;
 }) {
+  const t = useTranslations("equipment");
   const active = devices.filter((d) => d.is_active);
   const inactive = devices.filter((d) => !d.is_active);
 
@@ -76,20 +75,20 @@ function DeviceList({
     <div>
       <div className="mb-7">
         <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-          {isPT ? "Equipamentos" : "Equipment"}
+          {t("title")}
         </h2>
         <p className="text-xs mt-1 text-gray-400 dark:text-gray-500">
-          {devices.length} {isPT ? "dispositivos cadastrados" : "registered devices"}
+          {t("registeredDevices", { count: devices.length })}
         </p>
       </div>
       {devices.length === 0 && (
         <p className="text-center py-12 text-sm text-gray-400 dark:text-gray-500">
-          {isPT ? "Nenhum dispositivo cadastrado." : "No devices registered."}
+          {t("noDevices")}
         </p>
       )}
       {active.length > 0 && (
         <div className="mb-6">
-          <SLabel t={`${isPT ? "Ativos" : "Active"} (${active.length})`} />
+          <SLabel t={`${t("active")} (${active.length})`} />
           <div className="flex flex-col gap-2">
             {active.map((d) => (
               <Row key={d.id} device={d} />
@@ -99,7 +98,7 @@ function DeviceList({
       )}
       {inactive.length > 0 && (
         <div>
-          <SLabel t={`${isPT ? "Inativos" : "Inactive"} (${inactive.length})`} />
+          <SLabel t={`${t("inactive")} (${inactive.length})`} />
           <div className="flex flex-col gap-2">
             {inactive.map((d) => (
               <Row key={d.id} device={d} />
@@ -120,7 +119,6 @@ function DeviceDetail({
   onBack,
   onEdit,
   onDelete,
-  isPT,
 }: {
   device: Device;
   signals: Signal[];
@@ -129,8 +127,8 @@ function DeviceDetail({
   onBack: () => void;
   onEdit?: (device: Device) => void;
   onDelete?: (deviceId: number) => void;
-  isPT: boolean;
 }) {
+  const t = useTranslations("equipment");
   const { preferences, loading: prefsLoading, savePreferences } = usePreferences(userId);
   const isAdmin = user?.type === "admin";
 
@@ -171,7 +169,7 @@ function DeviceDetail({
               dark:border-gray-700/60 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-200"
           >
             <ArrowLeft size={13} />
-            {isPT ? "Voltar" : "Back"}
+            {t("back")}
           </button>
           <div>
             <h2 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
@@ -192,7 +190,7 @@ function DeviceDetail({
                 onClick={() => onEdit(device)}
               >
                 <Pencil size={13} />
-                {isPT ? "Editar" : "Edit"}
+                {t("edit")}
               </Button>
             )}
             {onDelete && (
@@ -203,7 +201,7 @@ function DeviceDetail({
                 onClick={() => onDelete(device.id)}
               >
                 <Trash2 size={13} />
-                {isPT ? "Excluir" : "Delete"}
+                {t("delete")}
               </Button>
             )}
           </div>
@@ -213,7 +211,7 @@ function DeviceDetail({
       {/* Widget Grid */}
       {prefsLoading ? (
         <div className="flex items-center justify-center py-12 text-sm text-gray-400">
-          Loading widgets...
+          {t("loadingWidgets")}
         </div>
       ) : (
         <WidgetGrid
@@ -237,8 +235,6 @@ export default function EquipmentTab({
   onEditDevice,
   onDeleteDevice,
 }: EquipmentTabProps) {
-  const locale = useLocale();
-  const isPT = locale === "pt-BR";
   const [selected, setSelected] = useState<Device | null>(null);
 
   return (
@@ -255,10 +251,9 @@ export default function EquipmentTab({
             onDeleteDevice?.(id);
             setSelected(null);
           }}
-          isPT={isPT}
         />
       ) : (
-        <DeviceList devices={devices} onSelect={setSelected} isPT={isPT} />
+        <DeviceList devices={devices} onSelect={setSelected} />
       )}
     </div>
   );
