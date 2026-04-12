@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +28,12 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
   const t = useTranslations("users");
   const tc = useTranslations("common");
   const selectedImageRef = useRef<File | null>(null);
+
+  useEffect(() => {
+    if (!open) {
+      selectedImageRef.current = null;
+    }
+  }, [open]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
