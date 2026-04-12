@@ -12,8 +12,8 @@ async function login(page: Page, email: string, password: string): Promise<strin
   await page.fill('input[type="password"]', password);
   await page.click('button[type="submit"]');
 
-  // Wait for successful navigation away from login
-  await page.waitForTimeout(3000);
+  // Wait for sidebar to appear (indicates dashboard has loaded)
+  await expect(page.locator("aside")).toBeVisible({ timeout: 15000 });
 
   // Dismiss any Next.js dev overlay that may intercept clicks
   await page.evaluate(() => {
@@ -29,21 +29,16 @@ test.describe("Permission Enforcement", () => {
   test("worker cannot see admin-only tabs", async ({ page }) => {
     await login(page, "worker@test.com", "worker123");
 
-    // Admin-only tabs should NOT be visible
-    await expect(
-      page.locator('button:has-text("Users"), [role="tab"]:has-text("Users")')
-    ).not.toBeVisible();
-    await expect(
-      page.locator('button:has-text("Products"), [role="tab"]:has-text("Products")')
-    ).not.toBeVisible();
-    await expect(
-      page.locator('button:has-text("Materials"), [role="tab"]:has-text("Materials")')
-    ).not.toBeVisible();
+    // Admin-only MES tabs should NOT be visible
+    await expect(page.getByRole("button", { name: "Products" })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Materials" })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Customers" })).not.toBeVisible();
 
-    // Settings dropdown should not be visible
-    await expect(
-      page.locator('button:has-text("Settings"), [role="tab"]:has-text("Settings")')
-    ).not.toBeVisible();
+    // Admin-only SETTINGS section tabs should NOT be visible
+    await expect(page.getByRole("button", { name: "Devices" })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Signals" })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Services" })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Users" })).not.toBeVisible();
   });
 
   test("worker gets 403 on admin-only API endpoints", async ({ page, request }) => {
@@ -125,12 +120,15 @@ test.describe("Permission Enforcement", () => {
   test("admin can see all tabs", async ({ page }) => {
     await login(page, "admin@test.com", "admin123");
 
-    const tabNames = ["Dashboard", "Orders", "Hours", "Products", "Materials", "Settings", "Users"];
+    // MONITORING section
+    const monitoringTabs = ["Dashboard", "Equipment"];
+    // MES section
+    const mesTabs = ["Orders", "Hours", "Products", "Materials", "Customers"];
+    // SETTINGS section
+    const settingsTabs = ["Devices", "Signals", "Services", "Users"];
 
-    for (const name of tabNames) {
-      await expect(
-        page.locator(`button:has-text("${name}"), [role="tab"]:has-text("${name}")`)
-      ).toBeVisible();
+    for (const name of [...monitoringTabs, ...mesTabs, ...settingsTabs]) {
+      await expect(page.getByRole("button", { name })).toBeVisible();
     }
   });
 });

@@ -1,8 +1,8 @@
 /**
  * E2E Tests for Worker Workflow
  *
- * Covers: login, restricted tab visibility, read-only services,
- * read-only orders, time entry creation, and own-entries-only filtering.
+ * Covers: login, restricted tab visibility, read-only orders,
+ * time entry creation, and own-entries-only filtering.
  *
  * Requires seeded data (worker user Maria Santos, services, production orders, time entries).
  */
@@ -18,8 +18,8 @@ async function loginAsWorker(page: Page) {
   await page.locator('input[type="password"]').fill("worker123");
   await page.locator('button[type="submit"]').click();
 
-  // Wait for dashboard to fully load
-  await expect(page.getByText("IoT Data Storage Dashboard")).toBeVisible({
+  // Wait for sidebar to appear (indicates dashboard has loaded)
+  await expect(page.locator("aside")).toBeVisible({
     timeout: 15000,
   });
 
@@ -33,43 +33,22 @@ test.describe("Worker Workflow", () => {
   test("worker can login and sees restricted tabs", async ({ page }) => {
     await loginAsWorker(page);
 
-    // Verify allowed tabs are visible
+    // Verify allowed tabs are visible (MONITORING + MES worker items)
     await expect(page.getByRole("button", { name: "Dashboard" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Equipment" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Orders" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Hours" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Services" })).toBeVisible();
 
-    // Verify restricted tabs are NOT visible
+    // Verify admin-only MES tabs are NOT visible
     await expect(page.getByRole("button", { name: "Products" })).not.toBeVisible();
     await expect(page.getByRole("button", { name: "Materials" })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Customers" })).not.toBeVisible();
+
+    // Verify SETTINGS section tabs are NOT visible for workers
+    await expect(page.getByRole("button", { name: "Devices" })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Signals" })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Services" })).not.toBeVisible();
     await expect(page.getByRole("button", { name: "Users" })).not.toBeVisible();
-
-    // Settings dropdown should NOT be visible for workers
-    await expect(page.getByRole("button", { name: "Settings" })).not.toBeVisible();
-  });
-
-  test("worker can view services read-only", async ({ page }) => {
-    await loginAsWorker(page);
-
-    // Click Services tab (directly visible for workers, not inside Settings)
-    await page.getByRole("button", { name: "Services" }).click();
-
-    // Wait for the Services tab to load (use role to avoid strict mode with multiple "Services" matches)
-    await expect(page.getByRole("heading", { name: "Services" })).toBeVisible({ timeout: 5000 });
-
-    // Verify seeded services appear in the table (exact: true to avoid matching description cells)
-    await expect(page.getByRole("cell", { name: "Assembly", exact: true })).toBeVisible({
-      timeout: 5000,
-    });
-    await expect(page.getByRole("cell", { name: "Quality Control", exact: true })).toBeVisible();
-    await expect(page.getByRole("cell", { name: "Packaging", exact: true })).toBeVisible();
-
-    // Verify no "Add Service" button is visible
-    await expect(page.getByRole("button", { name: "Add Service" })).not.toBeVisible();
-
-    // Verify no Edit or Delete buttons in table rows
-    await expect(page.getByRole("button", { name: "Edit" })).not.toBeVisible();
-    await expect(page.getByRole("button", { name: "Delete" })).not.toBeVisible();
   });
 
   test("worker can view orders but not create/edit", async ({ page }) => {
