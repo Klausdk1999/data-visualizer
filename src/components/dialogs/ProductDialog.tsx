@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import ImageUpload from "@/components/ui/image-upload";
+import { uploadImage, deleteImage } from "@/lib/requestHandlers";
 import type {
   Product,
   RawMaterial,
@@ -55,15 +57,17 @@ export default function ProductDialog({
 
   const [newMaterialId, setNewMaterialId] = useState<string>("");
   const [newQuantity, setNewQuantity] = useState<string>("");
+  const selectedImageRef = useRef<File | null>(null);
 
   useEffect(() => {
     if (!open) {
       setNewMaterialId("");
       setNewQuantity("");
+      selectedImageRef.current = null;
     }
   }, [open]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const productData: CreateProductRequest = {
@@ -74,6 +78,13 @@ export default function ProductDialog({
       category: (formData.get("category") as string) || undefined,
     };
     onSubmit(productData);
+    if (selectedImageRef.current && editingItem?.id) {
+      try {
+        await uploadImage("products", editingItem.id, selectedImageRef.current);
+      } catch (err) {
+        console.error("Error uploading product image:", err);
+      }
+    }
   };
 
   const handleAddMaterial = () => {
@@ -161,6 +172,31 @@ export default function ProductDialog({
                 />
               </div>
             </div>
+
+            {/* Image Upload - shown when editing */}
+            {editingItem && (
+              <div>
+                <Label className="text-gray-700 dark:text-gray-300">
+                  {tc("image")}
+                </Label>
+                <div className="mt-1">
+                  <ImageUpload
+                    entity="products"
+                    entityId={editingItem.id}
+                    onImageChange={(file) => {
+                      selectedImageRef.current = file;
+                    }}
+                    onImageDelete={async () => {
+                      try {
+                        await deleteImage("products", editingItem.id);
+                      } catch (err) {
+                        console.error("Error deleting product image:", err);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* BOM Section - shown when editing an existing product */}
             {editingItem && (

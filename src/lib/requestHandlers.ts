@@ -832,3 +832,21 @@ export const updateUserPreferences = async (
     throw error;
   }
 };
+
+// Image endpoints
+export const uploadImage = async (entity: string, id: number, file: File): Promise<void> => {
+  const formData = new FormData();
+  formData.append("image", file);
+  await axiosInstance.put(`${entity}/${id}/image`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const deleteImage = async (entity: string, id: number): Promise<void> => {
+  await axiosInstance.delete(`${entity}/${id}/image`);
+};
+
+export const getImageUrl = (entity: string, id: number): string => {
+  const base = axiosInstance.defaults.baseURL || "";
+  return `${base}/${entity}/${id}/image`;
+};

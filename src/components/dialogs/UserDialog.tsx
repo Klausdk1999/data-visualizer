@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
 import { useTranslations } from "next-intl";
+import ImageUpload from "@/components/ui/image-upload";
+import { uploadImage, deleteImage } from "@/lib/requestHandlers";
 import type { User, CreateUserRequest } from "@/types";
 
 interface UserDialogProps {
@@ -25,8 +27,9 @@ interface UserDialogProps {
 export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }: UserDialogProps) {
   const t = useTranslations("users");
   const tc = useTranslations("common");
+  const selectedImageRef = useRef<File | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const userData: CreateUserRequest = {
@@ -37,6 +40,13 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
       rfid: (formData.get("rfid") as string) || undefined,
     };
     onSubmit(userData);
+    if (selectedImageRef.current && editingItem?.id) {
+      try {
+        await uploadImage("users", editingItem.id, selectedImageRef.current);
+      } catch (err) {
+        console.error("Error uploading user image:", err);
+      }
+    }
   };
 
   return (
@@ -106,6 +116,31 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
               </Label>
               <Input id="user-rfid" name="rfid" defaultValue={editingItem?.rfid} className="mt-1" />
             </div>
+
+            {/* Image Upload - shown when editing */}
+            {editingItem && (
+              <div>
+                <Label className="text-gray-700 dark:text-gray-300">
+                  {tc("image")}
+                </Label>
+                <div className="mt-1">
+                  <ImageUpload
+                    entity="users"
+                    entityId={editingItem.id}
+                    onImageChange={(file) => {
+                      selectedImageRef.current = file;
+                    }}
+                    onImageDelete={async () => {
+                      try {
+                        await deleteImage("users", editingItem.id);
+                      } catch (err) {
+                        console.error("Error deleting user image:", err);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button

@@ -29,7 +29,12 @@
     "priority": "Prioridade",
     "quantity": "Quantidade",
     "search": "Pesquisar...",
-    "noResults": "Nenhum resultado encontrado"
+    "noResults": "Nenhum resultado encontrado",
+    "uploadImage": "Enviar Imagem",
+    "deleteImage": "Excluir Imagem",
+    "dragAndDrop": "Arraste e solte uma imagem aqui",
+    "fileTooLarge": "Arquivo muito grande. Tamanho máximo é 2MB.",
+    "image": "Imagem"
   },
   "login": {
     "title": "IoT Dashboard",
