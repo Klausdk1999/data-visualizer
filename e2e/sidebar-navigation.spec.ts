@@ -63,8 +63,8 @@ test.describe("Sidebar Navigation", () => {
     const expandedWidth = await aside.evaluate((el) => el.getBoundingClientRect().width);
     expect(expandedWidth).toBeGreaterThan(100);
 
-    // Find and click the collapse toggle button (typically a chevron button inside the sidebar)
-    const collapseToggle = aside.locator("button").filter({ has: page.locator("svg") }).first();
+    // Find and click the collapse toggle button (has title "Collapse sidebar")
+    const collapseToggle = aside.locator('button[title="Collapse sidebar"]');
     await collapseToggle.click();
 
     // Wait for transition and check that width decreased
@@ -72,8 +72,9 @@ test.describe("Sidebar Navigation", () => {
     const collapsedWidth = await aside.evaluate((el) => el.getBoundingClientRect().width);
     expect(collapsedWidth).toBeLessThan(expandedWidth);
 
-    // Click toggle again to expand
-    await collapseToggle.click();
+    // Click toggle again to expand (title changes when collapsed)
+    const expandToggle = aside.locator('button[title="Expand sidebar"]');
+    await expandToggle.click();
     await page.waitForTimeout(500);
     const reExpandedWidth = await aside.evaluate((el) => el.getBoundingClientRect().width);
     expect(reExpandedWidth).toBeGreaterThan(collapsedWidth);

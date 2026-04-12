@@ -9,8 +9,6 @@
 
 import { test, expect, type Page } from "@playwright/test";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
 /** Logs in as admin and waits for the dashboard to load. */
 async function loginAsAdmin(page: Page) {
   await page.goto("/");
