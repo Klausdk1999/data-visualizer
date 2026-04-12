@@ -837,9 +837,7 @@ export const updateUserPreferences = async (
 export const uploadImage = async (entity: string, id: number, file: File): Promise<void> => {
   const formData = new FormData();
   formData.append("image", file);
-  await axiosInstance.put(`${entity}/${id}/image`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  await axiosInstance.put(`${entity}/${id}/image`, formData);
 };
 
 export const deleteImage = async (entity: string, id: number): Promise<void> => {
