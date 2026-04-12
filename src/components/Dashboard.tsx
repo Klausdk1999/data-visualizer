@@ -715,6 +715,7 @@ export default function Dashboard({
                 orders={productionOrders}
                 timeEntries={timeEntries}
                 rawMaterials={rawMaterials}
+                userId={user?.id ?? 0}
               />
             )}
 
@@ -882,8 +883,18 @@ export default function Dashboard({
               />
             )}
             {activeTab === "equipment" && (
-  <EquipmentTab devices={devices} />
-)}
+              <EquipmentTab
+                devices={devices}
+                signals={signals}
+                user={user}
+                userId={user?.id ?? 0}
+                onEditDevice={(device) => {
+                  setEditingItem(device);
+                  setDeviceDialogOpen(true);
+                }}
+                onDeleteDevice={handleDeleteDevice}
+              />
+            )}
           </>
         )}
       </div>
