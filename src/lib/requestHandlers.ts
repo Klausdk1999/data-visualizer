@@ -844,7 +844,8 @@ export const deleteImage = async (entity: string, id: number): Promise<void> => 
   await axiosInstance.delete(`${entity}/${id}/image`);
 };
 
-export const getImageUrl = (entity: string, id: number): string => {
+export const getImageUrl = (entity: string, id: number, bustCache = false): string => {
   const base = axiosInstance.defaults.baseURL || "";
-  return `${base}/${entity}/${id}/image`;
+  const url = `${base}/${entity}/${id}/image`;
+  return bustCache ? `${url}?t=${Date.now()}` : url;
 };

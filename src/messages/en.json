@@ -34,6 +34,7 @@
     "deleteImage": "Delete Image",
     "dragAndDrop": "Drag and drop an image here",
     "fileTooLarge": "File is too large. Maximum size is 2MB.",
+    "invalidFileType": "Only image files are accepted (JPEG, PNG, GIF, WebP).",
     "image": "Image"
   },
   "login": {

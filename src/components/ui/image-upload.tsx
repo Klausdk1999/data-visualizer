@@ -32,7 +32,8 @@ export default function ImageUpload({
   // Load existing image when entityId is available
   useEffect(() => {
     if (entityId) {
-      const url = getImageUrl(entity, entityId);
+      // Use cache-busting to ensure we always get the latest image
+      const url = getImageUrl(entity, entityId, true);
       // Check if image exists by trying to load it
       const img = new Image();
       img.onload = () => {
@@ -59,6 +60,7 @@ export default function ImageUpload({
       setError(null);
 
       if (!file.type.startsWith("image/")) {
+        setError(tc("invalidFileType"));
         return;
       }
 

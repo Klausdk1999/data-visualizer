@@ -46,7 +46,9 @@ export function usePreferences(userId: number) {
       // Debounce the API call
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
-        updateUserPreferences(userId, partial).catch((err) => {
+        // Send the full merged preferences so the backend can do a simple
+        // overwrite — avoids race conditions from concurrent partial updates.
+        updateUserPreferences(userId, merged).catch((err) => {
           console.error("Failed to save preferences:", err);
         });
       }, DEBOUNCE_MS);
