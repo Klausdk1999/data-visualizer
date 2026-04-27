@@ -41,9 +41,7 @@ export function SearchableSelect({
   const selectedOption = options.find((o) => o.value === value);
 
   const filtered = query.trim()
-    ? options.filter((o) =>
-        o.label.toLowerCase().includes(query.toLowerCase())
-      )
+    ? options.filter((o) => o.label.toLowerCase().includes(query.toLowerCase()))
     : options;
 
   const openDropdown = useCallback(() => {
@@ -113,7 +111,11 @@ export function SearchableSelect({
         aria-expanded={open}
         aria-controls={listboxId}
       >
-        <span className={selectedOption ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-500"}>
+        <span
+          className={
+            selectedOption ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-500"
+          }
+        >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <span className="flex items-center gap-1 ml-2 shrink-0">

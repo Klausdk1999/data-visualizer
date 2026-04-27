@@ -23,7 +23,7 @@ export default function ImageUpload({
 }: ImageUploadProps) {
   const tc = useTranslations("common");
   const [preview, setPreview] = useState<string | null>(null);
-  const [hasExisting, setHasExisting] = useState(false);
+  const [, setHasExisting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -153,9 +153,7 @@ export default function ImageUpload({
           }`}
         >
           <ImageIcon className="w-8 h-8 text-gray-400 dark:text-gray-500 mb-2" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {tc("dragAndDrop")}
-          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{tc("dragAndDrop")}</p>
           <Button
             type="button"
             variant="ghost"
@@ -180,9 +178,7 @@ export default function ImageUpload({
         onChange={handleFileInput}
       />
 
-      {error && (
-        <p className="text-sm text-red-500 dark:text-red-400">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
     </div>
   );
 }

@@ -24,7 +24,7 @@ export function TableWidget({ config }: TableWidgetProps) {
     limit: String(rowCount * 2), // fetch extra to account for sorting
   });
 
-  const values = config.signal_id ? dataMap[config.signal_id] ?? [] : [];
+  const values = config.signal_id ? (dataMap[config.signal_id] ?? []) : [];
 
   const rows = useMemo(() => {
     const sorted = [...values].sort((a, b) => {
@@ -75,10 +75,7 @@ export function TableWidget({ config }: TableWidgetProps) {
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td
-                  colSpan={2}
-                  className="py-4 text-center text-gray-400 dark:text-gray-500"
-                >
+                <td colSpan={2} className="py-4 text-center text-gray-400 dark:text-gray-500">
                   No data
                 </td>
               </tr>

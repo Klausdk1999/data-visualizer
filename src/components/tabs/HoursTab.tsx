@@ -25,7 +25,7 @@ interface HoursTabProps {
 
 export default function HoursTab({
   timeEntries,
-  isWorker,
+  isWorker: _isWorker,
   onAddEntry,
   onEditEntry,
   onDeleteEntry,

@@ -78,7 +78,6 @@ const WIDGET_TYPES: {
 ];
 
 const MULTI_SIGNAL_TYPES: WidgetType[] = ["line_chart", "bar_chart"];
-const SINGLE_SIGNAL_TYPES: WidgetType[] = ["gauge", "kpi_card", "digital_status", "table"];
 
 export function WidgetConfigDialog({
   open,
@@ -264,11 +263,7 @@ export function WidgetConfigDialog({
               />
             )}
             <div className="flex justify-end">
-              <Button
-                size="sm"
-                onClick={() => setStep(3)}
-                disabled={selectedSignals.length === 0}
-              >
+              <Button size="sm" onClick={() => setStep(3)} disabled={selectedSignals.length === 0}>
                 Next
               </Button>
             </div>

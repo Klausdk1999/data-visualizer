@@ -7,8 +7,12 @@ jest.mock("@/lib/requestHandlers", () => ({
   updateUserPreferences: jest.fn(),
 }));
 
-const mockedGetUserPreferences = getUserPreferences as jest.MockedFunction<typeof getUserPreferences>;
-const mockedUpdateUserPreferences = updateUserPreferences as jest.MockedFunction<typeof updateUserPreferences>;
+const mockedGetUserPreferences = getUserPreferences as jest.MockedFunction<
+  typeof getUserPreferences
+>;
+const mockedUpdateUserPreferences = updateUserPreferences as jest.MockedFunction<
+  typeof updateUserPreferences
+>;
 
 beforeEach(() => {
   jest.clearAllMocks();

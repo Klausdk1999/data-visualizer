@@ -13,12 +13,8 @@ jest.mock("next-intl", () => ({
 
 jest.mock("recharts", () => ({
   ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  LineChart: ({ children }: any) => (
-    <div data-testid="line-chart">{children}</div>
-  ),
-  BarChart: ({ children }: any) => (
-    <div data-testid="bar-chart">{children}</div>
-  ),
+  LineChart: ({ children }: any) => <div data-testid="line-chart">{children}</div>,
+  BarChart: ({ children }: any) => <div data-testid="bar-chart">{children}</div>,
   Line: () => null,
   Bar: () => null,
   XAxis: () => null,
@@ -120,17 +116,13 @@ beforeEach(() => {
 describe("LineChartWidget", () => {
   it("renders without crashing with minimal props", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: false, refresh: mockRefresh };
-    const { container } = render(
-      <LineChartWidget config={baseConfig({ type: "line_chart" })} />
-    );
+    const { container } = render(<LineChartWidget config={baseConfig({ type: "line_chart" })} />);
     expect(container).toBeTruthy();
   });
 
   it("shows loading state (skeleton) when loading with no data", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: true, refresh: mockRefresh };
-    const { container } = render(
-      <LineChartWidget config={baseConfig({ type: "line_chart" })} />
-    );
+    const { container } = render(<LineChartWidget config={baseConfig({ type: "line_chart" })} />);
     // Skeleton components render divs with the skeleton class
     const skeletons = container.querySelectorAll('[class*="bg-gray-200"]');
     expect(skeletons.length).toBeGreaterThan(0);
@@ -138,28 +130,19 @@ describe("LineChartWidget", () => {
 
   it("renders chart with data", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <LineChartWidget
-        config={baseConfig({ type: "line_chart" })}
-        signals={[mockSignal]}
-      />
-    );
+    render(<LineChartWidget config={baseConfig({ type: "line_chart" })} signals={[mockSignal]} />);
     expect(screen.getByTestId("line-chart")).toBeInTheDocument();
   });
 
   it("shows 'No data' when dataMap is empty and not loading", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: false, refresh: mockRefresh };
-    render(
-      <LineChartWidget config={baseConfig({ type: "line_chart" })} />
-    );
+    render(<LineChartWidget config={baseConfig({ type: "line_chart" })} />);
     expect(screen.getByText("No data")).toBeInTheDocument();
   });
 
   it("displays the config label", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <LineChartWidget config={baseConfig({ type: "line_chart", label: "Temp Chart" })} />
-    );
+    render(<LineChartWidget config={baseConfig({ type: "line_chart", label: "Temp Chart" })} />);
     expect(screen.getByText("Temp Chart")).toBeInTheDocument();
   });
 });
@@ -171,9 +154,7 @@ describe("LineChartWidget", () => {
 describe("BarChartWidget", () => {
   it("renders without crashing with minimal props", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: false, refresh: mockRefresh };
-    const { container } = render(
-      <BarChartWidget config={baseConfig({ type: "bar_chart" })} />
-    );
+    const { container } = render(<BarChartWidget config={baseConfig({ type: "bar_chart" })} />);
     expect(container).toBeTruthy();
   });
 
@@ -190,20 +171,13 @@ describe("BarChartWidget", () => {
 
   it("renders bar chart with data", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <BarChartWidget
-        config={baseConfig({ type: "bar_chart" })}
-        signals={[mockSignal]}
-      />
-    );
+    render(<BarChartWidget config={baseConfig({ type: "bar_chart" })} signals={[mockSignal]} />);
     expect(screen.getByTestId("bar-chart")).toBeInTheDocument();
   });
 
   it("displays the config label", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <BarChartWidget config={baseConfig({ type: "bar_chart", label: "Bar View" })} />
-    );
+    render(<BarChartWidget config={baseConfig({ type: "bar_chart", label: "Bar View" })} />);
     expect(screen.getByText("Bar View")).toBeInTheDocument();
   });
 });
@@ -215,17 +189,13 @@ describe("BarChartWidget", () => {
 describe("GaugeWidget", () => {
   it("renders without crashing with minimal props", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: false, refresh: mockRefresh };
-    const { container } = render(
-      <GaugeWidget config={baseConfig({ type: "gauge" })} />
-    );
+    const { container } = render(<GaugeWidget config={baseConfig({ type: "gauge" })} />);
     expect(container).toBeTruthy();
   });
 
   it("shows loading state when loading with no data", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: true, refresh: mockRefresh };
-    const { container } = render(
-      <GaugeWidget config={baseConfig({ type: "gauge" })} />
-    );
+    const { container } = render(<GaugeWidget config={baseConfig({ type: "gauge" })} />);
     const skeletons = container.querySelectorAll('[class*="bg-gray-200"]');
     expect(skeletons.length).toBeGreaterThan(0);
   });
@@ -236,18 +206,14 @@ describe("GaugeWidget", () => {
       loading: false,
       refresh: mockRefresh,
     };
-    render(
-      <GaugeWidget config={baseConfig({ type: "gauge", min: 0, max: 100, unit: "°C" })} />
-    );
+    render(<GaugeWidget config={baseConfig({ type: "gauge", min: 0, max: 100, unit: "°C" })} />);
     // The SVG text element should contain the formatted value
     expect(screen.getByText("72.3")).toBeInTheDocument();
   });
 
   it("displays the config label", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <GaugeWidget config={baseConfig({ type: "gauge", label: "Pressure" })} />
-    );
+    render(<GaugeWidget config={baseConfig({ type: "gauge", label: "Pressure" })} />);
     expect(screen.getByText("Pressure")).toBeInTheDocument();
   });
 
@@ -257,9 +223,7 @@ describe("GaugeWidget", () => {
       loading: false,
       refresh: mockRefresh,
     };
-    render(
-      <GaugeWidget config={baseConfig({ type: "gauge", unit: "bar" })} />
-    );
+    render(<GaugeWidget config={baseConfig({ type: "gauge", unit: "bar" })} />);
     expect(screen.getByText("bar")).toBeInTheDocument();
   });
 });
@@ -271,51 +235,39 @@ describe("GaugeWidget", () => {
 describe("KpiCardWidget", () => {
   it("renders without crashing with minimal props", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: false, refresh: mockRefresh };
-    const { container } = render(
-      <KpiCardWidget config={baseConfig({ type: "kpi_card" })} />
-    );
+    const { container } = render(<KpiCardWidget config={baseConfig({ type: "kpi_card" })} />);
     expect(container).toBeTruthy();
   });
 
   it("shows loading state when loading with no data", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: true, refresh: mockRefresh };
-    const { container } = render(
-      <KpiCardWidget config={baseConfig({ type: "kpi_card" })} />
-    );
+    const { container } = render(<KpiCardWidget config={baseConfig({ type: "kpi_card" })} />);
     const skeletons = container.querySelectorAll('[class*="bg-gray-200"]');
     expect(skeletons.length).toBeGreaterThan(0);
   });
 
   it("renders the current value", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <KpiCardWidget config={baseConfig({ type: "kpi_card" })} />
-    );
+    render(<KpiCardWidget config={baseConfig({ type: "kpi_card" })} />);
     // Latest value is 24.0 => displayed as "24.0"
     expect(screen.getByText("24.0")).toBeInTheDocument();
   });
 
   it("displays the config label", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <KpiCardWidget config={baseConfig({ type: "kpi_card", label: "Avg Temp" })} />
-    );
+    render(<KpiCardWidget config={baseConfig({ type: "kpi_card", label: "Avg Temp" })} />);
     expect(screen.getByText("Avg Temp")).toBeInTheDocument();
   });
 
   it("displays the unit when provided", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <KpiCardWidget config={baseConfig({ type: "kpi_card", unit: "°C" })} />
-    );
+    render(<KpiCardWidget config={baseConfig({ type: "kpi_card", unit: "°C" })} />);
     expect(screen.getByText("°C")).toBeInTheDocument();
   });
 
   it("shows dash when no value is available", () => {
     mockUseWidgetDataReturn = { dataMap: { 1: [] }, loading: false, refresh: mockRefresh };
-    render(
-      <KpiCardWidget config={baseConfig({ type: "kpi_card" })} />
-    );
+    render(<KpiCardWidget config={baseConfig({ type: "kpi_card" })} />);
     // mdash character
     expect(screen.getByText("—")).toBeInTheDocument();
   });
@@ -323,9 +275,7 @@ describe("KpiCardWidget", () => {
   it("shows trend indicator when multiple values exist", () => {
     // value goes from 23.5 to 24.0 => "Up"
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <KpiCardWidget config={baseConfig({ type: "kpi_card" })} />
-    );
+    render(<KpiCardWidget config={baseConfig({ type: "kpi_card" })} />);
     expect(screen.getByText(/Up/)).toBeInTheDocument();
   });
 });
@@ -358,9 +308,7 @@ describe("DigitalStatusWidget", () => {
       loading: false,
       refresh: mockRefresh,
     };
-    render(
-      <DigitalStatusWidget config={baseConfig({ type: "digital_status" })} />
-    );
+    render(<DigitalStatusWidget config={baseConfig({ type: "digital_status" })} />);
     expect(screen.getByText("ON")).toBeInTheDocument();
   });
 
@@ -372,9 +320,7 @@ describe("DigitalStatusWidget", () => {
       loading: false,
       refresh: mockRefresh,
     };
-    render(
-      <DigitalStatusWidget config={baseConfig({ type: "digital_status" })} />
-    );
+    render(<DigitalStatusWidget config={baseConfig({ type: "digital_status" })} />);
     expect(screen.getByText("OFF")).toBeInTheDocument();
   });
 
@@ -398,11 +344,7 @@ describe("DigitalStatusWidget", () => {
 
   it("displays the config label", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: false, refresh: mockRefresh };
-    render(
-      <DigitalStatusWidget
-        config={baseConfig({ type: "digital_status", label: "Motor" })}
-      />
-    );
+    render(<DigitalStatusWidget config={baseConfig({ type: "digital_status", label: "Motor" })} />);
     expect(screen.getByText("Motor")).toBeInTheDocument();
   });
 });
@@ -414,26 +356,20 @@ describe("DigitalStatusWidget", () => {
 describe("TableWidget", () => {
   it("renders without crashing with minimal props", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: false, refresh: mockRefresh };
-    const { container } = render(
-      <TableWidget config={baseConfig({ type: "table" })} />
-    );
+    const { container } = render(<TableWidget config={baseConfig({ type: "table" })} />);
     expect(container).toBeTruthy();
   });
 
   it("shows loading state when loading with no data", () => {
     mockUseWidgetDataReturn = { dataMap: {}, loading: true, refresh: mockRefresh };
-    const { container } = render(
-      <TableWidget config={baseConfig({ type: "table" })} />
-    );
+    const { container } = render(<TableWidget config={baseConfig({ type: "table" })} />);
     const skeletons = container.querySelectorAll('[class*="bg-gray-200"]');
     expect(skeletons.length).toBeGreaterThan(0);
   });
 
   it("renders table rows with data", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <TableWidget config={baseConfig({ type: "table" })} />
-    );
+    render(<TableWidget config={baseConfig({ type: "table" })} />);
     // Table should show header columns
     expect(screen.getByText("Timestamp")).toBeInTheDocument();
     expect(screen.getByText("Value")).toBeInTheDocument();
@@ -444,17 +380,13 @@ describe("TableWidget", () => {
 
   it("shows 'No data' when no values exist", () => {
     mockUseWidgetDataReturn = { dataMap: { 1: [] }, loading: false, refresh: mockRefresh };
-    render(
-      <TableWidget config={baseConfig({ type: "table" })} />
-    );
+    render(<TableWidget config={baseConfig({ type: "table" })} />);
     expect(screen.getByText("No data")).toBeInTheDocument();
   });
 
   it("displays the config label", () => {
     mockUseWidgetDataReturn = { dataMap: mockDataMap, loading: false, refresh: mockRefresh };
-    render(
-      <TableWidget config={baseConfig({ type: "table", label: "Readings" })} />
-    );
+    render(<TableWidget config={baseConfig({ type: "table", label: "Readings" })} />);
     expect(screen.getByText("Readings")).toBeInTheDocument();
   });
 });

@@ -30,11 +30,7 @@ describe("ImageUpload", () => {
 
   it("renders upload zone when no entityId", () => {
     render(
-      <ImageUpload
-        entity="products"
-        entityId={undefined}
-        onImageChange={mockOnImageChange}
-      />
+      <ImageUpload entity="products" entityId={undefined} onImageChange={mockOnImageChange} />
     );
 
     expect(screen.getByText("dragAndDrop")).toBeInTheDocument();
@@ -43,11 +39,7 @@ describe("ImageUpload", () => {
 
   it("calls onImageChange when file is selected", () => {
     const { container } = render(
-      <ImageUpload
-        entity="products"
-        entityId={undefined}
-        onImageChange={mockOnImageChange}
-      />
+      <ImageUpload entity="products" entityId={undefined} onImageChange={mockOnImageChange} />
     );
 
     const file = new File(["test"], "test.png", { type: "image/png" });
@@ -61,11 +53,7 @@ describe("ImageUpload", () => {
 
   it("rejects non-image files", () => {
     const { container } = render(
-      <ImageUpload
-        entity="products"
-        entityId={undefined}
-        onImageChange={mockOnImageChange}
-      />
+      <ImageUpload entity="products" entityId={undefined} onImageChange={mockOnImageChange} />
     );
 
     const file = new File(["test"], "test.txt", { type: "text/plain" });
@@ -80,11 +68,7 @@ describe("ImageUpload", () => {
 
   it("rejects files over 2MB", () => {
     const { container } = render(
-      <ImageUpload
-        entity="products"
-        entityId={undefined}
-        onImageChange={mockOnImageChange}
-      />
+      <ImageUpload entity="products" entityId={undefined} onImageChange={mockOnImageChange} />
     );
 
     const file = new File(["test"], "large.png", { type: "image/png" });

@@ -19,7 +19,7 @@ export function DigitalStatusWidget({ config }: DigitalStatusWidgetProps) {
     limit: "1",
   });
 
-  const values = config.signal_id ? dataMap[config.signal_id] ?? [] : [];
+  const values = config.signal_id ? (dataMap[config.signal_id] ?? []) : [];
   const latest = getLatestValue(values);
   const isOn = latest?.digital_value ?? false;
 

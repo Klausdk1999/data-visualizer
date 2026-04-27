@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getTimeEntries } from "@/lib/requestHandlers";
-import { useTranslations, useLocale } from "next-intl";
+import { useLocale } from "next-intl";
 import { Clock, Calendar, User, Wrench, AlertTriangle } from "lucide-react";
 import type { ProductionOrder, TimeEntry } from "@/types";
 
@@ -32,7 +32,6 @@ function fmt(iso?: string | null, locale?: string): string {
 export default function OrderSummaryDialog({ open, onOpenChange, order }: OrderSummaryDialogProps) {
   const locale = useLocale();
   const isPT = locale === "pt-BR";
-  const t = useTranslations("orders");
 
   const [entries, setEntries] = useState<TimeEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -81,7 +80,8 @@ export default function OrderSummaryDialog({ open, onOpenChange, order }: OrderS
   // Agrupa horas por serviço para o resumo
   const byService: Record<string, number> = {};
   entries.forEach((e) => {
-    const name = e.service?.name ?? (isPT ? `Serviço ID ${e.service_id}` : `Service ID ${e.service_id}`);
+    const name =
+      e.service?.name ?? (isPT ? `Serviço ID ${e.service_id}` : `Service ID ${e.service_id}`);
     byService[name] = (byService[name] ?? 0) + calcHours(e.start_time, e.end_time);
   });
 

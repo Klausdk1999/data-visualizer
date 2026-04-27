@@ -604,7 +604,10 @@ export const createCustomer = async (data: CreateCustomerRequest): Promise<Custo
   }
 };
 
-export const updateCustomer = async (id: string, data: Partial<CreateCustomerRequest>): Promise<Customer> => {
+export const updateCustomer = async (
+  id: string,
+  data: Partial<CreateCustomerRequest>
+): Promise<Customer> => {
   try {
     const response = await axiosInstance.put<Customer>(`customers/${id}`, data);
     return response.data;
@@ -775,9 +778,7 @@ export const createTimeEntry = async (data: CreateTimeEntryRequest): Promise<Tim
   }
 };
 
-export const createTimeEntries = async (
-  data: CreateTimeEntryRequest[]
-): Promise<TimeEntry[]> => {
+export const createTimeEntries = async (data: CreateTimeEntryRequest[]): Promise<TimeEntry[]> => {
   try {
     const response = await axiosInstance.post<TimeEntry[]>("time-entries", data);
     return response.data;

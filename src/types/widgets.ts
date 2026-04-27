@@ -1,4 +1,10 @@
-export type WidgetType = "line_chart" | "bar_chart" | "gauge" | "kpi_card" | "digital_status" | "table";
+export type WidgetType =
+  | "line_chart"
+  | "bar_chart"
+  | "gauge"
+  | "kpi_card"
+  | "digital_status"
+  | "table";
 export type GridLayout = "1x1" | "1x2" | "2x1" | "2x2";
 export type Timespan = "1h" | "6h" | "24h" | "7d" | "30d";
 

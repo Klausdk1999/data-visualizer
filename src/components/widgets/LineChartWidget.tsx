@@ -51,9 +51,7 @@ export function LineChartWidget({ config, signals = [] }: LineChartWidgetProps) 
         timestampMap.set(ts, existing);
       });
     });
-    return Array.from(timestampMap.values()).sort(
-      (a, b) => (a._ts as number) - (b._ts as number)
-    );
+    return Array.from(timestampMap.values()).sort((a, b) => (a._ts as number) - (b._ts as number));
   }, [dataMap, signalIds]);
 
   if (loading && chartData.length === 0) {

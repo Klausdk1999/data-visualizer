@@ -15,6 +15,7 @@
 ### Task 1: Add User Preferences Column + Endpoints
 
 **Files:**
+
 - Modify: `go-data-storage/internal/models/models.go:12-23` (User struct)
 - Modify: `go-data-storage/internal/handlers/users_handler.go`
 - Modify: `go-data-storage/cmd/api/main.go:57-62` (routes)
@@ -221,6 +222,7 @@ git commit -m "feat: add user preferences JSONB column and GET/PUT endpoints"
 ### Task 2: Add Image Upload/Download Endpoints
 
 **Files:**
+
 - Create: `go-data-storage/internal/handlers/image_handler.go`
 - Modify: `go-data-storage/internal/models/models.go` (Product, User, Device structs)
 - Modify: `go-data-storage/cmd/api/main.go` (routes)
@@ -553,6 +555,7 @@ git commit -m "feat: add image upload/download/delete endpoints for products, us
 ### Task 3: Create Sidebar Component
 
 **Files:**
+
 - Create: `data-visualizer/src/components/Sidebar.tsx`
 - Modify: `data-visualizer/src/components/Dashboard.tsx:710-830` (replace top nav with sidebar layout)
 
@@ -565,16 +568,39 @@ Create `src/components/Sidebar.tsx`:
 
 import React, { useState } from "react";
 import {
-  LayoutDashboard, Monitor, ClipboardList, Clock, Package,
-  Boxes, Users, Settings, Cpu, Radio, BarChart3, Wrench,
-  UserSquare, ChevronLeft, ChevronRight, LogOut, Menu,
+  LayoutDashboard,
+  Monitor,
+  ClipboardList,
+  Clock,
+  Package,
+  Boxes,
+  Users,
+  Settings,
+  Cpu,
+  Radio,
+  BarChart3,
+  Wrench,
+  UserSquare,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  Menu,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export type TabType =
-  | "dashboard" | "equipment" | "orders" | "hours"
-  | "products" | "materials" | "customers"
-  | "devices" | "signals" | "values" | "services" | "users";
+  | "dashboard"
+  | "equipment"
+  | "orders"
+  | "hours"
+  | "products"
+  | "materials"
+  | "customers"
+  | "devices"
+  | "signals"
+  | "values"
+  | "services"
+  | "users";
 
 interface SidebarSection {
   label: string;
@@ -600,8 +626,13 @@ interface SidebarProps {
 }
 
 export default function Sidebar({
-  activeTab, onTabChange, userType, userName, onLogout,
-  collapsed, onToggleCollapse,
+  activeTab,
+  onTabChange,
+  userType,
+  userName,
+  onLogout,
+  collapsed,
+  onToggleCollapse,
 }: SidebarProps) {
   const t = useTranslations("sidebar");
   const isAdmin = userType === "admin";
@@ -619,9 +650,24 @@ export default function Sidebar({
       items: [
         { id: "orders", label: t("orders"), icon: <ClipboardList className="w-5 h-5" /> },
         { id: "hours", label: t("hours"), icon: <Clock className="w-5 h-5" /> },
-        { id: "products", label: t("products"), icon: <Package className="w-5 h-5" />, adminOnly: true },
-        { id: "materials", label: t("materials"), icon: <Boxes className="w-5 h-5" />, adminOnly: true },
-        { id: "customers", label: t("customers"), icon: <UserSquare className="w-5 h-5" />, adminOnly: true },
+        {
+          id: "products",
+          label: t("products"),
+          icon: <Package className="w-5 h-5" />,
+          adminOnly: true,
+        },
+        {
+          id: "materials",
+          label: t("materials"),
+          icon: <Boxes className="w-5 h-5" />,
+          adminOnly: true,
+        },
+        {
+          id: "customers",
+          label: t("customers"),
+          icon: <UserSquare className="w-5 h-5" />,
+          adminOnly: true,
+        },
       ],
     },
     {
@@ -645,7 +691,9 @@ export default function Sidebar({
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-700">
-        {!collapsed && <span className="font-bold text-lg text-gray-900 dark:text-white">IoT MES</span>}
+        {!collapsed && (
+          <span className="font-bold text-lg text-gray-900 dark:text-white">IoT MES</span>
+        )}
         <button
           onClick={onToggleCollapse}
           className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500"
@@ -699,7 +747,9 @@ export default function Sidebar({
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{userName}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                {userName}
+              </p>
               <button
                 onClick={onLogout}
                 className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition-colors"
@@ -723,6 +773,7 @@ Add to locale files (`messages/en.json` and `messages/pt.json`) a `"sidebar"` ke
 **Step 3: Modify Dashboard.tsx to use Sidebar**
 
 Replace the top nav bar (lines ~710-830) with:
+
 - Sidebar component on left
 - Main content area with `ml-60` (or `ml-16` when collapsed)
 - Remove old tab button row
@@ -744,6 +795,7 @@ git commit -m "feat: replace top nav with collapsible sidebar navigation"
 ### Task 4: Create Widget Components
 
 **Files:**
+
 - Create: `data-visualizer/src/components/widgets/WidgetGrid.tsx`
 - Create: `data-visualizer/src/components/widgets/WidgetConfigDialog.tsx`
 - Create: `data-visualizer/src/components/widgets/LineChartWidget.tsx`
@@ -759,16 +811,22 @@ git commit -m "feat: replace top nav with collapsible sidebar navigation"
 Create `src/types/widgets.ts`:
 
 ```typescript
-export type WidgetType = "line_chart" | "bar_chart" | "gauge" | "kpi_card" | "digital_status" | "table";
+export type WidgetType =
+  | "line_chart"
+  | "bar_chart"
+  | "gauge"
+  | "kpi_card"
+  | "digital_status"
+  | "table";
 export type GridLayout = "1x1" | "1x2" | "2x1" | "2x2";
 export type Timespan = "1h" | "6h" | "24h" | "7d" | "30d" | "custom";
 export type Aggregation = "avg" | "min" | "max" | "sum";
 
 export interface WidgetConfig {
-  id: string;              // unique per widget instance (uuid)
+  id: string; // unique per widget instance (uuid)
   type: WidgetType;
-  signals?: number[];      // signal IDs
-  signal_id?: number;      // single signal (gauge, kpi, digital)
+  signals?: number[]; // signal IDs
+  signal_id?: number; // single signal (gauge, kpi, digital)
   timespan?: Timespan;
   aggregation?: Aggregation;
   label?: string;
@@ -779,7 +837,7 @@ export interface WidgetConfig {
   off_label?: string;
   row_count?: number;
   auto_refresh?: boolean;
-  custom_from?: string;    // ISO date for custom timespan
+  custom_from?: string; // ISO date for custom timespan
   custom_to?: string;
 }
 
@@ -801,6 +859,7 @@ Create `src/components/widgets/WidgetGrid.tsx` — a container that renders a CS
 **Step 3: Create each widget component**
 
 Each widget:
+
 - Receives its `WidgetConfig` + fetches its own signal data via `getSignalValues()`
 - Has an edit icon (top-right) that opens WidgetConfigDialog
 - Has a timespan selector (for chart-based widgets)
@@ -823,6 +882,7 @@ git commit -m "feat: add configurable widget grid system with 6 widget types"
 ### Task 5: Add Preferences API to Frontend
 
 **Files:**
+
 - Modify: `data-visualizer/src/lib/requestHandlers.ts`
 - Create: `data-visualizer/src/hooks/usePreferences.ts`
 
@@ -836,7 +896,10 @@ export async function getUserPreferences(userId: number): Promise<UserPreference
   return response.data;
 }
 
-export async function updateUserPreferences(userId: number, prefs: Partial<UserPreferences>): Promise<UserPreferences> {
+export async function updateUserPreferences(
+  userId: number,
+  prefs: Partial<UserPreferences>
+): Promise<UserPreferences> {
   const response = await api.put(`/users/${userId}/preferences`, prefs);
   return response.data;
 }
@@ -858,6 +921,7 @@ git commit -m "feat: add user preferences API functions and React hook"
 ### Task 6: Integrate Widget Grid into Dashboard and Equipment
 
 **Files:**
+
 - Modify: `data-visualizer/src/components/tabs/DashboardTab.tsx`
 - Modify: `data-visualizer/src/components/tabs/EquipmentTab.tsx`
 
@@ -886,6 +950,7 @@ git commit -m "feat: integrate configurable widget grid into dashboard and equip
 ### Task 7: Add Image Upload Components
 
 **Files:**
+
 - Create: `data-visualizer/src/components/ui/image-upload.tsx`
 - Modify: `data-visualizer/src/lib/requestHandlers.ts` (add image API functions)
 - Modify: `data-visualizer/src/components/dialogs/ProductDialog.tsx`
@@ -935,6 +1000,7 @@ git commit -m "feat: add image upload to product, device, and user dialogs"
 ### Task 8: Backend Tests
 
 **Files:**
+
 - Modify: `go-data-storage/tests/handlers_test.go`
 
 Tests already written in Tasks 1 and 2. Run full suite:
@@ -952,6 +1018,7 @@ Verify all pass. Fix any failures.
 ### Task 9: Frontend E2E Tests
 
 **Files:**
+
 - Create: `data-visualizer/e2e/sidebar.spec.ts`
 - Create: `data-visualizer/e2e/widgets.spec.ts`
 - Create: `data-visualizer/e2e/image-upload.spec.ts`
@@ -1026,14 +1093,14 @@ git commit -m "test: add E2E tests for sidebar, widgets, and image upload"
 
 ## Task Summary
 
-| # | Task | Phase | Repo |
-|---|------|-------|------|
-| 1 | User preferences column + endpoints | Backend | go-data-storage |
-| 2 | Image upload/download endpoints | Backend | go-data-storage |
-| 3 | Sidebar navigation component | Frontend | data-visualizer |
-| 4 | Widget components (6 types + grid) | Frontend | data-visualizer |
-| 5 | Preferences API + React hook | Frontend | data-visualizer |
-| 6 | Integrate widgets into Dashboard + Equipment | Frontend | data-visualizer |
-| 7 | Image upload in dialogs | Frontend | data-visualizer |
-| 8 | Backend test verification | Testing | go-data-storage |
-| 9 | E2E tests (sidebar, widgets, images) | Testing | data-visualizer |
+| #   | Task                                         | Phase    | Repo            |
+| --- | -------------------------------------------- | -------- | --------------- |
+| 1   | User preferences column + endpoints          | Backend  | go-data-storage |
+| 2   | Image upload/download endpoints              | Backend  | go-data-storage |
+| 3   | Sidebar navigation component                 | Frontend | data-visualizer |
+| 4   | Widget components (6 types + grid)           | Frontend | data-visualizer |
+| 5   | Preferences API + React hook                 | Frontend | data-visualizer |
+| 6   | Integrate widgets into Dashboard + Equipment | Frontend | data-visualizer |
+| 7   | Image upload in dialogs                      | Frontend | data-visualizer |
+| 8   | Backend test verification                    | Testing  | go-data-storage |
+| 9   | E2E tests (sidebar, widgets, images)         | Testing  | data-visualizer |

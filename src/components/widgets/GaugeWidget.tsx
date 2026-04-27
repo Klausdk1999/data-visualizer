@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useWidgetData, getLatestValue } from "./useWidgetData";
 import type { WidgetConfig, Timespan } from "@/types/widgets";
@@ -27,7 +27,7 @@ export function GaugeWidget({ config }: GaugeWidgetProps) {
     limit: "1",
   });
 
-  const values = config.signal_id ? dataMap[config.signal_id] ?? [] : [];
+  const values = config.signal_id ? (dataMap[config.signal_id] ?? []) : [];
   const latest = getLatestValue(values);
   const currentValue = latest?.value ?? 0;
 

@@ -51,10 +51,7 @@ import {
   deleteCustomer,
 } from "@/lib/requestHandlers";
 import { Button } from "@/components/ui/button";
-import {
-  Copy,
-  Check,
-} from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import type { TabType } from "@/components/Sidebar";
 import DashboardTab from "@/components/tabs/DashboardTab";
@@ -692,7 +689,9 @@ export default function Dashboard({
         onLocaleChange={onLocaleChange}
       />
 
-      <main className={`flex-1 transition-all duration-200 ${sidebarCollapsed ? "ml-16" : "ml-60"}`}>
+      <main
+        className={`flex-1 transition-all duration-200 ${sidebarCollapsed ? "ml-16" : "ml-60"}`}
+      >
         {/* Error Message */}
         {error && (
           <div className="px-4 sm:px-6 lg:px-8 mt-4">
@@ -704,199 +703,207 @@ export default function Dashboard({
 
         {/* Content */}
         <div className="px-4 sm:px-6 lg:px-8 py-8">
-        {loading ? (
-          <div className="text-gray-700 dark:text-gray-300 text-center">{t("common.loading")}</div>
-        ) : (
-          <>
-            {activeTab === "dashboard" && (
-              <DashboardTab
-                signals={signals}
-                orders={productionOrders}
-                timeEntries={timeEntries}
-                rawMaterials={rawMaterials}
-                userId={user?.id ?? 0}
-              />
-            )}
+          {loading ? (
+            <div className="text-gray-700 dark:text-gray-300 text-center">
+              {t("common.loading")}
+            </div>
+          ) : (
+            <>
+              {activeTab === "dashboard" && (
+                <DashboardTab
+                  signals={signals}
+                  orders={productionOrders}
+                  timeEntries={timeEntries}
+                  rawMaterials={rawMaterials}
+                  userId={user?.id ?? 0}
+                />
+              )}
 
-            {activeTab === "devices" && (
-              <DevicesTab
-                devices={devices}
-                selectedDevice={selectedDevice}
-                onDeviceSelect={handleDeviceSelect}
-                onAddDevice={() => {
-                  setEditingItem(null);
-                  setDeviceDialogOpen(true);
-                }}
-                onEditDevice={(device) => {
-                  setEditingItem(device);
-                  setDeviceDialogOpen(true);
-                }}
-                onDeleteDevice={handleDeleteDevice}
-              />
-            )}
+              {activeTab === "devices" && (
+                <DevicesTab
+                  devices={devices}
+                  selectedDevice={selectedDevice}
+                  onDeviceSelect={handleDeviceSelect}
+                  onAddDevice={() => {
+                    setEditingItem(null);
+                    setDeviceDialogOpen(true);
+                  }}
+                  onEditDevice={(device) => {
+                    setEditingItem(device);
+                    setDeviceDialogOpen(true);
+                  }}
+                  onDeleteDevice={handleDeleteDevice}
+                />
+              )}
 
-            {activeTab === "signals" && (
-              <SignalsTab
-                signals={signals}
-                selectedDevice={selectedDevice}
-                selectedSignal={selectedSignal}
-                onSignalSelect={handleSignalSelect}
-                onAddSignal={() => {
-                  setEditingItem(null);
-                  setSignalDialogOpen(true);
-                }}
-                onEditSignal={(signal) => {
-                  setEditingItem(signal);
-                  setSignalDialogOpen(true);
-                }}
-                onDeleteSignal={handleDeleteSignal}
-              />
-            )}
+              {activeTab === "signals" && (
+                <SignalsTab
+                  signals={signals}
+                  selectedDevice={selectedDevice}
+                  selectedSignal={selectedSignal}
+                  onSignalSelect={handleSignalSelect}
+                  onAddSignal={() => {
+                    setEditingItem(null);
+                    setSignalDialogOpen(true);
+                  }}
+                  onEditSignal={(signal) => {
+                    setEditingItem(signal);
+                    setSignalDialogOpen(true);
+                  }}
+                  onDeleteSignal={handleDeleteSignal}
+                />
+              )}
 
-            {activeTab === "values" && (
-              <SignalValuesTab
-                signals={signals}
-                signalValues={signalValues}
-                selectedSignal={selectedSignal}
-                onAddValue={() => {
-                  setEditingItem(null);
-                  setValueDialogOpen(true);
-                }}
-                onDeleteValue={handleDeleteSignalValue}
-              />
-            )}
+              {activeTab === "values" && (
+                <SignalValuesTab
+                  signals={signals}
+                  signalValues={signalValues}
+                  selectedSignal={selectedSignal}
+                  onAddValue={() => {
+                    setEditingItem(null);
+                    setValueDialogOpen(true);
+                  }}
+                  onDeleteValue={handleDeleteSignalValue}
+                />
+              )}
 
-            {activeTab === "users" && (
-              <UsersTab
-                users={users}
-                onAddUser={() => {
-                  setEditingItem(null);
-                  setUserDialogOpen(true);
-                }}
-                onEditUser={(user) => {
-                  setEditingItem(user);
-                  setUserDialogOpen(true);
-                }}
-                onDeleteUser={handleDeleteUser}
-              />
-            )}
+              {activeTab === "users" && (
+                <UsersTab
+                  users={users}
+                  onAddUser={() => {
+                    setEditingItem(null);
+                    setUserDialogOpen(true);
+                  }}
+                  onEditUser={(user) => {
+                    setEditingItem(user);
+                    setUserDialogOpen(true);
+                  }}
+                  onDeleteUser={handleDeleteUser}
+                />
+              )}
 
-            {activeTab === "products" && (
-              <ProductsTab
-                products={products}
-                rawMaterials={rawMaterials}
-                selectedProduct={selectedProduct}
-                bomEntries={bomEntries}
-                onProductSelect={handleProductSelect}
-                onAddProduct={() => {
-                  setEditingItem(null);
-                  setProductDialogOpen(true);
-                }}
-                onEditProduct={(product) => {
-                  setEditingItem(product);
-                  handleProductSelect(product.id);
-                  setProductDialogOpen(true);
-                }}
-                onDeleteProduct={handleDeleteProduct}
-                onAddBOMEntry={() => setBomDialogOpen(true)}
-                onDeleteBOMEntry={handleDeleteBOMEntry}
-              />
-            )}
+              {activeTab === "products" && (
+                <ProductsTab
+                  products={products}
+                  rawMaterials={rawMaterials}
+                  selectedProduct={selectedProduct}
+                  bomEntries={bomEntries}
+                  onProductSelect={handleProductSelect}
+                  onAddProduct={() => {
+                    setEditingItem(null);
+                    setProductDialogOpen(true);
+                  }}
+                  onEditProduct={(product) => {
+                    setEditingItem(product);
+                    handleProductSelect(product.id);
+                    setProductDialogOpen(true);
+                  }}
+                  onDeleteProduct={handleDeleteProduct}
+                  onAddBOMEntry={() => setBomDialogOpen(true)}
+                  onDeleteBOMEntry={handleDeleteBOMEntry}
+                />
+              )}
 
-            {activeTab === "materials" && (
-              <MaterialsTab
-                materials={rawMaterials}
-                onAddMaterial={() => {
-                  setEditingItem(null);
-                  setMaterialDialogOpen(true);
-                }}
-                onEditMaterial={(material) => {
-                  setEditingItem(material);
-                  setMaterialDialogOpen(true);
-                }}
-                onDeleteMaterial={handleDeleteRawMaterial}
-                onAdjustStock={(material) => {
-                  setSelectedMaterial(material);
-                  setStockAdjustDialogOpen(true);
-                }}
-              />
-            )}
+              {activeTab === "materials" && (
+                <MaterialsTab
+                  materials={rawMaterials}
+                  onAddMaterial={() => {
+                    setEditingItem(null);
+                    setMaterialDialogOpen(true);
+                  }}
+                  onEditMaterial={(material) => {
+                    setEditingItem(material);
+                    setMaterialDialogOpen(true);
+                  }}
+                  onDeleteMaterial={handleDeleteRawMaterial}
+                  onAdjustStock={(material) => {
+                    setSelectedMaterial(material);
+                    setStockAdjustDialogOpen(true);
+                  }}
+                />
+              )}
 
-            {activeTab === "orders" && (
-              <OrdersTab
-                orders={productionOrders}
-                isWorker={isWorker}
-                onAddOrder={() => {
-                  setEditingItem(null);
-                  setOrderDialogOpen(true);
-                }}
-                onEditOrder={(order) => {
-                  setEditingItem(order);
-                  setOrderDialogOpen(true);
-                }}
-                onDeleteOrder={handleDeleteOrder}
-                onUpdateStatus={handleUpdateOrderStatus}
-              />
-            )}
+              {activeTab === "orders" && (
+                <OrdersTab
+                  orders={productionOrders}
+                  isWorker={isWorker}
+                  onAddOrder={() => {
+                    setEditingItem(null);
+                    setOrderDialogOpen(true);
+                  }}
+                  onEditOrder={(order) => {
+                    setEditingItem(order);
+                    setOrderDialogOpen(true);
+                  }}
+                  onDeleteOrder={handleDeleteOrder}
+                  onUpdateStatus={handleUpdateOrderStatus}
+                />
+              )}
 
-            {activeTab === "hours" && (
-              <HoursTab
-                timeEntries={
-                  isWorker ? timeEntries.filter((e) => e.user_id === user?.id) : timeEntries
-                }
-                isWorker={isWorker}
-                onAddEntry={() => {
-                  setEditingTimeEntry(null);
-                  setTimeEntryDialogOpen(true);
-                }}
-                onEditEntry={(entry) => {
-                  setEditingTimeEntry(entry);
-                  setTimeEntryDialogOpen(true);
-                }}
-                onDeleteEntry={handleDeleteTimeEntry}
-              />
-            )}
+              {activeTab === "hours" && (
+                <HoursTab
+                  timeEntries={
+                    isWorker ? timeEntries.filter((e) => e.user_id === user?.id) : timeEntries
+                  }
+                  isWorker={isWorker}
+                  onAddEntry={() => {
+                    setEditingTimeEntry(null);
+                    setTimeEntryDialogOpen(true);
+                  }}
+                  onEditEntry={(entry) => {
+                    setEditingTimeEntry(entry);
+                    setTimeEntryDialogOpen(true);
+                  }}
+                  onDeleteEntry={handleDeleteTimeEntry}
+                />
+              )}
 
-            {activeTab === "services" && (
-              <ServicesTab
-                services={services}
-                isWorker={isWorker}
-                onAddService={() => {
-                  setEditingService(null);
-                  setServiceDialogOpen(true);
-                }}
-                onEditService={(service) => {
-                  setEditingService(service);
-                  setServiceDialogOpen(true);
-                }}
-                onDeleteService={handleDeleteService}
-              />
-            )}
+              {activeTab === "services" && (
+                <ServicesTab
+                  services={services}
+                  isWorker={isWorker}
+                  onAddService={() => {
+                    setEditingService(null);
+                    setServiceDialogOpen(true);
+                  }}
+                  onEditService={(service) => {
+                    setEditingService(service);
+                    setServiceDialogOpen(true);
+                  }}
+                  onDeleteService={handleDeleteService}
+                />
+              )}
 
-            {activeTab === "customers" && (
-              <CustomersTab
-                customers={customers}
-                onAddCustomer={() => { setEditingCustomer(null); setCustomerDialogOpen(true); }}
-                onEditCustomer={(customer) => { setEditingCustomer(customer); setCustomerDialogOpen(true); }}
-                onDeleteCustomer={handleDeleteCustomer}
-              />
-            )}
-            {activeTab === "equipment" && (
-              <EquipmentTab
-                devices={devices}
-                signals={signals}
-                user={user}
-                userId={user?.id ?? 0}
-                onEditDevice={(device) => {
-                  setEditingItem(device);
-                  setDeviceDialogOpen(true);
-                }}
-                onDeleteDevice={handleDeleteDevice}
-              />
-            )}
-          </>
-        )}
-      </div>
+              {activeTab === "customers" && (
+                <CustomersTab
+                  customers={customers}
+                  onAddCustomer={() => {
+                    setEditingCustomer(null);
+                    setCustomerDialogOpen(true);
+                  }}
+                  onEditCustomer={(customer) => {
+                    setEditingCustomer(customer);
+                    setCustomerDialogOpen(true);
+                  }}
+                  onDeleteCustomer={handleDeleteCustomer}
+                />
+              )}
+              {activeTab === "equipment" && (
+                <EquipmentTab
+                  devices={devices}
+                  signals={signals}
+                  user={user}
+                  userId={user?.id ?? 0}
+                  onEditDevice={(device) => {
+                    setEditingItem(device);
+                    setDeviceDialogOpen(true);
+                  }}
+                  onDeleteDevice={handleDeleteDevice}
+                />
+              )}
+            </>
+          )}
+        </div>
       </main>
 
       {/* Dialogs */}

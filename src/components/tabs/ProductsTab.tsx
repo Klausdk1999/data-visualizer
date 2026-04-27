@@ -30,7 +30,7 @@ interface ProductsTabProps {
 
 export default function ProductsTab({
   products,
-  rawMaterials,
+  rawMaterials: _rawMaterials,
   selectedProduct,
   bomEntries,
   onProductSelect,

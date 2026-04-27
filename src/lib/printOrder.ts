@@ -25,13 +25,6 @@ export function printProductionOrder(order: ProductionOrder, locale: string = "p
     generatedAt: isPT ? "Gerado em" : "Generated at",
   };
 
-  const statusMap: Record<string, string> = {
-    planned: isPT ? "Planejada" : "Planned",
-    in_progress: isPT ? "Em Andamento" : "In Progress",
-    completed: isPT ? "Concluída" : "Completed",
-    cancelled: isPT ? "Cancelada" : "Cancelled",
-  };
-
   const fmt = (iso?: string | null) => {
     if (!iso) return "—";
     return new Date(iso).toLocaleDateString(locale, {

@@ -176,9 +176,7 @@ export default function ProductDialog({
             {/* Image Upload - shown when editing */}
             {editingItem && (
               <div>
-                <Label className="text-gray-700 dark:text-gray-300">
-                  {tc("image")}
-                </Label>
+                <Label className="text-gray-700 dark:text-gray-300">{tc("image")}</Label>
                 <div className="mt-1">
                   <ImageUpload
                     entity="products"

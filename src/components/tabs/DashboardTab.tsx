@@ -213,7 +213,9 @@ export default function DashboardTab({
                 <AlertTriangle className="w-5 h-5 shrink-0" />
                 <div>
                   <p className="text-sm font-bold">
-                    {t(overdueOrders.length === 1 ? "overdueOrderOne" : "overdueOrderMany", { count: overdueOrders.length })}
+                    {t(overdueOrders.length === 1 ? "overdueOrderOne" : "overdueOrderMany", {
+                      count: overdueOrders.length,
+                    })}
                   </p>
                   <p className="text-xs opacity-75">
                     {overdueOrders.map((o) => o.product?.name || `#${o.id}`).join(", ")}
@@ -299,7 +301,9 @@ export default function DashboardTab({
                 <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/30 px-4 py-2.5 border-b border-red-200 dark:border-red-800">
                   <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
                   <p className="text-sm font-bold text-red-700 dark:text-red-400">
-                    {t(lowStockItems.length === 1 ? "materialsBelowOne" : "materialsBelowMany", { count: lowStockItems.length })}
+                    {t(lowStockItems.length === 1 ? "materialsBelowOne" : "materialsBelowMany", {
+                      count: lowStockItems.length,
+                    })}
                   </p>
                 </div>
                 <div className="h-40 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">

@@ -65,14 +65,14 @@ Used on both the global Dashboard page and per-device Equipment detail view.
 
 ### Widget types
 
-| Type | Description | Config params |
-|------|-------------|---------------|
-| `line_chart` | Time-series line | signals[], timespan, auto-refresh |
-| `bar_chart` | Bar comparison | signals[], timespan, aggregation (avg/min/max) |
-| `gauge` | Circular gauge | signal_id, unit, min, max |
-| `kpi_card` | Single number + trend | signal_id, label, unit |
-| `digital_status` | On/off indicator | signal_id, on_label, off_label |
-| `table` | Recent values list | signals[], row_count |
+| Type             | Description           | Config params                                  |
+| ---------------- | --------------------- | ---------------------------------------------- |
+| `line_chart`     | Time-series line      | signals[], timespan, auto-refresh              |
+| `bar_chart`      | Bar comparison        | signals[], timespan, aggregation (avg/min/max) |
+| `gauge`          | Circular gauge        | signal_id, unit, min, max                      |
+| `kpi_card`       | Single number + trend | signal_id, label, unit                         |
+| `digital_status` | On/off indicator      | signal_id, on_label, off_label                 |
+| `table`          | Recent values list    | signals[], row_count                           |
 
 ### Widget config flow
 

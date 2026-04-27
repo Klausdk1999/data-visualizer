@@ -126,11 +126,7 @@ export default function Sidebar({
           className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? (
-            <ChevronRight className="w-4 h-4" />
-          ) : (
-            <ChevronLeft className="w-4 h-4" />
-          )}
+          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
       </div>
 
@@ -151,9 +147,7 @@ export default function Sidebar({
         {sections.map((section) => {
           if (section.adminOnly && !isAdmin) return null;
 
-          const visibleItems = section.items.filter(
-            (item) => !item.adminOnly || isAdmin
-          );
+          const visibleItems = section.items.filter((item) => !item.adminOnly || isAdmin);
           if (visibleItems.length === 0) return null;
 
           return (
@@ -195,11 +189,7 @@ export default function Sidebar({
 
       {/* User section */}
       <div className="border-t border-gray-200/60 dark:border-gray-700/60 p-2">
-        <div
-          className={`flex items-center ${
-            collapsed ? "justify-center" : "gap-3 px-2"
-          } py-2`}
-        >
+        <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3 px-2"} py-2`}>
           <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold shrink-0">
             {initial}
           </div>

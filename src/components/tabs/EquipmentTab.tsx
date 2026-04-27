@@ -19,13 +19,7 @@ interface EquipmentTabProps {
 }
 
 // ── Device List ───────────────────────────────────────────────────────────────
-function DeviceList({
-  devices,
-  onSelect,
-}: {
-  devices: Device[];
-  onSelect: (d: Device) => void;
-}) {
+function DeviceList({ devices, onSelect }: { devices: Device[]; onSelect: (d: Device) => void }) {
   const t = useTranslations("equipment");
   const active = devices.filter((d) => d.is_active);
   const inactive = devices.filter((d) => !d.is_active);

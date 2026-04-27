@@ -20,7 +20,7 @@ export function KpiCardWidget({ config }: KpiCardWidgetProps) {
     limit: "10",
   });
 
-  const values = config.signal_id ? dataMap[config.signal_id] ?? [] : [];
+  const values = config.signal_id ? (dataMap[config.signal_id] ?? []) : [];
   const latest = getLatestValue(values);
   const previous = getPreviousValue(values);
 
