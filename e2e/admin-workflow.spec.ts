@@ -9,8 +9,6 @@
 
 import { test, expect, type Page } from "@playwright/test";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
 /** Logs in as admin and waits for the dashboard to load. */
 async function loginAsAdmin(page: Page) {
   await page.goto("/");
@@ -20,8 +18,8 @@ async function loginAsAdmin(page: Page) {
   await page.locator('input[type="password"]').fill("admin123");
   await page.locator('button[type="submit"]').click();
 
-  // Wait for dashboard to fully load (the header title is always visible after login)
-  await expect(page.getByText("IoT Data Storage Dashboard")).toBeVisible({
+  // Wait for sidebar to appear (indicates dashboard has loaded)
+  await expect(page.locator("aside")).toBeVisible({
     timeout: 15000,
   });
 
@@ -35,21 +33,28 @@ test.describe("Admin Workflow", () => {
   test("admin can login and see all tabs", async ({ page }) => {
     await loginAsAdmin(page);
 
-    // Verify main tab buttons are visible
+    // Verify MONITORING section sidebar items
     await expect(page.getByRole("button", { name: "Dashboard" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Equipment" })).toBeVisible();
+
+    // Verify MES section sidebar items
     await expect(page.getByRole("button", { name: "Orders" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Hours" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Products" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Materials" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Settings" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Customers" })).toBeVisible();
+
+    // Verify SETTINGS section sidebar items (admin-only)
+    await expect(page.getByRole("button", { name: "Devices" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Signals" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Services" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Users" })).toBeVisible();
   });
 
   test("admin can create a new service", async ({ page }) => {
     await loginAsAdmin(page);
 
-    // Open Settings dropdown and click Services
-    await page.getByRole("button", { name: "Settings" }).click();
+    // Click Services directly in the sidebar
     await page.getByRole("button", { name: "Services" }).click();
 
     // Wait for the Services tab to load

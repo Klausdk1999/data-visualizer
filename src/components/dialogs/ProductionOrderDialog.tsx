@@ -96,9 +96,7 @@ export default function ProductionOrderDialog({
     const orderData: CreateProductionOrderRequest = {
       product_id: Number(productId),
       quantity: Number(formData.get("quantity")),
-      priority: formData.get("priority")
-        ? Number(formData.get("priority"))
-        : undefined,
+      priority: formData.get("priority") ? Number(formData.get("priority")) : undefined,
       device_id: deviceId ? Number(deviceId) : undefined,
       customer_name: selectedCustomer?.name || undefined,
       started_at: combineDatetime(

@@ -28,6 +28,7 @@ import type {
   CreateCustomerRequest,
 } from "@/types";
 import type { TTNUplink, TTNDevice, TTNStats } from "@/types/ttn";
+import type { UserPreferences } from "@/types/widgets";
 
 // Use relative path when behind nginx, or full URL for direct access
 const getBaseURL = () => {
@@ -603,7 +604,10 @@ export const createCustomer = async (data: CreateCustomerRequest): Promise<Custo
   }
 };
 
-export const updateCustomer = async (id: string, data: Partial<CreateCustomerRequest>): Promise<Customer> => {
+export const updateCustomer = async (
+  id: string,
+  data: Partial<CreateCustomerRequest>
+): Promise<Customer> => {
   try {
     const response = await axiosInstance.put<Customer>(`customers/${id}`, data);
     return response.data;
@@ -774,9 +778,7 @@ export const createTimeEntry = async (data: CreateTimeEntryRequest): Promise<Tim
   }
 };
 
-export const createTimeEntries = async (
-  data: CreateTimeEntryRequest[]
-): Promise<TimeEntry[]> => {
+export const createTimeEntries = async (data: CreateTimeEntryRequest[]): Promise<TimeEntry[]> => {
   try {
     const response = await axiosInstance.post<TimeEntry[]>("time-entries", data);
     return response.data;
@@ -806,4 +808,45 @@ export const deleteTimeEntry = async (id: string): Promise<void> => {
     console.error("Error deleting time entry:", error);
     throw error;
   }
+};
+
+// User Preferences endpoints
+export const getUserPreferences = async (userId: number): Promise<UserPreferences> => {
+  try {
+    const response = await axiosInstance.get<UserPreferences>(`users/${userId}/preferences`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user preferences:", error);
+    throw error;
+  }
+};
+
+export const updateUserPreferences = async (
+  userId: number,
+  prefs: Partial<UserPreferences>
+): Promise<UserPreferences> => {
+  try {
+    const response = await axiosInstance.put<UserPreferences>(`users/${userId}/preferences`, prefs);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user preferences:", error);
+    throw error;
+  }
+};
+
+// Image endpoints
+export const uploadImage = async (entity: string, id: number, file: File): Promise<void> => {
+  const formData = new FormData();
+  formData.append("image", file);
+  await axiosInstance.put(`${entity}/${id}/image`, formData);
+};
+
+export const deleteImage = async (entity: string, id: number): Promise<void> => {
+  await axiosInstance.delete(`${entity}/${id}/image`);
+};
+
+export const getImageUrl = (entity: string, id: number, bustCache = false): string => {
+  const base = axiosInstance.defaults.baseURL || "";
+  const url = `${base}/${entity}/${id}/image`;
+  return bustCache ? `${url}?t=${Date.now()}` : url;
 };

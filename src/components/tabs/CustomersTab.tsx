@@ -116,10 +116,7 @@ export default function CustomersTab({
                         )}
                       </TableCell>
                       <TableCell>
-                        <div
-                          className="flex space-x-2"
-                          onClick={(e) => e.stopPropagation()}
-                        >
+                        <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
                           <Button
                             size="sm"
                             variant="outline"

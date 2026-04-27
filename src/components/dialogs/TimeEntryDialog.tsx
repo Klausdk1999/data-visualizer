@@ -81,14 +81,16 @@ export default function TimeEntryDialog({
       if (editingItem) {
         setUserId(String(editingItem.user_id));
         setDay(editingItem.day ?? "");
-        setIntervals([{
-          id: crypto.randomUUID(),
-          production_order_id: String(editingItem.production_order_id),
-          service_id: String(editingItem.service_id),
-          start_time: editingItem.start_time ?? "",
-          end_time: editingItem.end_time ?? "",
-          observations: editingItem.observations ?? "",
-        }]);
+        setIntervals([
+          {
+            id: crypto.randomUUID(),
+            production_order_id: String(editingItem.production_order_id),
+            service_id: String(editingItem.service_id),
+            start_time: editingItem.start_time ?? "",
+            end_time: editingItem.end_time ?? "",
+            observations: editingItem.observations ?? "",
+          },
+        ]);
       } else {
         setUserId(isWorker && currentUser ? String(currentUser.id) : "");
         setDay("");
@@ -100,9 +102,7 @@ export default function TimeEntryDialog({
   const updateInterval = useCallback(
     (id: string, field: keyof Omit<IntervalEntry, "id">, value: string) => {
       setIntervals((prev) =>
-        prev.map((interval) =>
-          interval.id === id ? { ...interval, [field]: value } : interval
-        )
+        prev.map((interval) => (interval.id === id ? { ...interval, [field]: value } : interval))
       );
     },
     []
@@ -128,15 +128,12 @@ export default function TimeEntryDialog({
       }
     }, 100);
   };
-  const removeInterval = (id: string) =>
-    setIntervals((prev) => prev.filter((i) => i.id !== id));
+  const removeInterval = (id: string) => setIntervals((prev) => prev.filter((i) => i.id !== id));
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const resolvedUserId = isWorker && currentUser
-      ? currentUser.id
-      : Number(userId);
+    const resolvedUserId = isWorker && currentUser ? currentUser.id : Number(userId);
 
     const entries: CreateTimeEntryRequest[] = intervals.map((interval) => ({
       user_id: resolvedUserId,
@@ -160,7 +157,7 @@ export default function TimeEntryDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}onKeyDown={handleKeyDown}>
+        <form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
           <div className="space-y-4 py-4">
             {/* Shared: Worker selector */}
             {!isWorker && (
@@ -222,7 +219,10 @@ export default function TimeEntryDialog({
                   <div className="space-y-3">
                     {/* Order */}
                     <div>
-                      <Label htmlFor={index === 0 ? "entry-order" : undefined} className="text-gray-700 dark:text-gray-300">
+                      <Label
+                        htmlFor={index === 0 ? "entry-order" : undefined}
+                        className="text-gray-700 dark:text-gray-300"
+                      >
                         {t("order")} *
                       </Label>
                       <SearchableSelect
@@ -239,7 +239,10 @@ export default function TimeEntryDialog({
 
                     {/* Service */}
                     <div>
-                      <Label htmlFor={index === 0 ? "entry-service" : undefined} className="text-gray-700 dark:text-gray-300">
+                      <Label
+                        htmlFor={index === 0 ? "entry-service" : undefined}
+                        className="text-gray-700 dark:text-gray-300"
+                      >
                         {t("service")} *
                       </Label>
                       <SearchableSelect
@@ -257,7 +260,10 @@ export default function TimeEntryDialog({
                     {/* Start / End times */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor={index === 0 ? "entry-start" : undefined} className="text-gray-700 dark:text-gray-300">
+                        <Label
+                          htmlFor={index === 0 ? "entry-start" : undefined}
+                          className="text-gray-700 dark:text-gray-300"
+                        >
                           {t("startTime")} *
                         </Label>
                         <Input
@@ -272,7 +278,10 @@ export default function TimeEntryDialog({
                         />
                       </div>
                       <div>
-                        <Label htmlFor={index === 0 ? "entry-end" : undefined} className="text-gray-700 dark:text-gray-300">
+                        <Label
+                          htmlFor={index === 0 ? "entry-end" : undefined}
+                          className="text-gray-700 dark:text-gray-300"
+                        >
                           {t("endTime")} *
                         </Label>
                         <Input
@@ -280,9 +289,7 @@ export default function TimeEntryDialog({
                           type="time"
                           required
                           value={interval.end_time}
-                          onChange={(e) =>
-                            updateInterval(interval.id, "end_time", e.target.value)
-                          }
+                          onChange={(e) => updateInterval(interval.id, "end_time", e.target.value)}
                           className="mt-1"
                         />
                       </div>
@@ -290,7 +297,10 @@ export default function TimeEntryDialog({
 
                     {/* Observations */}
                     <div>
-                      <Label htmlFor={index === 0 ? "entry-observations" : undefined} className="text-gray-700 dark:text-gray-300">
+                      <Label
+                        htmlFor={index === 0 ? "entry-observations" : undefined}
+                        className="text-gray-700 dark:text-gray-300"
+                      >
                         {t("observations")}
                       </Label>
                       <textarea
