@@ -27,6 +27,7 @@ import {
   ArrowDown,
   ArrowUpDown,
   FileText,
+  Printer,
 } from "lucide-react";
 import {
   LineChart,
@@ -39,7 +40,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { getOrderSignalValues } from "@/lib/requestHandlers";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { printProductionOrder } from "@/lib/printOrder";
 import type { ProductionOrder, SignalValue } from "@/types";
 
 interface OrdersTabProps {
@@ -75,6 +77,7 @@ export default function OrdersTab({
 }: OrdersTabProps) {
   const t = useTranslations("orders");
   const tc = useTranslations("common");
+  const locale = useLocale();
   const [selectedOrder, setSelectedOrder] = useState<ProductionOrder | null>(null);
   const [orderSignalValues, setOrderSignalValues] = useState<SignalValue[]>([]);
   const [loadingSignals, setLoadingSignals] = useState(false);
@@ -500,6 +503,16 @@ export default function OrdersTab({
                               {tc("edit")}
                             </Button>
                           )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => printProductionOrder(order, locale)}
+                          className="flex items-center gap-1"
+                          title={t("printOrder")}
+                        >
+                          <Printer className="w-3 h-3" />
+                          {t("printOrder")}
+                        </Button>
                         {!isWorker && (
                           <Button
                             size="sm"
