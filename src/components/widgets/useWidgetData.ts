@@ -72,7 +72,16 @@ export function useWidgetData({
           };
           if (limit) params.limit = limit;
           const values = await getSignalValues(params);
-          newMap[id] = values.sort(
+          
+          // Fallback frontend filtering to guarantee the timespan is respected
+          const fromTime = new Date(from_date).getTime();
+          const toTime = new Date(to_date).getTime();
+          const filteredValues = values.filter((v) => {
+            const ts = new Date(v.timestamp).getTime();
+            return ts >= fromTime && ts <= toTime;
+          });
+
+          newMap[id] = filteredValues.sort(
             (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
           );
         })
@@ -141,4 +150,14 @@ export function formatTimestamp(iso: string): string {
 export function formatShortTime(iso: string): string {
   const d = new Date(iso);
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+/** Format time for chart axis based on timespan */
+export function formatTimeForAxis(iso: string, timespan: Timespan): string {
+  const d = new Date(iso);
+  const timeStr = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  if (timespan === "7d" || timespan === "30d") {
+    return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")} ${timeStr}`;
+  }
+  return timeStr;
 }

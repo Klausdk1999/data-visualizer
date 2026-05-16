@@ -131,12 +131,12 @@ export function WidgetGrid({
       )}
 
       {/* Grid */}
-      <div className={`grid gap-3 ${LAYOUT_GRID_CLASS[layout]}`} style={{ minHeight: "280px" }}>
+      <div className={`grid gap-4 ${LAYOUT_GRID_CLASS[layout]}`}>
         {cells.map((widget, i) =>
           widget ? (
             <Card
               key={widget.id}
-              className="relative overflow-hidden border-gray-200/70 dark:border-gray-700/50 dark:bg-gray-800/50 group"
+              className="relative overflow-hidden border-gray-200/70 dark:border-gray-700/50 dark:bg-gray-800/50 group min-h-[320px]"
             >
               {/* Edit/Remove controls */}
               {editable && (
@@ -166,7 +166,7 @@ export function WidgetGrid({
               className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed
                 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500
                 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300
-                transition-all bg-transparent"
+                transition-all bg-transparent min-h-[320px]"
             >
               <Plus size={24} />
               <span className="text-xs font-medium">Add Widget</span>
@@ -174,7 +174,7 @@ export function WidgetGrid({
           ) : (
             <div
               key={`empty-${i}`}
-              className="rounded-2xl border-2 border-dashed border-gray-100 dark:border-gray-800"
+              className="rounded-2xl border-2 border-dashed border-gray-100 dark:border-gray-800 min-h-[320px]"
             />
           )
         )}

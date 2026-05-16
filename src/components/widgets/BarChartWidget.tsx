@@ -54,7 +54,7 @@ export function BarChartWidget({ config, signals = [] }: BarChartWidgetProps) {
   }
 
   return (
-    <div className="h-full flex flex-col p-3">
+    <div className="h-full flex flex-col p-3 pt-7">
       <div className="flex items-center justify-between mb-2 flex-wrap gap-1">
         <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 truncate">
           {config.label ?? "Bar Chart"}
