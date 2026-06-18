@@ -14,21 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Play,
-  CheckCircle,
-  XCircle,
-  BarChart3,
-  X,
-  ArrowUp,
-  ArrowDown,
-  ArrowUpDown,
-  FileText,
-  Printer,
-} from "lucide-react";
+import { Plus, Edit, Trash2, Play, CheckCircle, XCircle, BarChart3, X, ArrowUp, ArrowDown, ArrowUpDown, FileText } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -40,8 +26,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { getOrderSignalValues } from "@/lib/requestHandlers";
-import { useTranslations, useLocale } from "next-intl";
-import { printProductionOrder } from "@/lib/printOrder";
+import { useTranslations } from "next-intl";
 import type { ProductionOrder, SignalValue } from "@/types";
 
 interface OrdersTabProps {
@@ -77,7 +62,6 @@ export default function OrdersTab({
 }: OrdersTabProps) {
   const t = useTranslations("orders");
   const tc = useTranslations("common");
-  const locale = useLocale();
   const [selectedOrder, setSelectedOrder] = useState<ProductionOrder | null>(null);
   const [orderSignalValues, setOrderSignalValues] = useState<SignalValue[]>([]);
   const [loadingSignals, setLoadingSignals] = useState(false);
@@ -102,11 +86,9 @@ export default function OrdersTab({
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) return <ArrowUpDown className="w-3 h-3 ml-1 opacity-40" />;
-    return sortDir === "asc" ? (
-      <ArrowUp className="w-3 h-3 ml-1" />
-    ) : (
-      <ArrowDown className="w-3 h-3 ml-1" />
-    );
+    return sortDir === "asc"
+      ? <ArrowUp className="w-3 h-3 ml-1" />
+      : <ArrowDown className="w-3 h-3 ml-1" />;
   };
 
   // Unique values for filters
@@ -216,28 +198,26 @@ export default function OrdersTab({
   function getStatusBadge(order: ProductionOrder) {
     const overdue = isOrderOverdue(order);
     const days = orderOverdueDays(order);
-
+  
     const styles: Record<string, string> = {
-      planned: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+      planned:     "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
       in_progress: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400",
-      completed: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
-      cancelled: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
+      completed:   "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
+      cancelled:   "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
     };
     const labels: Record<string, string> = {
-      planned: t("planned"),
+      planned:     t("planned"),
       in_progress: t("inProgress"),
-      completed: t("completed"),
-      cancelled: t("cancelled"),
+      completed:   t("completed"),
+      cancelled:   t("cancelled"),
     };
-
+  
     // Se está atrasada, sobrepõe o badge com visual de alerta
     if (overdue) {
       return (
         <div className="flex items-center gap-1.5 flex-wrap">
           {/* Badge do status atual (planejada ou em andamento) */}
-          <span
-            className={`px-2 py-1 rounded-full text-xs font-semibold ${styles[order.status] ?? "bg-gray-100 text-gray-600"}`}
-          >
+          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${styles[order.status] ?? "bg-gray-100 text-gray-600"}`}>
             {labels[order.status] ?? order.status}
           </span>
           {/* Badge de atraso */}
@@ -247,18 +227,15 @@ export default function OrdersTab({
         </div>
       );
     }
-
+  
     return (
-      <span
-        className={`px-2 py-1 rounded-full text-xs font-semibold ${styles[order.status] ?? "bg-gray-100 text-gray-600"}`}
-      >
+      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${styles[order.status] ?? "bg-gray-100 text-gray-600"}`}>
         {labels[order.status] ?? order.status}
       </span>
     );
   }
 
-  const selectClass =
-    "rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  const selectClass = "rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
   return (
     <div className="space-y-4">
@@ -289,14 +266,7 @@ export default function OrdersTab({
               <option value="">{t("allStatuses")}</option>
               {statuses.map((s) => (
                 <option key={s} value={s}>
-                  {(
-                    {
-                      planned: t("planned"),
-                      in_progress: t("inProgress"),
-                      completed: t("completed"),
-                      cancelled: t("cancelled"),
-                    } as Record<string, string>
-                  )[s] || s}
+                  {({ planned: t("planned"), in_progress: t("inProgress"), completed: t("completed"), cancelled: t("cancelled") } as Record<string, string>)[s] || s}
                 </option>
               ))}
             </select>
@@ -304,10 +274,7 @@ export default function OrdersTab({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  setStatusFilter("");
-                  setSearchText("");
-                }}
+                onClick={() => { setStatusFilter(""); setSearchText(""); }}
                 className="flex items-center gap-1"
               >
                 <X className="w-3 h-3" />
@@ -320,63 +287,33 @@ export default function OrdersTab({
             <TableHeader>
               <TableRow>
                 <TableHead>
-                  <button
-                    type="button"
-                    className="flex items-center font-medium"
-                    onClick={() => handleSort("id")}
-                  >
-                    {tc("id")}
-                    <SortIcon field="id" />
+                  <button type="button" className="flex items-center font-medium" onClick={() => handleSort("id")}>
+                    {tc("id")}<SortIcon field="id" />
                   </button>
                 </TableHead>
                 <TableHead>
-                  <button
-                    type="button"
-                    className="flex items-center font-medium"
-                    onClick={() => handleSort("product")}
-                  >
-                    {t("product")}
-                    <SortIcon field="product" />
+                  <button type="button" className="flex items-center font-medium" onClick={() => handleSort("product")}>
+                    {t("product")}<SortIcon field="product" />
                   </button>
                 </TableHead>
                 <TableHead>
-                  <button
-                    type="button"
-                    className="flex items-center font-medium"
-                    onClick={() => handleSort("customer")}
-                  >
-                    {t("customer")}
-                    <SortIcon field="customer" />
+                  <button type="button" className="flex items-center font-medium" onClick={() => handleSort("customer")}>
+                    {t("customer")}<SortIcon field="customer" />
                   </button>
                 </TableHead>
                 <TableHead>
-                  <button
-                    type="button"
-                    className="flex items-center font-medium"
-                    onClick={() => handleSort("quantity")}
-                  >
-                    {t("quantity")}
-                    <SortIcon field="quantity" />
+                  <button type="button" className="flex items-center font-medium" onClick={() => handleSort("quantity")}>
+                    {t("quantity")}<SortIcon field="quantity" />
                   </button>
                 </TableHead>
                 <TableHead>
-                  <button
-                    type="button"
-                    className="flex items-center font-medium"
-                    onClick={() => handleSort("status")}
-                  >
-                    {tc("status")}
-                    <SortIcon field="status" />
+                  <button type="button" className="flex items-center font-medium" onClick={() => handleSort("status")}>
+                    {tc("status")}<SortIcon field="status" />
                   </button>
                 </TableHead>
                 <TableHead>
-                  <button
-                    type="button"
-                    className="flex items-center font-medium"
-                    onClick={() => handleSort("priority")}
-                  >
-                    {t("priority")}
-                    <SortIcon field="priority" />
+                  <button type="button" className="flex items-center font-medium" onClick={() => handleSort("priority")}>
+                    {t("priority")}<SortIcon field="priority" />
                   </button>
                 </TableHead>
                 <TableHead>{t("device")}</TableHead>
@@ -479,40 +416,28 @@ export default function OrdersTab({
                             {t("completeOrder")}
                           </Button>
                         )}
-                        {!isWorker &&
-                          (order.status === "planned" || order.status === "in_progress") && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => onUpdateStatus(order.id, "cancelled")}
-                              className="flex items-center gap-1 text-red-700 border-red-300"
-                            >
-                              <XCircle className="w-3 h-3" />
-                              {t("cancelOrder")}
-                            </Button>
-                          )}
-                        {!isWorker &&
-                          (order.status === "planned" || order.status === "in_progress") && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => onEditOrder(order)}
-                              className="flex items-center gap-1"
-                            >
-                              <Edit className="w-3 h-3" />
-                              {tc("edit")}
-                            </Button>
-                          )}
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => printProductionOrder(order, locale)}
-                          className="flex items-center gap-1"
-                          title={t("printOrder")}
-                        >
-                          <Printer className="w-3 h-3" />
-                          {t("printOrder")}
-                        </Button>
+                        {!isWorker && (order.status === "planned" || order.status === "in_progress") && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => onUpdateStatus(order.id, "cancelled")}
+                            className="flex items-center gap-1 text-red-700 border-red-300"
+                          >
+                            <XCircle className="w-3 h-3" />
+                            {t("cancelOrder")}
+                          </Button>
+                        )}
+                        {!isWorker && (order.status === "planned" || order.status === "in_progress") && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => onEditOrder(order)}
+                            className="flex items-center gap-1"
+                          >
+                            <Edit className="w-3 h-3" />
+                            {tc("edit")}
+                          </Button>
+                        )}
                         {!isWorker && (
                           <Button
                             size="sm"
@@ -526,9 +451,7 @@ export default function OrdersTab({
                         )}
                         <OrderSummaryDialog
                           open={!!summaryOrder}
-                          onOpenChange={(open) => {
-                            if (!open) setSummaryOrder(null);
-                          }}
+                          onOpenChange={(open) => { if (!open) setSummaryOrder(null); }}
                           order={summaryOrder}
                         />
                       </div>

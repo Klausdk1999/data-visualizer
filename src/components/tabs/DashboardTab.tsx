@@ -13,10 +13,7 @@ import {
   PackageOpen,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { WidgetGrid } from "@/components/widgets";
-import { usePreferences } from "@/hooks/usePreferences";
 import type { ProductionOrder, TimeEntry, RawMaterial, Signal } from "@/types";
-import type { GridLayout, WidgetConfig } from "@/types/widgets";
 
 interface DashboardTabProps {
   signals: Signal[];
@@ -35,19 +32,6 @@ export default function DashboardTab({
 }: DashboardTabProps) {
   const t = useTranslations("dashboardTab");
   const [dayFilter, setDayFilter] = useState<7 | 15 | 30>(30);
-  const { preferences, loading: prefsLoading, savePreferences } = usePreferences(userId);
-
-  // ── Widget grid state derived from preferences ──
-  const dashLayout = preferences?.dashboard?.layout ?? "2x2";
-  const dashWidgets = preferences?.dashboard?.widgets ?? [];
-
-  const handleLayoutChange = (layout: GridLayout) => {
-    savePreferences({ dashboard: { layout, widgets: dashWidgets } });
-  };
-
-  const handleWidgetsChange = (widgets: WidgetConfig[]) => {
-    savePreferences({ dashboard: { layout: dashLayout, widgets } });
-  };
 
   // ── today declared first, used in all calculations below ──
   const today = new Date();
@@ -103,31 +87,6 @@ export default function DashboardTab({
 
   return (
     <div className="space-y-6">
-      {/* ══ WIDGET GRID ══ */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-            <Gauge className="w-5 h-5" />
-            {t("widgets")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {prefsLoading ? (
-            <div className="flex items-center justify-center py-12 text-sm text-gray-400">
-              {t("loadingWidgets")}
-            </div>
-          ) : (
-            <WidgetGrid
-              layout={dashLayout}
-              widgets={dashWidgets}
-              onLayoutChange={handleLayoutChange}
-              onWidgetsChange={handleWidgetsChange}
-              signals={signals as Signal[]}
-            />
-          )}
-        </CardContent>
-      </Card>
-
       {/* ══ SEÇÃO: ORDENS ══ */}
       <Card>
         <CardHeader>
