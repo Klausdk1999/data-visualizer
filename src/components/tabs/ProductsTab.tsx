@@ -24,6 +24,7 @@ interface ProductsTabProps {
   onAddProduct: () => void;
   onEditProduct: (product: Product) => void;
   onDeleteProduct: (productId: number) => void;
+  canDelete?: boolean;
   onAddBOMEntry: () => void;
   onDeleteBOMEntry: (bomId: number) => void;
 }
@@ -37,6 +38,7 @@ export default function ProductsTab({
   onAddProduct,
   onEditProduct,
   onDeleteProduct,
+  canDelete = true,
   onAddBOMEntry,
   onDeleteBOMEntry,
 }: ProductsTabProps) {
@@ -104,15 +106,17 @@ export default function ProductsTab({
                         <Edit className="w-3 h-3" />
                         {tc("edit")}
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => onDeleteProduct(product.id)}
-                        className="flex items-center gap-1"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        {tc("delete")}
-                      </Button>
+                      {canDelete && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => onDeleteProduct(product.id)}
+                          className="flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          {tc("delete")}
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -154,15 +158,17 @@ export default function ProductsTab({
                       {bom.raw_material?.unit || "-"}
                     </TableCell>
                     <TableCell className="text-gray-900 dark:text-gray-100">
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => onDeleteBOMEntry(bom.id)}
-                        className="flex items-center gap-1"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        {tc("delete")}
-                      </Button>
+                      {canDelete && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => onDeleteBOMEntry(bom.id)}
+                          className="flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          {tc("delete")}
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

@@ -21,6 +21,7 @@ interface CustomersTabProps {
   onAddCustomer: () => void;
   onEditCustomer: (customer: Customer) => void;
   onDeleteCustomer: (customerId: number) => void;
+  canDelete?: boolean;
 }
 
 export default function CustomersTab({
@@ -28,6 +29,7 @@ export default function CustomersTab({
   onAddCustomer,
   onEditCustomer,
   onDeleteCustomer,
+  canDelete = true,
 }: CustomersTabProps) {
   const t = useTranslations("customers");
   const tc = useTranslations("common");
@@ -126,15 +128,17 @@ export default function CustomersTab({
                             <Edit className="w-3 h-3" />
                             {tc("edit")}
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => onDeleteCustomer(customer.id)}
-                            className="flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                            {tc("delete")}
-                          </Button>
+                          {canDelete && (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => onDeleteCustomer(customer.id)}
+                              className="flex items-center gap-1"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              {tc("delete")}
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>

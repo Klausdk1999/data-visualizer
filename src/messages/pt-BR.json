@@ -28,6 +28,8 @@
     "none": "Nenhum",
     "priority": "Prioridade",
     "quantity": "Quantidade",
+    "appTitle": "Nexo OS",
+    "reload": "Recarregar",
     "search": "Pesquisar...",
     "noResults": "Nenhum resultado encontrado",
     "uploadImage": "Enviar Imagem",
@@ -69,7 +71,8 @@
     "hours": "Horas",
     "users": "Usuários",
     "settings": "Configurações",
-    "customers": "Clientes"
+    "customers": "Clientes",
+    "companies": "Empresas"
   },
   "sidebar": {
     "monitoring": "Monitoramento",
@@ -87,7 +90,8 @@
     "values": "Valores de Sinais",
     "services": "Serviços",
     "users": "Usuários",
-    "logout": "Sair"
+    "logout": "Sair",
+    "companies": "Empresas"
   },
   "devices": {
     "title": "Dispositivos",
@@ -182,7 +186,12 @@
     "type": "Tipo",
     "admin": "Administrador",
     "worker": "Trabalhador",
-    "rfid": "RFID"
+    "rfid": "RFID",
+    "superadmin": "Super Administrador",
+    "manager": "Gerente",
+    "company": "Empresa",
+    "role": "Perfil",
+    "selectCompany": "Selecione uma empresa"
   },
   "products": {
     "title": "Produtos",
@@ -294,8 +303,10 @@
     "selectWorker": "Selecione um trabalhador",
     "confirmDelete": "Tem certeza que deseja excluir este registro?",
     "addInterval": "Adicionar intervalo",
-    "removeInterval": "Remover",
-    "interval": "Intervalo"
+    "interval": "Intervalo",
+    "intervals": "Intervalos de Produção",
+    "timeTip": "Digite apenas os números (ex: 0800 vira 08:00)",
+    "observationsPlaceholder": "Observações (opcional). Pressione Enter para ir ao próximo..."
   },
   "ttn": {
     "title": "Monitoramento de Rios TTN",
@@ -340,7 +351,7 @@
     "totalProducts": "Total de Produtos",
     "totalMaterials": "Total de Materiais",
     "activeOrders": "Ordens Ativas",
-    "title": "Resumo",
+    "title": "Resumo Operacional",
     "selectDevice": "Selecionar Dispositivo",
     "selectDevicePlaceholder": "-- Selecione um dispositivo --",
     "latestSignalValues": "Últimos Valores de Sinais",
@@ -375,7 +386,12 @@
     "materialsBelowOne": "{count} material abaixo do estoque mínimo",
     "materialsBelowMany": "{count} materiais abaixo do estoque mínimo",
     "current": "Atual",
-    "minimum": "Mínimo"
+    "minimum": "Mínimo",
+    "days": "dias",
+    "scheduleIsFree": "O cronograma está livre.",
+    "addEvent": "Adicionar Evento",
+    "stockSafeMessage": "Todos os níveis de materiais essenciais estão dentro da margem de segurança operacional.",
+    "viewFullReport": "Ver Relatório Completo"
   },
   "equipment": {
     "title": "Equipamentos",
@@ -395,5 +411,22 @@
     "deleteFailed": "Falha ao excluir item",
     "saveFailed": "Falha ao salvar item",
     "updateFailed": "Falha ao atualizar item"
+  },
+  "companies": {
+    "title": "Empresas",
+    "addCompany": "Adicionar Empresa",
+    "editCompany": "Editar Empresa",
+    "createCompany": "Criar Empresa",
+    "cnpj": "CNPJ",
+    "active": "Ativa",
+    "inactive": "Inativa",
+    "activate": "Ativar",
+    "deactivate": "Desativar",
+    "allCompanies": "Todas as empresas",
+    "selectCompany": "Selecionar empresa",
+    "company": "Empresa",
+    "confirmDeactivate": "Desativar esta empresa?",
+    "confirmActivate": "Ativar esta empresa?",
+    "selectCompanyHint": "Selecione uma empresa para criar registros"
   }
 }

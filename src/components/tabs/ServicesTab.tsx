@@ -21,6 +21,7 @@ interface ServicesTabProps {
   onAddService: () => void;
   onEditService: (service: Service) => void;
   onDeleteService: (serviceId: number) => void;
+  canDelete?: boolean;
 }
 
 export default function ServicesTab({
@@ -29,6 +30,7 @@ export default function ServicesTab({
   onAddService,
   onEditService,
   onDeleteService,
+  canDelete = true,
 }: ServicesTabProps) {
   const t = useTranslations("services");
   const tc = useTranslations("common");
@@ -80,15 +82,17 @@ export default function ServicesTab({
                         <Edit className="w-3 h-3" />
                         {tc("edit")}
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => onDeleteService(service.id)}
-                        className="flex items-center gap-1"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        {tc("delete")}
-                      </Button>
+                      {canDelete && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => onDeleteService(service.id)}
+                          className="flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          {tc("delete")}
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 )}

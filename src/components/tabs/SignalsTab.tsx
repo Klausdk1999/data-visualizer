@@ -23,6 +23,7 @@ interface SignalsTabProps {
   onAddSignal: () => void;
   onEditSignal: (signal: Signal) => void;
   onDeleteSignal: (signalId: number) => void;
+  canDelete?: boolean;
 }
 
 export default function SignalsTab({
@@ -33,6 +34,7 @@ export default function SignalsTab({
   onAddSignal,
   onEditSignal,
   onDeleteSignal,
+  canDelete = true,
 }: SignalsTabProps) {
   const t = useTranslations("signals");
   const tc = useTranslations("common");
@@ -106,15 +108,17 @@ export default function SignalsTab({
                       <Edit className="w-3 h-3" />
                       {tc("edit")}
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => onDeleteSignal(signal.id)}
-                      className="flex items-center gap-1"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      {tc("delete")}
-                    </Button>
+                    {canDelete && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => onDeleteSignal(signal.id)}
+                        className="flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        {tc("delete")}
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>

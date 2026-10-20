@@ -43,6 +43,7 @@ interface SignalValuesTabProps {
   selectedSignal: number | null;
   onAddValue: () => void;
   onDeleteValue: (valueId: number) => void;
+  canDelete?: boolean;
 }
 
 function getDateRangeFromTimespan(timespan: string): { from: Date; to: Date } {
@@ -76,6 +77,7 @@ export default function SignalValuesTab({
   selectedSignal,
   onAddValue,
   onDeleteValue,
+  canDelete = true,
 }: SignalValuesTabProps) {
   const t = useTranslations("signalValues");
   const tc = useTranslations("common");
@@ -401,15 +403,17 @@ export default function SignalValuesTab({
                     {value.user?.name || value.user_id || "-"}
                   </TableCell>
                   <TableCell className="text-gray-900 dark:text-gray-100">
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => onDeleteValue(value.id)}
-                      className="flex items-center gap-1"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      {tc("delete")}
-                    </Button>
+                    {canDelete && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => onDeleteValue(value.id)}
+                        className="flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        {tc("delete")}
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

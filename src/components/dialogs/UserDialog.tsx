@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,37 +15,63 @@ import { X, Save } from "lucide-react";
 import { useTranslations } from "next-intl";
 import ImageUpload from "@/components/ui/image-upload";
 import { uploadImage, deleteImage } from "@/lib/requestHandlers";
-import type { User, CreateUserRequest } from "@/types";
+import type { User, CreateUserRequest, Company } from "@/types";
 
 interface UserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   editingItem: User | null;
   onSubmit: (data: CreateUserRequest) => void;
+  currentUserRole?: string;
+  companies?: Company[];
 }
 
-export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }: UserDialogProps) {
+export default function UserDialog({
+  open,
+  onOpenChange,
+  editingItem,
+  onSubmit,
+  currentUserRole = "admin",
+  companies = [],
+}: UserDialogProps) {
   const t = useTranslations("users");
   const tc = useTranslations("common");
   const selectedImageRef = useRef<File | null>(null);
 
+  const [selectedRole, setSelectedRole] = useState<string>("worker");
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string>("");
+
   useEffect(() => {
     if (!open) {
       selectedImageRef.current = null;
+    } else {
+      setSelectedRole(editingItem?.type || "worker");
+      setSelectedCompanyId(editingItem?.company_id ? String(editingItem.company_id) : "");
     }
-  }, [open]);
+  }, [open, editingItem]);
+
+  const isSuperAdmin = currentUserRole === "superadmin";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    const role = (formData.get("type") as string) || "worker";
+    const companyVal = formData.get("company_id") as string;
+
     const userData: CreateUserRequest = {
       name: formData.get("name") as string,
       email: (formData.get("email") as string) || undefined,
       password: (formData.get("password") as string) || undefined,
-      type: (formData.get("type") as string) || "worker",
+      type: role,
       rfid: (formData.get("rfid") as string) || undefined,
+      company_id:
+        isSuperAdmin && role !== "superadmin" && companyVal
+          ? Number(companyVal)
+          : undefined,
     };
+
     onSubmit(userData);
+
     if (selectedImageRef.current && editingItem?.id) {
       try {
         await uploadImage("users", editingItem.id, selectedImageRef.current);
@@ -109,13 +135,43 @@ export default function UserDialog({ open, onOpenChange, editingItem, onSubmit }
               <select
                 id="user-type"
                 name="type"
-                defaultValue={editingItem?.type || "worker"}
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
               >
                 <option value="worker">{t("worker")}</option>
+                <option value="manager">{t("manager")}</option>
                 <option value="admin">{t("admin")}</option>
+                {isSuperAdmin && (
+                  <option value="superadmin">{t("superadmin")}</option>
+                )}
               </select>
             </div>
+
+            {/* Company selection for Superadmin */}
+            {isSuperAdmin && selectedRole !== "superadmin" && (
+              <div>
+                <Label htmlFor="user-company" className="text-gray-700 dark:text-gray-300">
+                  {t("company")} *
+                </Label>
+                <select
+                  id="user-company"
+                  name="company_id"
+                  required
+                  value={selectedCompanyId}
+                  onChange={(e) => setSelectedCompanyId(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                >
+                  <option value="">{t("selectCompany")}</option>
+                  {companies.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div>
               <Label htmlFor="user-rfid" className="text-gray-700 dark:text-gray-300">
                 {t("rfid")}

@@ -22,6 +22,7 @@ interface DevicesTabProps {
   onAddDevice: () => void;
   onEditDevice: (device: Device) => void;
   onDeleteDevice: (deviceId: number) => void;
+  canDelete?: boolean;
 }
 
 export default function DevicesTab({
@@ -31,6 +32,7 @@ export default function DevicesTab({
   onAddDevice,
   onEditDevice,
   onDeleteDevice,
+  canDelete = true,
 }: DevicesTabProps) {
   const t = useTranslations("devices");
   const tc = useTranslations("common");
@@ -124,15 +126,17 @@ export default function DevicesTab({
                       <Edit className="w-3 h-3" />
                       {tc("edit")}
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => onDeleteDevice(device.id)}
-                      className="flex items-center gap-1"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      {tc("delete")}
-                    </Button>
+                    {canDelete && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => onDeleteDevice(device.id)}
+                        className="flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        {tc("delete")}
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>

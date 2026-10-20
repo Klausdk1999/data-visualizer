@@ -20,6 +20,7 @@ interface MaterialsTabProps {
   onAddMaterial: () => void;
   onEditMaterial: (material: RawMaterial) => void;
   onDeleteMaterial: (materialId: number) => void;
+  canDelete?: boolean;
   onAdjustStock: (material: RawMaterial) => void;
 }
 
@@ -35,6 +36,7 @@ export default function MaterialsTab({
   onAddMaterial,
   onEditMaterial,
   onDeleteMaterial,
+  canDelete = true,
   onAdjustStock,
 }: MaterialsTabProps) {
   const t = useTranslations("materials");
@@ -98,15 +100,17 @@ export default function MaterialsTab({
                       <Edit className="w-3 h-3" />
                       {tc("edit")}
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => onDeleteMaterial(material.id)}
-                      className="flex items-center gap-1"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      {tc("delete")}
-                    </Button>
+                    {canDelete && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => onDeleteMaterial(material.id)}
+                        className="flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        {tc("delete")}
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="outline"

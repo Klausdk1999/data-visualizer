@@ -1,10 +1,28 @@
 // Type definitions for the application
 
+export type UserRole = "superadmin" | "admin" | "manager" | "worker";
+
+export interface Company {
+  id: number;
+  name: string;
+  cnpj?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CreateCompanyRequest {
+  name: string;
+  cnpj?: string;
+  is_active?: boolean;
+}
+
 export interface User {
   id: number;
   name: string;
   email?: string;
-  type?: string;
+  type?: UserRole;
+  company_id?: number;
   rfid?: string;
   is_active: boolean;
   created_at?: string;
@@ -59,6 +77,7 @@ export interface SignalValue {
 export interface LoginResponse {
   token: string;
   user: User;
+  company?: Company;
 }
 
 export interface CreateDeviceRequest {
@@ -97,6 +116,7 @@ export interface CreateUserRequest {
   password?: string;
   type?: string;
   rfid?: string;
+  company_id?: number;
 }
 
 // MES Types

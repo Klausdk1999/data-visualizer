@@ -18,6 +18,8 @@ interface SearchableSelectProps {
   required?: boolean;
   className?: string;
   id?: string;
+  onSelect?: (value: string) => void;
+  autoAdvance?: boolean;
 }
 
 export function SearchableSelect({
@@ -30,10 +32,13 @@ export function SearchableSelect({
   required,
   className = "",
   id,
+  onSelect,
+  autoAdvance = true,
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const generatedId = useId();
   const listboxId = `${generatedId}-listbox`;
@@ -44,6 +49,25 @@ export function SearchableSelect({
     ? options.filter((o) => o.label.toLowerCase().includes(query.toLowerCase()))
     : options;
 
+  const focusNextElement = useCallback(() => {
+    if (!autoAdvance) return;
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+    const form = trigger.closest("form");
+    if (!form) return;
+
+    const focusable = Array.from(
+      form.querySelectorAll<HTMLElement>(
+        'input:not([disabled]):not([type="hidden"]):not([tabindex="-1"]), textarea:not([disabled]), button:not([disabled]):not([data-skip-nav]), [role="combobox"]:not([disabled])'
+      )
+    ).filter((el) => el.tabIndex >= 0 && el.offsetWidth > 0 && el.offsetHeight > 0);
+
+    const currentIndex = focusable.indexOf(trigger);
+    if (currentIndex > -1 && currentIndex + 1 < focusable.length) {
+      focusable[currentIndex + 1].focus();
+    }
+  }, [autoAdvance]);
+
   const openDropdown = useCallback(() => {
     setOpen(true);
     setQuery("");
@@ -52,12 +76,18 @@ export function SearchableSelect({
   }, []);
 
   const selectOption = useCallback(
-    (option: SelectOption) => {
+    (option: SelectOption, advance = false) => {
       onChange(option.value);
+      onSelect?.(option.value);
       setOpen(false);
       setQuery("");
+      if (advance) {
+        setTimeout(() => focusNextElement(), 30);
+      } else {
+        setTimeout(() => triggerRef.current?.focus(), 0);
+      }
     },
-    [onChange]
+    [onChange, onSelect, focusNextElement]
   );
 
   const clear = useCallback(
@@ -83,9 +113,16 @@ export function SearchableSelect({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       setOpen(false);
+      triggerRef.current?.focus();
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (filtered.length > 0) selectOption(filtered[0]);
+      e.stopPropagation();
+      if (filtered.length > 0) {
+        selectOption(filtered[0], true);
+      } else {
+        setOpen(false);
+        focusNextElement();
+      }
     }
   };
 
@@ -102,10 +139,27 @@ export function SearchableSelect({
     <div ref={containerRef} className="relative">
       {/* Trigger button */}
       <button
+        ref={triggerRef}
         type="button"
         role="combobox"
         id={id}
         onClick={openDropdown}
+        onFocus={() => {
+          // Quando o botão ganha foco por tab/enter, abre automaticamente o dropdown para digitar
+          openDropdown();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === "ArrowDown" || e.key === " ") {
+            e.preventDefault();
+            openDropdown();
+          } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            // Se o usuário já começou a digitar uma letra
+            e.preventDefault();
+            setOpen(true);
+            setQuery(e.key);
+            setTimeout(() => inputRef.current?.focus(), 0);
+          }
+        }}
         className={triggerClasses}
         aria-haspopup="listbox"
         aria-expanded={open}

@@ -34,6 +34,16 @@ For local development without nginx:
 NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
+## Default Credentials & Roles
+
+Para acessar a interface pela primeira vez após subir o backend:
+
+| Perfil | E-mail | Senha | Descrição |
+| :--- | :--- | :--- | :--- |
+| **Superadmin** | `admin@admin.com` | `admin123` | Gerencia todas as empresas (tenants), cria novos administradores e pode alternar o escopo de visualização. |
+| **Admin da Empresa** *(semente)* | `admin@test.com` | `admin123` | Acesso de administrador dentro de sua empresa. |
+| **Operador / Worker** *(semente)* | `worker@test.com` | `worker123` | Registra e consulta apontamentos de horas. |
+
 ## Commands
 
 ### Development

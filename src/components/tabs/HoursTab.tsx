@@ -21,6 +21,7 @@ interface HoursTabProps {
   onAddEntry: () => void;
   onEditEntry: (entry: TimeEntry) => void;
   onDeleteEntry: (entryId: number) => void;
+  canDelete?: boolean;
 }
 
 export default function HoursTab({
@@ -29,6 +30,7 @@ export default function HoursTab({
   onAddEntry,
   onEditEntry,
   onDeleteEntry,
+  canDelete = true,
 }: HoursTabProps) {
   const t = useTranslations("hours");
   const tc = useTranslations("common");
@@ -92,15 +94,17 @@ export default function HoursTab({
                       <Edit className="w-3 h-3" />
                       {tc("edit")}
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => onDeleteEntry(entry.id)}
-                      className="flex items-center gap-1"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      {tc("delete")}
-                    </Button>
+                    {canDelete && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => onDeleteEntry(entry.id)}
+                        className="flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        {tc("delete")}
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>

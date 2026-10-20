@@ -26,6 +26,8 @@ import type {
   CreateServiceRequest,
   CreateTimeEntryRequest,
   CreateCustomerRequest,
+  Company,
+  CreateCompanyRequest,
 } from "@/types";
 import type { TTNUplink, TTNDevice, TTNStats } from "@/types/ttn";
 import type { UserPreferences } from "@/types/widgets";
@@ -56,6 +58,8 @@ const handleUnauthorized = () => {
   // Clear auth data
   localStorage.removeItem("auth_token");
   localStorage.removeItem("user");
+  localStorage.removeItem("company");
+  localStorage.removeItem("selected_company_id");
   // Notify listeners
   if (onUnauthorizedCallback) {
     onUnauthorizedCallback();
@@ -73,6 +77,11 @@ axiosInstance.interceptors.request.use((config) => {
   // Don't require token for login endpoint
   if (token && !config.url?.includes("auth/login")) {
     config.headers.Authorization = `Bearer ${token}`;
+    // Superadmin scopes requests to the selected company
+    const companyId = getSelectedCompanyId();
+    if (companyId !== null && getCurrentUser()?.type === "superadmin") {
+      config.headers["X-Company-ID"] = String(companyId);
+    }
   }
   return config;
 });
@@ -99,6 +108,12 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   if (response.data.token) {
     localStorage.setItem("auth_token", response.data.token);
     localStorage.setItem("user", JSON.stringify(response.data.user));
+    if (response.data.company) {
+      localStorage.setItem("company", JSON.stringify(response.data.company));
+    } else {
+      localStorage.removeItem("company");
+    }
+    localStorage.removeItem("selected_company_id");
   }
   return response.data;
 };
@@ -106,6 +121,29 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 export const logout = () => {
   localStorage.removeItem("auth_token");
   localStorage.removeItem("user");
+  localStorage.removeItem("company");
+  localStorage.removeItem("selected_company_id");
+};
+
+export const getCurrentCompany = (): Company | null => {
+  const str = localStorage.getItem("company");
+  return str ? JSON.parse(str) : null;
+};
+
+export const getSelectedCompanyId = (): number | null => {
+  if (typeof window === "undefined") return null;
+  const v = localStorage.getItem("selected_company_id");
+  if (!v) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+};
+
+export const setSelectedCompanyId = (id: number | null) => {
+  if (id === null) {
+    localStorage.removeItem("selected_company_id");
+  } else {
+    localStorage.setItem("selected_company_id", String(id));
+  }
 };
 
 export const getCurrentUser = () => {
@@ -115,6 +153,40 @@ export const getCurrentUser = () => {
 
 export const isAuthenticated = () => {
   return !!localStorage.getItem("auth_token");
+};
+
+// Company endpoints (superadmin only)
+export const getCompanies = async (): Promise<Company[]> => {
+  try {
+    const response = await axiosInstance.get<Company[]>("companies");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching companies:", error);
+    throw error;
+  }
+};
+
+export const createCompany = async (data: CreateCompanyRequest): Promise<Company> => {
+  try {
+    const response = await axiosInstance.post<Company>("companies", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating company:", error);
+    throw error;
+  }
+};
+
+export const updateCompany = async (
+  id: string,
+  data: Partial<CreateCompanyRequest>
+): Promise<Company> => {
+  try {
+    const response = await axiosInstance.put<Company>(`companies/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating company:", error);
+    throw error;
+  }
 };
 
 // User endpoints

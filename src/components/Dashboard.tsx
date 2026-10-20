@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
-import { getCurrentUser } from "@/lib/requestHandlers";
+import {
+  getCurrentUser,
+  getCurrentCompany,
+  getSelectedCompanyId,
+  setSelectedCompanyId,
+  getCompanies,
+  createCompany,
+  updateCompany,
+} from "@/lib/requestHandlers";
 import EquipmentTab from "@/components/tabs/EquipmentTab";
 import {
   getDevices,
@@ -65,6 +73,7 @@ import OrdersTab from "@/components/tabs/OrdersTab";
 import ServicesTab from "@/components/tabs/ServicesTab";
 import HoursTab from "@/components/tabs/HoursTab";
 import CustomersTab from "@/components/tabs/CustomersTab";
+import CompaniesTab from "@/components/tabs/CompaniesTab";
 import DeviceDialog from "@/components/dialogs/DeviceDialog";
 import SignalDialog from "@/components/dialogs/SignalDialog";
 import SignalValueDialog from "@/components/dialogs/SignalValueDialog";
@@ -77,6 +86,7 @@ import BOMDialog from "@/components/dialogs/BOMDialog";
 import ServiceDialog from "@/components/dialogs/ServiceDialog";
 import TimeEntryDialog from "@/components/dialogs/TimeEntryDialog";
 import CustomerDialog from "@/components/dialogs/CustomerDialog";
+import CompanyDialog from "@/components/dialogs/CompanyDialog";
 import {
   Dialog,
   DialogContent,
@@ -110,6 +120,8 @@ import type {
   CreateServiceRequest,
   CreateTimeEntryRequest,
   CreateCustomerRequest,
+  Company,
+  CreateCompanyRequest,
 } from "@/types";
 
 interface DashboardProps {
@@ -180,6 +192,12 @@ export default function Dashboard({
   const [customerDialogOpen, setCustomerDialogOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
 
+  // Companies state (multi-tenant)
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [companyDialogOpen, setCompanyDialogOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+  const [selectedCompanyId, setSelectedCompanyIdState] = useState<number | null>(null);
+
   // Update URL when tab changes
   const updateUrl = useCallback(
     (tab: TabType, extraParams?: Record<string, string>) => {
@@ -206,6 +224,7 @@ export default function Dashboard({
   useEffect(() => {
     const currentUser = getCurrentUser();
     setUser(currentUser);
+    setSelectedCompanyIdState(getSelectedCompanyId());
     fetchData();
   }, []);
 
@@ -222,9 +241,49 @@ export default function Dashboard({
       }
 
       const currentUser = getCurrentUser();
-      const isAdmin = currentUser?.type === "admin";
+      const role = currentUser?.type || "worker";
+      const isSuperAdmin = role === "superadmin";
+      const isAdmin = role === "admin" || isSuperAdmin;
+      const isManager = role === "manager";
 
-      if (isAdmin) {
+      if (isSuperAdmin) {
+        const [
+          devicesData,
+          signalsData,
+          valuesData,
+          usersData,
+          productsData,
+          materialsData,
+          ordersData,
+          servicesData,
+          timeEntriesData,
+          customersData,
+          companiesData,
+        ] = await Promise.all([
+          getDevices(),
+          getSignals(),
+          getSignalValues({ limit: "100" }),
+          getUsers(),
+          getProducts(),
+          getRawMaterials(),
+          getProductionOrders(),
+          getServices(),
+          getTimeEntries(),
+          getCustomers(),
+          getCompanies(),
+        ]);
+        setDevices(devicesData);
+        setSignals(signalsData);
+        setSignalValues(valuesData);
+        setUsers(usersData);
+        setProducts(productsData);
+        setRawMaterials(materialsData);
+        setProductionOrders(ordersData);
+        setServices(servicesData);
+        setTimeEntries(timeEntriesData);
+        setCustomers(customersData);
+        setCompanies(companiesData);
+      } else if (isAdmin) {
         const [
           devicesData,
           signalsData,
@@ -251,6 +310,31 @@ export default function Dashboard({
         setDevices(devicesData);
         setSignals(signalsData);
         setSignalValues(valuesData);
+        setUsers(usersData);
+        setProducts(productsData);
+        setRawMaterials(materialsData);
+        setProductionOrders(ordersData);
+        setServices(servicesData);
+        setTimeEntries(timeEntriesData);
+        setCustomers(customersData);
+      } else if (isManager) {
+        const [
+          usersData,
+          productsData,
+          materialsData,
+          ordersData,
+          servicesData,
+          timeEntriesData,
+          customersData,
+        ] = await Promise.all([
+          getUsers(),
+          getProducts(),
+          getRawMaterials(),
+          getProductionOrders(),
+          getServices(),
+          getTimeEntries(),
+          getCustomers(),
+        ]);
         setUsers(usersData);
         setProducts(productsData);
         setRawMaterials(materialsData);
@@ -673,15 +757,58 @@ export default function Dashboard({
     }
   };
 
-  const isWorker = user?.type === "worker";
+  // Company handlers
+  const handleCreateCompany = async (data: CreateCompanyRequest) => {
+    setError("");
+    try {
+      if (editingCompany) {
+        await updateCompany(editingCompany.id.toString(), data);
+      } else {
+        await createCompany(data);
+      }
+      setCompanyDialogOpen(false);
+      setEditingCompany(null);
+      const updated = await getCompanies();
+      setCompanies(updated);
+    } catch (err: any) {
+      setError(err.response?.data || t("errors.saveFailed"));
+    }
+  };
+
+  const handleToggleCompanyActive = async (company: Company) => {
+    const action = company.is_active ? t("companies.confirmDeactivate") : t("companies.confirmActivate");
+    if (!confirm(action)) return;
+    try {
+      await updateCompany(company.id.toString(), { is_active: !company.is_active });
+      const updated = await getCompanies();
+      setCompanies(updated);
+    } catch (err: any) {
+      setError(err.response?.data || t("errors.updateFailed"));
+    }
+  };
+
+  const handleCompanyChange = (companyIdStr: string) => {
+    const id = companyIdStr ? Number(companyIdStr) : null;
+    setSelectedCompanyId(id);
+    setSelectedCompanyIdState(id);
+    fetchData();
+  };
+
+  const role = user?.type || "worker";
+  const isSuperAdmin = role === "superadmin";
+  const isAdmin = role === "admin" || isSuperAdmin;
+  const isManager = role === "manager";
+  const isWorker = role === "worker";
+  const canDelete = isAdmin;
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--page-bg)" }}>
       <Sidebar
         activeTab={activeTab}
         onTabChange={handleTabChange}
         userType={user?.type || ""}
         userName={user?.name || user?.email || ""}
+        companyName={getCurrentCompany()?.name}
         onLogout={onLogout}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -689,22 +816,178 @@ export default function Dashboard({
         onLocaleChange={onLocaleChange}
       />
 
-      <main
-        className={`flex-1 transition-all duration-200 ${sidebarCollapsed ? "ml-16" : "ml-60"}`}
+      <div
+        className={`flex flex-col flex-1 min-h-screen transition-all duration-200 ${
+          sidebarCollapsed ? "ml-16" : "ml-60"
+        }`}
       >
-        {/* Error Message */}
-        {error && (
-          <div className="px-4 sm:px-6 lg:px-8 mt-4">
-            <div className="bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-xl shadow-md border border-red-400/30">
-              {error}
+        {/* Top Header Bar */}
+        <header
+          className="sticky top-0 z-20 flex items-center justify-between h-14 px-6"
+          style={{
+            backgroundColor: "var(--header-bg)",
+            borderBottom: "1px solid var(--header-border)",
+            boxShadow: "0 1px 6px rgba(0,0,0,0.07)",
+          }}
+        >
+          <div className="flex items-center gap-4">
+            <h1
+              className="text-lg font-bold"
+              style={{ color: "var(--indigo-accent)" }}
+            >
+              {t("common.appTitle") || "Industrial IoT OS"}
+            </h1>
+
+            {/* Superadmin Company Selector */}
+            {isSuperAdmin && (
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedCompanyId ? String(selectedCompanyId) : ""}
+                  onChange={(e) => handleCompanyChange(e.target.value)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-indigo-200 dark:border-indigo-900 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="">{t("companies.allCompanies") || "Todas as empresas"}</option>
+                  {companies.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} {!c.is_active ? `(${t("companies.inactive") || "Inativa"})` : ""}
+                    </option>
+                  ))}
+                </select>
+                {!selectedCompanyId && (
+                  <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                    ({t("companies.allCompanies") || "Visão Geral"})
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Current company name badge for non-superadmin */}
+            {!isSuperAdmin && getCurrentCompany() && (
+              <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-900">
+                {getCurrentCompany()?.name}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              {[
+                {
+                  title: "Notificações",
+                  path: (
+                    <>
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </>
+                  ),
+                },
+                {
+                  title: "Configurações",
+                  path: (
+                    <>
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </>
+                  ),
+                },
+                {
+                  title: "Cloud",
+                  path: (
+                    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+                  ),
+                },
+              ].map(({ title, path }) => (
+                <button
+                  key={title}
+                  className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
+                  style={{ color: "var(--text-muted)" }}
+                  title={title}
+                  onMouseEnter={(e) =>
+                    ((e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                      "var(--surface-hover)")
+                  }
+                  onMouseLeave={(e) =>
+                    ((e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                      "transparent")
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {path}
+                  </svg>
+                </button>
+              ))}
+            </div>
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-sm"
+              style={{ background: "linear-gradient(135deg, #4B5CF0, #7C3AED)" }}
+              title={user?.name || user?.email || ""}
+            >
+              {(user?.name || user?.email || "?").charAt(0).toUpperCase()}
             </div>
           </div>
-        )}
+        </header>
 
-        {/* Content */}
-        <div className="px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 px-6 py-6">
+          {/* Error Message */}
+          {error && (
+            <div className="mb-5">
+              <div
+                className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                style={{
+                  backgroundColor: "var(--error-banner-bg)",
+                  border: "1px solid var(--error-banner-border)",
+                }}
+              >
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: "var(--error-icon-bg)" }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--error-banner-btn)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </div>
+                <p
+                  className="flex-1 text-sm font-medium"
+                  style={{ color: "var(--error-banner-text)" }}
+                >
+                  {error}
+                </p>
+                <button
+                  onClick={fetchData}
+                  className="px-4 py-1.5 rounded-lg text-white text-xs font-bold transition-opacity hover:opacity-85 shrink-0"
+                  style={{ backgroundColor: "var(--error-banner-btn)" }}
+                >
+                  {t("common.reload") || "Recarregar"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Content */}
           {loading ? (
-            <div className="text-gray-700 dark:text-gray-300 text-center">
+            <div
+              className="text-center py-20"
+              style={{ color: "var(--text-muted)" }}
+            >
               {t("common.loading")}
             </div>
           ) : (
@@ -770,6 +1053,8 @@ export default function Dashboard({
               {activeTab === "users" && (
                 <UsersTab
                   users={users}
+                  companies={companies}
+                  canDelete={canDelete}
                   onAddUser={() => {
                     setEditingItem(null);
                     setUserDialogOpen(true);
@@ -788,6 +1073,7 @@ export default function Dashboard({
                   rawMaterials={rawMaterials}
                   selectedProduct={selectedProduct}
                   bomEntries={bomEntries}
+                  canDelete={canDelete}
                   onProductSelect={handleProductSelect}
                   onAddProduct={() => {
                     setEditingItem(null);
@@ -807,6 +1093,7 @@ export default function Dashboard({
               {activeTab === "materials" && (
                 <MaterialsTab
                   materials={rawMaterials}
+                  canDelete={canDelete}
                   onAddMaterial={() => {
                     setEditingItem(null);
                     setMaterialDialogOpen(true);
@@ -827,6 +1114,7 @@ export default function Dashboard({
                 <OrdersTab
                   orders={productionOrders}
                   isWorker={isWorker}
+                  canDelete={canDelete}
                   onAddOrder={() => {
                     setEditingItem(null);
                     setOrderDialogOpen(true);
@@ -862,6 +1150,7 @@ export default function Dashboard({
                 <ServicesTab
                   services={services}
                   isWorker={isWorker}
+                  canDelete={canDelete}
                   onAddService={() => {
                     setEditingService(null);
                     setServiceDialogOpen(true);
@@ -877,6 +1166,7 @@ export default function Dashboard({
               {activeTab === "customers" && (
                 <CustomersTab
                   customers={customers}
+                  canDelete={canDelete}
                   onAddCustomer={() => {
                     setEditingCustomer(null);
                     setCustomerDialogOpen(true);
@@ -886,6 +1176,21 @@ export default function Dashboard({
                     setCustomerDialogOpen(true);
                   }}
                   onDeleteCustomer={handleDeleteCustomer}
+                />
+              )}
+
+              {activeTab === "companies" && (
+                <CompaniesTab
+                  companies={companies}
+                  onAddCompany={() => {
+                    setEditingCompany(null);
+                    setCompanyDialogOpen(true);
+                  }}
+                  onEditCompany={(c) => {
+                    setEditingCompany(c);
+                    setCompanyDialogOpen(true);
+                  }}
+                  onToggleActive={handleToggleCompanyActive}
                 />
               )}
               {activeTab === "equipment" && (
@@ -903,8 +1208,8 @@ export default function Dashboard({
               )}
             </>
           )}
-        </div>
-      </main>
+        </main>
+      </div>
 
       {/* Dialogs */}
       <DeviceDialog
@@ -934,6 +1239,8 @@ export default function Dashboard({
         onOpenChange={setUserDialogOpen}
         editingItem={editingItem as User | null}
         onSubmit={handleCreateUser}
+        currentUserRole={user?.type}
+        companies={companies}
       />
 
       <ProductDialog
@@ -1001,6 +1308,13 @@ export default function Dashboard({
         onOpenChange={setCustomerDialogOpen}
         editingItem={editingCustomer}
         onSubmit={handleCreateCustomer}
+      />
+
+      <CompanyDialog
+        open={companyDialogOpen}
+        onOpenChange={setCompanyDialogOpen}
+        editingItem={editingCompany}
+        onSubmit={handleCreateCompany}
       />
 
       {/* Device Token Dialog — shown once after creating a new device */}
