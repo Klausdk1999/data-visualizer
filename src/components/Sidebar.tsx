@@ -146,7 +146,7 @@ export default function Sidebar({
               className="text-sm font-bold truncate leading-tight"
               style={{ color: "var(--text-primary)" }}
             >
-              {companyName || "Industrial IoT"}
+              {companyName || "Nexo MES"}
             </p>
             <p
               className="text-[11px] font-medium truncate leading-tight"

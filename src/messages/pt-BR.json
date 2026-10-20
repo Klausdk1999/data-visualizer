@@ -28,7 +28,7 @@
     "none": "Nenhum",
     "priority": "Prioridade",
     "quantity": "Quantidade",
-    "appTitle": "Nexo OS",
+    "appTitle": "Nexo MES",
     "reload": "Recarregar",
     "search": "Pesquisar...",
     "noResults": "Nenhum resultado encontrado",
@@ -40,7 +40,7 @@
     "image": "Imagem"
   },
   "login": {
-    "title": "IoT Dashboard",
+    "title": "Nexo MES",
     "subtitle": "Entre na sua conta",
     "email": "Email",
     "emailPlaceholder": "usuario@exemplo.com",

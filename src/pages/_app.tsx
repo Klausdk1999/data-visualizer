@@ -24,10 +24,10 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <NextIntlClientProvider locale={locale} messages={messages[locale]}>
         <Head>
-          <title>IoT Data Storage Dashboard</title>
+          <title>Nexo MES</title>
           <meta
             name="description"
-            content="IoT Data Storage Dashboard - Manage devices, signals, and data"
+            content="Nexo MES - Manufacturing Execution System"
           />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
