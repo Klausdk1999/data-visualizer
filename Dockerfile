@@ -11,7 +11,7 @@ RUN npm ci
 COPY . .
 
 # Build argument for API URL
-ARG NEXT_PUBLIC_API_URL=http://localhost:8080
+ARG NEXT_PUBLIC_API_URL=http://nexo-os-backend-y48jiz-82ff0c-200-141-16-230.sslip.io
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 # Build the application
