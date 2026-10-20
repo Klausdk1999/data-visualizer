@@ -135,7 +135,7 @@ export function WidgetConfigDialog({
 
   const handleSave = () => {
     const config: WidgetConfig = {
-      id: editConfig?.id ?? crypto.randomUUID(),
+      id: editConfig?.id ?? (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`),
       type: widgetType,
       label: label || WIDGET_TYPES.find((w) => w.type === widgetType)?.label,
       timespan,

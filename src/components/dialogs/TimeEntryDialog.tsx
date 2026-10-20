@@ -45,8 +45,15 @@ interface DayGroup {
   intervals: IntervalRow[];
 }
 
+const generateId = () => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+};
+
 const emptyInterval = (suggestedStartTime: string = ""): IntervalRow => ({
-  id: crypto.randomUUID(),
+  id: generateId(),
   production_order_id: "",
   service_id: "",
   start_time: suggestedStartTime,
@@ -55,7 +62,7 @@ const emptyInterval = (suggestedStartTime: string = ""): IntervalRow => ({
 });
 
 const emptyDayGroup = (initialDate: string = "", suggestedStartTime: string = ""): DayGroup => ({
-  id: crypto.randomUUID(),
+  id: generateId(),
   day: initialDate,
   intervals: [emptyInterval(suggestedStartTime)],
 });
@@ -116,11 +123,11 @@ export default function TimeEntryDialog({
         setUserId(String(editingItem.user_id));
         setDayGroups([
           {
-            id: crypto.randomUUID(),
+            id: generateId(),
             day: editingItem.day ?? "",
             intervals: [
               {
-                id: crypto.randomUUID(),
+                id: generateId(),
                 production_order_id: String(editingItem.production_order_id),
                 service_id: String(editingItem.service_id),
                 start_time: editingItem.start_time ?? "",
